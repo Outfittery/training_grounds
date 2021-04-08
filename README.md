@@ -6,29 +6,31 @@ Training Grounds (TG) is a data science framework, developed in Outfittery Gmbh 
 Currently, it is used in several projects for data preprocessing pipelines and machine learning pipelines design.
 The main tools available are:
 
-0. Featurization: easy-to-write pure functions that convert the unstructured data into tidy dataset.
-0. Data Frame Transformers: a slim wrapper around `sklearn` that applies the transformations to `pandas.Dataframe` 
+1. Featurization: easy-to-write pure functions that convert the unstructured data into tidy dataset.
+1. Data Frame Transformers: a slim wrapper around `sklearn` that applies the transformations to `pandas.Dataframe` 
 and keeps the column names.
-0. Training: SOLID-based architecture to define machine-learning pipelines, including test/train splitting, 
+1. Training: SOLID-based architecture to define machine-learning pipelines, including test/train splitting, 
 training itself, evaluation and hyperparameter tuning.
-0. Delivery: the way to package the code, send it to the remote server and execute there. Here, TG provides a flexible way of delivery
+1. Delivery: the way to package the code, send it to the remote server and execute there. Here, TG provides a flexible way of delivery
 (no integration with the version control system or any other external software is required), 
 reliable versioning technique and hot-module replacement.
 
 Our main principles were:
-0. Use the existing solution to the maximum extent and write the lightest wrappers possible.
-0. SOLID to provide testability, extendability and reusability of the solutions.
-0. "Open framework": we do not claim that we offer all components you will ever need; 
+
+1. Use the existing solution to the maximum extent and write the lightest wrappers possible.
+1. SOLID to provide testability, extendability and reusability of the solutions.
+1. "Open framework": we do not claim that we offer all components you will ever need; 
 rather, we offer you the architecture where you can build components for your use cases, and the components we used for ours.
-0. Minimizing complexity gap: instead of domain specific languages or visual programming that are often easy in the training phase,
+1. Minimizing complexity gap: instead of domain specific languages or visual programming that are often easy in the training phase,
 but are hard to adopt for the real use cases, not covered by the manual, we offer a code-first approach that behaves 
 the same way on all the stages of adoption.
 
 This repository contains:
-0. The source code of the framework
-0. The comprehensive set of Demos that covers the platform functionality. Demos are Jupyter Notebooks, so you can not only run them,
+
+1. The source code of the framework
+1. The comprehensive set of Demos that covers the platform functionality. Demos are Jupyter Notebooks, so you can not only run them,
 but also play around and explore the functionality yourself.
-0. Tests that cover substantial part of the code, especially in the crucial parts, but not 100% of it.
+1. Tests that cover substantial part of the code, especially in the crucial parts, but not 100% of it.
 
 This repository **is not** a Python module. This is due to technical requirements of the delivery subsystem, which
 is covered in the Demo in full details. Therefore, the installation process, required to run the Demos and tests, is more 
@@ -73,7 +75,7 @@ Tests are located in `tg/common/test_common`. Some of them use external dependen
  
 ### Folders
 
-There are 2 folders created by TG:
+There are two folders created by TG:
 
 * `/temp`. It contains files that can be deleted at any time.
 * `/data-cache`. It contains downloaded data. Deleting it will cause re-downloading.
