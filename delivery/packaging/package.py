@@ -164,7 +164,7 @@ from setuptools import setup, find_packages
 
 setup(name='{module_name}',
       version='{version}',
-      description='The framework for model training',
+      description='The framework for featurization and model training',
       packages=find_packages(),
       install_requires=[
           {dependencies}

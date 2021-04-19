@@ -33,10 +33,19 @@ but also play around and explore the functionality yourself.
 1. Tests that cover substantial part of the code, especially in the crucial parts, but not 100% of it.
 
 This repository **is not** a Python module. This is due to technical requirements of the delivery subsystem, which
-is covered in the Demo in full details. Therefore, the installation process, required to run the Demos and tests, is more 
-complicated than usual. 
+is covered in the Demo in full details. Two installation options are available.
 
-## Installation instructions
+## Fast installation
+
+* run `pip install training-grounds` in your environment
+* checkout or download this repository on you machine
+* run `jupyter notebook` in terminal, open the Demos in `tg/common/demos` folder.
+
+On your local machine, you will be able to fully use TG without any limitations.
+As for delivery, you will only be able to deliver the objects that are composed entirely from build-in TG classes.
+This limitation is not something you should necessarily be concerned at your first steps.
+
+## Full-fledged installation
 
 * Create a git repository for your project. We will refer to the folder of the repository as `/`
   * If you don't want to use `git`, just create `/` folder.
