@@ -2,14 +2,14 @@ from typing import *
 
 import pandas as pd
 
-from yo_ds import Query, fluq
+from yo_fluq_ds import Query, fluq
 from pathlib import Path
 
-from ..training_core import AbstractTrainingTask, TrainingEnvironment, Splitter, IdentitySplit, Artificier, MetricPool, DataFrameSplit, TrainingResult, ArtificierArguments
+from ..training_core import AbstractTrainingTask, TrainingEnvironment, Splitter, IdentitySplitter, Artificier, MetricPool, DataFrameSplit, TrainingResult, ArtificierArguments
 from .df_loader import DataFrameLoader
 from .model_provider import AbstractModelProvider
 from ._kraken import _make_kraken_task
-
+from ..._common import Logger
 
 
 class Evaluation:
@@ -46,11 +46,11 @@ class SingleFrameTrainingTask(AbstractTrainingTask):
                  model_provider: Optional[AbstractModelProvider] = None,
                  evaluator: Optional[Callable] = None,
                  metrics_pool: Optional[MetricPool] = None,
-                 splitter: Splitter = IdentitySplit(),
+                 splitter: Splitter = IdentitySplitter(),
                  artificers: Optional[List[Artificier]] = None,
                  index_column_name: str = 'original_index',
                  with_tqdm: bool = True,
-                 late_initialization: Callable[['SingleFrameTrainingTask', DataFrameSplit, TrainingEnvironment], None] = None
+                 late_initialization: Callable[['SingleFrameTrainingTask', DataFrameSplit], None] = None
                  ):
         super(SingleFrameTrainingTask, self).__init__()
         self.data_loader = data_loader
@@ -114,7 +114,7 @@ class SingleFrameTrainingTask(AbstractTrainingTask):
     def _get_splits(self, data, env=None):
         dfs = self.data_loader.get_data(data)
         if self.late_initialization is not None:
-            self.late_initialization(self, dfs, env)
+            self.late_initialization(self, dfs)
         if self.model_provider is None:
             raise ValueError('model_provider is not set in constructor or in late initialization')
 
@@ -142,14 +142,14 @@ class SingleFrameTrainingTask(AbstractTrainingTask):
         result = []
         metrics_base = []
         for i, df in enumerate(dfs):
-            env.log(f'Starting stage {i + 1}/{stages_count}')
+            Logger.info(f'Starting stage {i + 1}/{stages_count}')
             iteration_result = self._iteration_on_dfs(i, df)
             if iteration_result.metrics is not None:
                 metrics_base.append(iteration_result.metrics)
             for key, value in iteration_result.__dict__.items():
                 env.store_artifact(['runs', i], key, value)
             result.append(iteration_result)
-            env.log(f'Completed stage {i + 1}/{stages_count}')
+            Logger.info(f'Completed stage {i + 1}/{stages_count}')
             env.flush()
 
         if len(metrics_base) > 0:

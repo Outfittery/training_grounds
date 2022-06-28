@@ -29,7 +29,9 @@ class ModelConstructor:
         self.type_name = type_name
         self.kwargs = kwargs
 
-    def _load_semicolor_part(self, part):
+
+    @staticmethod
+    def _load_semicolor_part(part):
         mod = __import__(part)
         subpath = part.split('.')
         for s in subpath[1:]:
@@ -42,16 +44,18 @@ class ModelConstructor:
             mod = new_mods[0]
         return mod
 
-    def _load_dotted_part(self, mod, path):
+    @staticmethod
+    def _load_dotted_part(mod, path):
         result = mod
         for p in path:
             result = getattr(mod, p)
         return result
 
-    def _load_class(self, path):
+    @staticmethod
+    def _load_class(path):
         parts = path.split(':')
-        mod = self._load_semicolor_part(parts[0])
-        result = self._load_dotted_part(mod, parts[1:])
+        mod = ModelConstructor._load_semicolor_part(parts[0])
+        result = ModelConstructor._load_dotted_part(mod, parts[1:])
         return result
 
     def __call__(self) -> Any:
@@ -80,7 +84,7 @@ class CatBoostWrap:
     def fit(self, X: pd.DataFrame, y = None):
         types = X.dtypes
         categorical = types.loc[types!='float'].index
-        self.algorithm.set_params(cat_features=categorical)
+        self.algorithm.set_params(cat_features=list(categorical))
 
     def transform(self, X: pd.DataFrame):
         return X

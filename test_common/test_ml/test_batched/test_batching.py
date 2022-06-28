@@ -3,6 +3,7 @@ from tg.common import Loc
 from unittest import TestCase
 import os
 import shutil
+import pandas as pd
 
 def get_bundle() -> IndexedDataBundle:
     df1 = pd.DataFrame(
@@ -19,14 +20,14 @@ def get_bundle() -> IndexedDataBundle:
             df2 = [a for a in range(10, 20)]
         )
     )
-    return DataBundle(index,dict(df1=df1,df2=df2)).as_indexed(index.index[[1,3,5,7]])
+    return IndexedDataBundle(index.iloc[[1,3,5,7]], DataBundle(index=index,df1=df1,df2=df2))
 
 
 class BatcherTestCase(TestCase):
     def test_batching_strategy(self):
         db = get_bundle()
         strategy = SimpleBatcherStrategy()
-        idx = strategy.get_batch(2, db.bundle.index_frame.loc[db.index], 0)
+        idx = strategy.get_batch(2, db.index_frame, 0)
         self.assertIsInstance(idx, pd.Int64Index)
         self.assertListEqual([1,3], list(idx))
 
@@ -35,8 +36,8 @@ class BatcherTestCase(TestCase):
         db = get_bundle()
         strategy = SimpleBatcherStrategy()
         batcher = Batcher(2,[
-            DirectExtractor('df1'),
-            DirectExtractor('df2')
+            PlainExtractor.build('df1').join('df1','df1').apply(),
+            PlainExtractor.build('df2').join('df2','df2').apply(),
             ])
         self.assertEqual(2, batcher.get_batch_count(db, strategy))
         batch = batcher.get_batch(db,1, strategy)
@@ -57,16 +58,16 @@ class BatcherTestCase(TestCase):
             shutil.rmtree(folder)
         os.makedirs(folder)
         bundle.save(folder)
-        bundle1 = DataBundle.ensure(folder)
-        self.assertSetEqual({'df1','df2'}, set(bundle1.data_frames.keys()))
+        bundle1 = DataBundle.load(folder)
+        self.assertSetEqual({'index', 'df1','df2'}, set(bundle1.data_frames.keys()))
         self.assertListEqual(['a'],list(bundle1.data_frames['df1'].columns))
         self.assertListEqual(['b'], list(bundle1.data_frames['df2'].columns))
 
 
-    def _unwrap(self, batcher, db, strategy):
+    def _unwrap(self, batcher: Batcher, db, strategy):
         result = []
         for i in range(batcher.get_batch_count(db, strategy)):
-            batch = batcher.get_batch(db,i, strategy)
+            batch = batcher.get_batch(db, i, strategy)
             result.extend(list(batch['df1']['a']))
         return result
 
@@ -74,16 +75,16 @@ class BatcherTestCase(TestCase):
     def test_uneven_batcch(self):
         strategy = SimpleBatcherStrategy()
         batcher = Batcher(2, [
-            DirectExtractor('df1'),
-            DirectExtractor('df2')
+            PlainExtractor.build('df1').join('df1', 'df1').apply(),
+            PlainExtractor.build('df2').join('df2', 'df2').apply(),
             ])
 
         db = get_bundle()
-        db.index = db.bundle.index_frame.index[[0,1,2,3]]
+        db.index_frame = db.bundle.index.iloc[[0,1,2,3]]
         self.assertEqual(2,batcher.get_batch_count(db, strategy))
         self.assertListEqual([0,1,2,3],self._unwrap(batcher,db, strategy))
 
-        db.index = db.bundle.index_frame.index[[0,1,2,3,4]]
+        db.index_frame = db.bundle.index.iloc[[0,1,2,3,4]]
         self.assertEqual(3,batcher.get_batch_count(db, strategy))
         self.assertListEqual([0, 1, 2, 3, 4], self._unwrap(batcher, db, strategy))
 

@@ -48,7 +48,7 @@ class SplitsTestCase(TestCase):
         dfs = self.createDfs()
         spl1 = FoldSplitter(3, 0.2, 'test1')
         spl2 = FoldSplitter(4, 0.3, 'test2')
-        spl3 = CompositionSplit(spl1, spl2)
+        spl3 = CompositionSplitter(spl1, spl2)
         dfs = spl3(dfs)
         self.assertEqual(12, len(dfs))
         for c in dfs:
@@ -63,7 +63,7 @@ class SplitsTestCase(TestCase):
         df = Query.en(range(140)).select(
             lambda z: dict(ind=z, x=z, y=z, day=datetime(2019, 1, 1) + timedelta(days=z))).to_dataframe()
         df.set_index('ind')
-        timeSplit = TimeSplit(
+        timeSplit = TimeSplitter(
             'day',
             datetime(2019, 2, 20),  # +50 days
             timedelta(days=20),
@@ -94,7 +94,7 @@ class SplitsTestCase(TestCase):
         df = Query.en(range(100)).select(lambda z: dict(tm=datetime(2019,1,1)+timedelta(days=z), x=z, y=z)).to_dataframe()
         dfs = DataFrameSplit(df, ['x'], 'y')
 
-        oneTimeSplit = OneTimeSplit('tm',0.3)
+        oneTimeSplit = OneTimeSplitter('tm',0.3)
         dfs = oneTimeSplit(dfs) 
         self.assertEqual(1, len(dfs))
         dfs = dfs[0]

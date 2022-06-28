@@ -5,6 +5,8 @@ from sklearn.pipeline import make_pipeline
 from sklearn.linear_model import LinearRegression
 from yo_fluq_ds import Query
 from sklearn.preprocessing import MinMaxScaler
+from tg.common._common import Logger
+from tg.common._common.logger.log_buffer import LogBuffer
 
 
 class EasyDftTest(TestCase):
@@ -21,6 +23,7 @@ class EasyDftTest(TestCase):
             ContinousTransformer(['a','b','c','d'], scaler=MinMaxScaler()),
             CategoricalTransformer(['f'])
             ])
+        buffer = LogBuffer()
         df = tr.fit_transform(df_src)
         self.assertListEqual(['a', 'b', 'c', 'd', 'b_missing', 'c_missing','f'],list(df.columns))
         self.assertListEqual([0, 0, 0, 0], list(df.a))
@@ -31,7 +34,7 @@ class EasyDftTest(TestCase):
         self.assertListEqual([False, False, False, True], list(df.c_missing))
         self.assertListEqual(['a','b','c','NONE'],list(df.f))
         self.assertListEqual(list(df_src.index),list(df.index))
-        self.assertEqual(0, len(TGWarningStorage.get_report()))
+        self.assertEqual(0, buffer.parse().count())
 
 
 
@@ -39,11 +42,12 @@ class EasyDftTest(TestCase):
         df_train = pd.DataFrame(dict(a=train))
         transformer.columns = ['a']
         tr = DataFrameTransformer([transformer])
+        buffer = LogBuffer()
         tr.fit(df_train)
         df_test = pd.DataFrame(dict(a=test))
         if expected is None:
             print(tr.transform(df_test))
-            print(pd.DataFrame(TGWarningStorage.get_report()))
+            print(buffer.parse().to_dataframe())
             return
         elif isinstance(expected,type):
             self.assertRaises(expected,lambda:tr.transform(df_test))
@@ -52,15 +56,16 @@ class EasyDftTest(TestCase):
             if callable(expected):
                 self.assertTrue(expected(result))
             else:
-                self.assertListEqual(expected,list(result['a']))
+                rs  = [None if str(c)=='nan' else c for c in list(result['a'])]
+                self.assertListEqual(expected,rs)
             if warnings is None:
-                report = TGWarningStorage.get_report()
+                report = buffer.parse().to_list()
                 if len(report)>0:
                     self.fail(f'Tranform had warnings, but those were not mentioned by test:\n{pd.DataFrame(report)}')
             else:
-                warns = [w['_message'] for w in TGWarningStorage.get_report()]
+                warns = [w['message'] for w in buffer.parse().to_list()]
                 self.assertListEqual(warnings,warns)
-            TGWarningStorage.clear()
+
 
 
 
@@ -79,9 +84,65 @@ class EasyDftTest(TestCase):
             ContinousTransformer([],scaler=MinMaxScaler()),
             [0.0,0.5],
             [
-                'Unexpected None'
+                'Unexpected None in MissingIndicatorWithReporting'
             ]
         )
+
+    def test_with_scaler_and_imputer(self):
+        self.make_test(
+            [1,2,3],
+            [1,None],
+            ContinousTransformer([],scaler=MinMaxScaler()),
+            [0,0.5],
+            [
+                'Unexpected None in MissingIndicatorWithReporting'
+            ]
+        )
+
+    def test_without_scaler(self):
+        self.make_test(
+            [1, 2, 3],
+            [1, None],
+            ContinousTransformer([], scaler=None),
+            [1, 2],
+            [
+                'Unexpected None in MissingIndicatorWithReporting'
+            ]
+        )
+
+    def test_without_imputer(self):
+        self.make_test(
+            [1, 2, 3],
+            [1, None],
+            ContinousTransformer([],scaler=MinMaxScaler(), imputer=None),
+            [0.0, None],
+            [
+                'Unexpected None in MissingIndicatorWithReporting'
+            ]
+        )
+
+    def test_without_scaler_and_imputer(self):
+        self.make_test(
+            [1, 2, 3],
+            [1, None],
+            ContinousTransformer([],scaler=None, imputer=None),
+            [1, None],
+            [
+                'Unexpected None in MissingIndicatorWithReporting'
+            ]
+        )
+
+    def test_with_preprocessor(self):
+        self.make_test(
+            [1,4,9],
+            [4,None],
+            ContinousTransformer([],scaler=MinMaxScaler(), preprocessor=lambda z: z.pow(0.5)),
+            [0.5,0.5],
+            [
+                'Unexpected None in MissingIndicatorWithReporting'
+            ]
+        )
+
 
     def test_categorical(self):
         self.make_test(
@@ -90,7 +151,7 @@ class EasyDftTest(TestCase):
             CategoricalTransformer([]),
             ['1.0','2.0','NONE','1.0'],
             [
-                'Unexpected value'
+                'Unexpected value in MostPopularStrategy'
             ]
         )
 
@@ -100,17 +161,19 @@ class EasyDftTest(TestCase):
             DataFrameTransformer([ContinousTransformer(['x'])]),
             LinearRegression()
         )
+        buffer = LogBuffer()
         pipe.fit(df[['x']],df.y)
         pipe.predict(pd.DataFrame(dict(x=[None])))
-        warnings = TGWarningStorage.get_report()
+        warnings = buffer.parse().to_list()
         self.assertEqual(1,len(warnings))
-        TGWarningStorage.clear()
+
 
     def test_categorical_with_one_hot(self):
         df = pd.DataFrame(dict(x=['a','b','c'], y=['x','x','y']))
         tr = DataFrameTransformer([
             CategoricalTransformer(['x','y'],postprocessor=OneHotEncoderForDataframe())
         ])
+        buffer = LogBuffer()
         r = tr.fit_transform(df)
         self.assertListEqual(
             ['x_a','x_b','x_c','y_x','y_y'],
@@ -121,7 +184,7 @@ class EasyDftTest(TestCase):
         self.assertListEqual([0, 0, 1], list(r.x_c))
         self.assertListEqual([1,1,0],list(r.y_x))
         self.assertListEqual([0, 0, 1], list(r.y_y))
-        self.assertEqual(0, len(TGWarningStorage.get_report()))
+        self.assertEqual(0, buffer.parse().count())
 
     def test_top_k_strategy(self):
         df = pd.DataFrame(dict(x=['a', 'b', 'c', 'a', 'b']))

@@ -3,7 +3,7 @@ from typing import *
 import re
 
 from pathlib import Path
-from yo_fluq_ds import Query
+from yo_fluq_ds import Query, fluq
 
 from ..._common import Loc
 
@@ -16,8 +16,15 @@ class DependenciesList:
 
 
 def get_default_dependencies() -> List[DependenciesList]:
-    dependencies = Query.file.text(Loc.tg_common_path/'requirements.txt').to_list()
-    return [DependenciesList('core', dependencies)]
+    dependencies = Query.file.text(Path(__file__).parent/'default_requirements.txt').to_list()
+    buffer = [ [] ]
+    for s in dependencies:
+        if s == '':
+            buffer.append([])
+        else:
+            buffer[-1].append(s)
+    deps = Query.en(buffer).with_indices().select(lambda z: DependenciesList(f'core{z.key}', z.value)).to_list()
+    return deps
 
 
 class PackagingTask:
@@ -26,7 +33,8 @@ class PackagingTask:
                  name: str,
                  version: str,
                  payload: Dict[str,Any] = None,
-                 additional_dependencies: Optional[List[DependenciesList]] = None
+                 additional_dependencies: Optional[List[DependenciesList]] = None,
+                 silent = False
                  ):
         """
 
@@ -45,6 +53,7 @@ class PackagingTask:
         if additional_dependencies is not None:
             for lst in additional_dependencies:
                 self.dependencies.append(lst)
+        self.silent = silent
         
 
 
@@ -52,7 +61,7 @@ class PackageInfo:
     """
     Description of the created package
     """
-    def __init__(self, task: PackagingTask, module_name: str, path: Path):
+    def __init__(self, task: PackagingTask, module_name: str, path: Path, properties: Any = None):
         """
 
         Args:
@@ -62,6 +71,7 @@ class PackageInfo:
         self.task = task
         self.module_name = module_name
         self.path = path
+        self.properties = properties
 
 
 

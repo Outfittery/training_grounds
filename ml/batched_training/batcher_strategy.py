@@ -24,11 +24,15 @@ class SimpleBatcherStrategy(BatcherStrategy):
 
 
 class PriorityRandomBatcherStrategy(BatcherStrategy):
-    def __init__(self, priority_column: Optional[str] = None, dataset_size_factor: float = 1.0,
-                 random_state: Optional[int] = None):
+    def __init__(self,
+                 priority_column: Optional[str] = None,
+                 dataset_size_factor: float = 1.0,
+                 random_state: Optional[int] = None,
+                 deduplicate = True):
         self.priority_column = priority_column
         self.dataset_size_factor = dataset_size_factor
         self.random_state = random_state
+        self.deduplicate = deduplicate
 
     def get_batch_count(self, batch_size: int, df: pd.DataFrame) -> int:
         return int(math.ceil(self.dataset_size_factor * df.shape[0] / batch_size))
@@ -45,7 +49,10 @@ class PriorityRandomBatcherStrategy(BatcherStrategy):
             True,
             probs
         ))
-        return df.index[idx]
+        result = df.index[idx]
+        if self.deduplicate:
+            result = result[~result.duplicated()]
+        return result
 
     @staticmethod
     def make_priorities_for_even_representation(df: pd.DataFrame, column: Any, magnitude=1):

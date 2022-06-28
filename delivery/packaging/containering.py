@@ -1,3 +1,4 @@
+from typing import *
 from .packaging_dto import ContaineringTask
 from subprocess import call
 
@@ -52,49 +53,6 @@ def make_container(task: ContaineringTask):
     shutil.rmtree(release)
 
 
-def push_contaner_to_aws(
-        image_name: str,
-        image_tag: str,
-        region: str = '',
-        registry: str = ''):
-    """
-    Pushes the previously build local docker container to AWS ECR, from where it can be later used by Sagemaker
-    """
-    p1 = subprocess.Popen(['aws', 'ecr', 'get-login-password', '--region', region], stdout=subprocess.PIPE)
-    p2 = subprocess.Popen(['docker', 'login', '-u', 'AWS', '--password-stdin', registry.split('/')[0]], stdin=p1.stdout, stdout=subprocess.PIPE)
-    p1.stdout.close()
-    p2.communicate()
-
-    remote_name = f'{registry}:{image_tag}'
-
-    call([
-        'docker',
-        'tag',
-        image_name + ":" + image_tag,
-        remote_name
-    ])
-
-    call([
-        'docker',
-        'push',
-        remote_name
-    ])
-
-
-def push_container_to_quay(name: str, tag: str, remote_image_name_and_tag):
-    call([
-        'docker',
-        'tag',
-        f'{name}:{tag}',
-        remote_image_name_and_tag
-    ])
-    call([
-        'docker',
-        'push',
-        remote_image_name_and_tag
-    ])
-
-
 _run_py_template = '''
 from {module}.{tg_name}.{entry_module} import {entry_method} as entry_method
 from {module} import Entry
@@ -103,3 +61,50 @@ entry_method(Entry)
 
 
 '''
+
+class ContainerPusher:
+    def get_auth_command(self):
+        raise  NotImplementedError()
+
+    def get_remote_name(self, image_name: str, image_tag: str):
+        raise NotImplementedError()
+
+    def push(self, image_name: str, image_tag: str):
+        raise NotImplementedError()
+
+
+class ContainerHandler:
+    def get_image_name(self) -> str:
+        raise NotImplementedError()
+
+    def get_tag(self) -> str:
+        raise NotImplementedError()
+
+    def get_auth_command(self) -> Optional[List[str]]:
+        raise  NotImplementedError()
+
+    def get_remote_name(self) -> str:
+        raise NotImplementedError()
+
+    def push(self) -> None:
+        raise NotImplementedError()
+
+    class Factory:
+        def create_handler(self, name: str, version: str) -> 'ContainerHandler':
+            raise NotImplementedError()
+
+
+class FakeContainerHandler(ContainerHandler):
+    def __init__(self, name, version):
+        self.name = name
+        self.version = version
+
+    def get_image_name(self) -> str:
+        return self.name
+
+    def get_tag(self) -> str:
+        return self.version
+
+    class Factory(ContainerHandler.Factory):
+        def create_handler(self, name: str, version: str) -> 'ContainerHandler':
+            return FakeContainerHandler(name, version)

@@ -99,7 +99,7 @@ class FoldSplitter(Splitter):
         return [self.test_name]
 
 
-class TimeSplit(Splitter):
+class TimeSplitter(Splitter):
     """
     This strategy implements the splitting strategy that prevents time leak
 
@@ -142,7 +142,7 @@ class TimeSplit(Splitter):
         if self.first_training_end < min:
             raise ValueError(
                 f'First_training_end {self.first_training_end} should be greater than minimal date in the set {min}')
-        split = TimeSplit.Borders(
+        split = TimeSplitter.Borders(
             min,
             self.first_training_end,
             self.first_training_end + self.interlag,
@@ -150,7 +150,7 @@ class TimeSplit(Splitter):
         )
         while True:
             yield split
-            split = TimeSplit.Borders(
+            split = TimeSplitter.Borders(
                 split.train_begin,
                 split.train_end + self.prediction_span,
                 split.test_begin + self.prediction_span,
@@ -182,17 +182,14 @@ class TimeSplit(Splitter):
         return [self.test_name]
 
 
-class OneTimeSplit(Splitter):
+
+class OneTimeSplitter(Splitter):
     def __init__(self, date_column: str, test_fraction: float, test_name='test'):
         self.date_column = date_column
         self.test_fraction = test_fraction
         self.test_name = test_name
 
     def __call__(self, dfs: DataFrameSplit):
-        # TODO: for compatibility only, remove when no continuation model in training
-        if not hasattr(self, 'test_fraction'):
-            self.test_fraction = 0.2
-
         child_dfs = dfs.clone()
         min_date = dfs.df[self.date_column].min()
         max_date = dfs.df[self.date_column].max()
@@ -209,7 +206,7 @@ class OneTimeSplit(Splitter):
         return [self.test_name]
 
 
-class UnionSplit(Splitter):
+class UnionSplitter(Splitter):
     def __init__(self, *splitters: Splitter):
         self.splitters = splitters
 
@@ -224,7 +221,7 @@ class UnionSplit(Splitter):
         return [c for splitter in self.splitters for c in splitter.get_subset_names()]
 
 
-class IdentitySplit(Splitter):
+class IdentitySplitter(Splitter):
     def __call__(self, dfs: DataFrameSplit):
         return [dfs]
 
@@ -232,7 +229,7 @@ class IdentitySplit(Splitter):
         return []
 
 
-class CompositionSplit(Splitter):
+class CompositionSplitter(Splitter):
     def __init__(self, *splitters: Splitter):
         self.splitters = splitters
 
@@ -248,3 +245,29 @@ class CompositionSplit(Splitter):
 
     def _get_subset_names_internal(self):
         return [c for splitter in self.splitters for c in splitter.get_subset_names()]
+
+
+class PredefinedSplitter(Splitter):
+    def __init__(self, field_name, test_values: List, train_values: Optional[List] = None):
+        self.test_values = test_values
+        if train_values is None:
+            self.train_values = [DataFrameSplit.TRAIN_NAME]
+        elif isinstance(train_values, list):
+            self.train_values = train_values
+        else:
+            self.train_values = [train_values]
+        self.field_name = field_name
+
+    def _get_subset_names_internal(self) -> List[str]:
+        return self.test_values
+
+    def __call__(self, dfs):
+        rdfs = dfs.clone()
+        rdfs.train = dfs.df.loc[dfs.df[self.field_name].isin(self.train_values)].index
+        rdfs.tests = {}
+        for test in self.test_values:
+            idx = dfs.df.loc[dfs.df[self.field_name]==test].index
+            if len(idx)>0:
+                rdfs.tests[test] = idx
+        return [rdfs]
+

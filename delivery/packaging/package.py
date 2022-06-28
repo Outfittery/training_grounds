@@ -75,7 +75,11 @@ def make_package(
     pwd = os.getcwd()
     os.chdir(release.__str__())
 
-    subprocess.call([sys.executable, 'setup.py', 'sdist'])
+    args = [sys.executable, 'setup.py']
+    if task.silent:
+        args.append('-q')
+    args.append('sdist')
+    subprocess.call(args)
 
     os.chdir(pwd)
 
@@ -88,7 +92,8 @@ def make_package(
     return PackageInfo(
         task,
         full_module_name,
-        dst_location
+        dst_location,
+        props
     )
 
 
@@ -101,41 +106,58 @@ def get_loader_from_installed_package(name: str) -> EntryPoint:
     return my_element
 
 
-def _get_module_name_and_version(path: Path):
-    try:
-        file = tarfile.open(path, 'r:gz')
-        properties = (Query
-                      .en(file.getmembers())
-                      .where(lambda z: z.name.endswith('properties.json'))
-                      .order_by(lambda z: len(z.name))
-                      .first()
-                      )
-        stream = file.extractfile(properties).read()
-        props = json.loads(stream)
-        return props['full_module_name'], props['version']
-    except:
-        module_name, version = re.match('([^-/]+)-(.+)\.tar\.gz$', path.name).groups()
-        return module_name, version
+def _read_file(file, fname_ending):
+    fname = (Query
+                  .en(file.getmembers())
+                  .where(lambda z: z.name.endswith(fname_ending))
+                  .order_by(lambda z: len(z.name))
+                  .first()
+                  )
+    content = file.extractfile(fname).read().decode('utf-8')
+    return content
+
+def _get_old_module_to_remove(path: Path):
+    with tarfile.open(path, 'r:gz') as file:
+        egg_info = _read_file(file, '.egg-info/PKG-INFO')
+        module_to_remove = Query.en(egg_info.split('\n')).select(lambda z: z.split(': ')).where(lambda z: z[0]=='Name').select(lambda z: z[1]).single()
+        return module_to_remove
+
+def _get_module_to_import(path: Path):
+    with tarfile.open(path, 'r:gz') as file:
+        props = json.loads(_read_file(file, 'properties.json'))
+        return props['full_module_name']
 
 
-def install_package_and_get_loader(filepath: Union[Path, str], try_uninstall_existing=True, silent=False) -> EntryPoint:
+def uninstall_old_version(filepath: Union[Path, str], silent = False):
+    if isinstance(filepath, str):
+        filepath = Path(filepath)
+    module_to_remove = _get_old_module_to_remove(filepath)
+    silent_option = ['-q'] if silent else []
+    subprocess.call([sys.executable, '-m', 'pip', 'uninstall', module_to_remove, '-y'] + silent_option)
+
+
+def install_package_and_get_loader(
+        filepath: Union[Path, str],
+        try_uninstall_existing=True,
+        silent=False
+    ) -> EntryPoint:
     """
     Installs the package from the specified file.
     Args:
         filepath: path to file
         try_uninstall_existing: If True, uninstall existing package of the same name
     """
+    if try_uninstall_existing:
+        uninstall_old_version(filepath)
+
     if isinstance(filepath, str):
         filepath = Path(filepath)
     filename = filepath.name
-
-    module_name, version = _get_module_name_and_version(filepath)
+    module_to_import = _get_module_to_import(filepath)
     silent_option = ['-q'] if silent else []
+    subprocess.call([sys.executable, '-m', 'pip', 'install', filepath ] + silent_option)
+    return get_loader_from_installed_package(module_to_import)
 
-    if try_uninstall_existing:
-        subprocess.call([sys.executable, '-m', 'pip', 'uninstall', module_name, '-y'] + silent_option)
-    subprocess.call([sys.executable, '-m', 'pip', 'install', filepath] + silent_option)
-    return get_loader_from_installed_package(module_name)
 
 
 _INIT_TEMPLATE = '''

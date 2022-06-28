@@ -96,7 +96,6 @@ class SelectionContext:
         """
         self = SelectionContext()
         self.call_stack = SelectorCallStack()
-        self.warnings = []
         self.chain_context = SelectorDataPathContext(tuple())
         self.original_object = original_object
         self.root_info = root_info
@@ -112,7 +111,6 @@ class SelectionContext:
         """
         self.original_object = None
         self.call_stack = None # type:Optional[SelectorCallStack]
-        self.warnings = None # type: Optional[List]
         self.chain_context = SelectorDataPathContext(tuple()) #type: SelectorDataPathContext
 
 
@@ -131,7 +129,6 @@ class SelectionContext:
         """
         ctx = SelectionContext()
         ctx.call_stack = self.call_stack.append_call(selector, stage, called_object)
-        ctx.warnings = self.warnings
         ctx.chain_context.in_chain = self.chain_context.in_chain+data_path
         ctx.chain_context.out_chain = None
         ctx.original_object = self.original_object
@@ -205,7 +202,7 @@ class CombinedSelector:
 
     def call_and_return_context(self, obj: Any) -> Tuple[Any, SelectionContext]:
         """
-        Performs the call and returns not only the result, but also the context. The context will contain warnings.
+        Performs the call and returns not only the result, but also the context.
 
         """
         context = SelectionContext.create(obj, SelectionRootInfo(self._name, self._id_selector))

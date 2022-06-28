@@ -1,6 +1,7 @@
+from typing import *
 import os
 import subprocess
-
+import uuid
 from pathlib import Path
 
 
@@ -29,6 +30,13 @@ class LocationsClass:
         self.temp_path = self.root_path.joinpath('temp')
         self.tg_name = 'tg'
         self.git_username = _get_git_user()
+
+    def get_default_temp_path(self, prefix: str, location: Optional[Union[str,Path]] = None) -> Path:
+        if location is None:
+            return self.temp_path/prefix/str(uuid.uuid4())
+        return Path(location)
+
+
 
 
 Loc = LocationsClass()

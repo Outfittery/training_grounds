@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.impute import MissingIndicator
 from sklearn.preprocessing import OneHotEncoder
 
-from ..._common import TGWarningStorage
+from ..._common import Logger
 
 
 
@@ -14,7 +14,11 @@ class MissingIndicatorWithReporting(MissingIndicator):
     the column that didn't have nones before
     """
     def __init__(self, missing_values=np.nan, sparse="auto"):
-        super(MissingIndicatorWithReporting, self).__init__(missing_values,"missing-only",sparse,False)
+        super(MissingIndicatorWithReporting, self).__init__(
+            missing_values=missing_values,
+            features="missing-only",
+            sparse=sparse,
+            error_on_new=False)
         self._warnings = []
 
     def fit_transform(self, X, y=None):
@@ -29,7 +33,10 @@ class MissingIndicatorWithReporting(MissingIndicator):
                     unexpected_nones.append(X.columns[column_index])
             if len(unexpected_nones)>0:
                 for column in unexpected_nones:
-                    TGWarningStorage.add_warning('Unexpected None', dict(reporter='MissingIndicatorWithReporting'), dict(column=column))
+                    Logger.warning(
+                        'Unexpected None in MissingIndicatorWithReporting',
+                        column=column
+                    )
         return super(MissingIndicatorWithReporting, self).transform(X)
 
 

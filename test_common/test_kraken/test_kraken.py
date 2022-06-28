@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 import pandas as pd
 from typing import *
-from tg.common.ml import kraken
+from tg.common.ml.miscellaneous import kraken
 from yo_fluq_ds import Query
 
 

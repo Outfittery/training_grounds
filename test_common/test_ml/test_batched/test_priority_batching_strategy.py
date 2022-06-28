@@ -9,7 +9,7 @@ class PRBSTestCase(TestCase):
         lst = list(range(4))
         index = pd.Series([100+c for c in lst])
         prios = pd.DataFrame(dict(prio=lst), index=index)
-        strategy = PriorityRandomBatcherStrategy('prio',1)
+        strategy = PriorityRandomBatcherStrategy('prio',1, deduplicate=False)
         N=10000
         result = strategy.get_batch(N,prios,0)
         self.assertIsInstance(result,pd.Int64Index)
@@ -26,7 +26,7 @@ class PRBSTestCase(TestCase):
         df = df.sample(frac=1)
         prios = PriorityRandomBatcherStrategy.make_priorities_for_even_representation(df,'value', magnitude)
         df['prio'] = prios
-        strategy = PriorityRandomBatcherStrategy('prio',1)
+        strategy = PriorityRandomBatcherStrategy('prio',1, deduplicate=False)
         N=10000
         result=strategy.get_batch(N,df,0)
         x = df.loc[result]

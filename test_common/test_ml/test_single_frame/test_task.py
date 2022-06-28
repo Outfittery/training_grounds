@@ -1,11 +1,13 @@
 from sklearn import datasets
 from unittest import TestCase
 from sklearn.linear_model import LogisticRegression, Lasso
-from yo_ds import kraken
+from tg.common.ml.miscellaneous import Kraken
 from tg.common.ml.single_frame_training import *
 from sklearn.metrics import accuracy_score, f1_score
 import numpy as np
 from tg.common.test_common.test_ml.test_single_frame.task import get_data, create_task
+from yo_fluq_ds import *
+
 
 def metric(result):
     accuracies = []
@@ -45,7 +47,7 @@ class TaskTestCase(TestCase):
                 'model_provider.constructor.kwargs.C:float': [1, 2]
             })
         callable, config = task.make_kraken_task(pre_config, DF)
-        result = kraken.release(callable, config, None)
+        result = Kraken.release(callable, config, None)
         self.assertEqual(10, len(result))
 
     def test_with_metric(self):

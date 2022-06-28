@@ -1,5 +1,5 @@
 from unittest import TestCase
-from tg.common.tools.fix_absolute_import import get_tg_files, find_module_name
+from tg.common.tools_bak.fix_absolute_import import get_tg_files, find_module_name
 from yo_fluq_ds import Query
 
 class RelativeImportsTestCase(TestCase):

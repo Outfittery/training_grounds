@@ -5,7 +5,7 @@ import os
 
 from ..packaging.packaging_dto import ContaineringTask, PackagingTask
 from .architecture import DeliverableJob, JobExecutor, DockerOptions
-from ..packaging import make_container, push_container_to_quay
+from ..packaging import make_container, ContainerHandler
 
 
 
@@ -33,7 +33,7 @@ CMD ["python3","/featurization/run.py"]
 '''
 
 
-def build_container(job: DeliverableJob, name: str, version: str, tag: str, entry_file_template=ENTRY_FILE_TEMPLATE):
+def build_container(job: DeliverableJob, name: str, version: str, image_name: str, image_tag: str, entry_file_template=ENTRY_FILE_TEMPLATE):
     task = ContaineringTask(
         PackagingTask(
             name,
@@ -43,8 +43,8 @@ def build_container(job: DeliverableJob, name: str, version: str, tag: str, entr
         'run.py',
         entry_file_template,
         DOCKERFILE_TEMPLATE,
-        name,
-        tag
+        image_name,
+        image_tag
     )
     make_container(task)
 
@@ -54,7 +54,8 @@ def get_docker_run_cmd(image_to_call, environment_quotation, options: DockerOpti
     if options.propagate_environmental_variables is not None:
         for var in options.propagate_environmental_variables:
             envs.append('--env')
-            envs.append(f'{environment_quotation}{var}={os.environ[var]}{environment_quotation}')
+            if var in os.environ:
+                envs.append(f'{environment_quotation}{var}={os.environ[var]}{environment_quotation}')
 
     mounts = []
     if options.mount_volumes is not None:
@@ -111,16 +112,16 @@ def get_logs_by_full_image_name(full_image_name, ssh_prefix, truncate_quotes) ->
 class SSHDockerJobRoutine:
     def __init__(self,
                  job: DeliverableJob,
-                 repository: str,
                  remote_host_address: str,
                  remote_host_user: str,
+                 handler_factory: ContainerHandler.Factory,
                  options: DockerOptions
                  ):
         self._job = job
 
         self._name, self._version = job.get_name_and_version()
-        self._tag = self._name + '-' + self._version
-        self._remote_image_name = f'{repository}:{self._tag}'
+
+        self.handler = handler_factory.create_handler(self._name, self._version)
 
         self.remote_host_address = remote_host_address
         self.remote_host_user = remote_host_user
@@ -137,20 +138,28 @@ class RemoteJobExecutor(JobExecutor):
         self.routine = routine
 
     def execute(self):
-        build_container(self.routine._job, self.routine._name, self.routine._version, self.routine._tag)
-        push_container_to_quay(self.routine._name, self.routine._tag, self.routine._remote_image_name)
+        build_container(
+            self.routine._job,
+            self.routine._name,
+            self.routine._version,
+            self.routine.handler.get_image_name(),
+            self.routine.handler.get_tag()
+        )
+        self.routine.handler.push()
         ssh = get_ssh(self.routine.remote_host_address, self.routine.remote_host_user)
-
-        subprocess.call(ssh + ['docker', 'pull', self.routine._remote_image_name])
-        subprocess.call(ssh + get_docker_run_cmd(self.routine._remote_image_name, '"', self.routine._options))
+        auth_command = self.routine.handler.get_auth_command()
+        if auth_command is not None:
+            subprocess.call(ssh+auth_command)
+        subprocess.call(ssh + ['docker', 'pull', self.routine.handler.get_remote_name()])
+        subprocess.call(ssh + get_docker_run_cmd(self.routine.handler.get_remote_name(), '"', self.routine._options))
 
     def kill(self):
         ssh = get_ssh(self.routine.remote_host_address, self.routine.remote_host_user)
-        subprocess.call(ssh + kill_by_full_image_name(self.routine._remote_image_name))
+        subprocess.call(ssh + kill_by_full_image_name(self.routine.handler.get_remote_name()))
 
     def get_logs(self) -> Tuple[str, str]:
         ssh = get_ssh(self.routine.remote_host_address, self.routine.remote_host_user)
-        result = get_logs_by_full_image_name(self.routine._remote_image_name, ssh, False)
+        result = get_logs_by_full_image_name(self.routine.handler.get_remote_name(), ssh, False)
         return result
 
 
@@ -159,12 +168,18 @@ class LocalJobExecutor(JobExecutor):
         self.routine = routine
 
     def execute(self):
-        build_container(self.routine._job, self.routine._name, self.routine._version, self.routine._tag)
-        call_args = get_docker_run_cmd(f'{self.routine._name}:{self.routine._tag}', '', self.routine._options)
+        build_container(
+            self.routine._job,
+            self.routine._name,
+            self.routine._version,
+            self.routine.handler.get_image_name(),
+            self.routine.handler.get_tag()
+        )
+        call_args = get_docker_run_cmd(f'{self.routine.handler.get_image_name()}:{self.routine.handler.get_tag()}', '', self.routine._options)
         subprocess.call(call_args)
 
     def get_logs(self) -> Tuple[str, str]:
-        result = get_logs_by_full_image_name(f'{self.routine._name}:{self.routine._tag}', [], True)
+        result = get_logs_by_full_image_name(f'{self.routine.handler.get_image_name()}:{self.routine.handler.get_tag()}', [], True)
         return result
 
 

@@ -1,13 +1,12 @@
 from typing import *
 
 import datetime
-import logging
 
 from datetime import timedelta
 from yo_fluq_ds import Query, fluq
 
 from .arch import DataSource
-
+from ..._common import Logger
 
 
 class SqlShardedDataSource(DataSource):
@@ -68,10 +67,8 @@ class IntFieldShardedJob(SqlShardedDataSource):
                 )
 
 
-logger = logging.getLogger(__name__)
 
-
-class UpdateDataSource:
+class UpdateDataSource(DataSource):
     def __init__(self,
                  id_retrieve_sql_template: str,
                  download_sql_template: str,
@@ -88,21 +85,21 @@ class UpdateDataSource:
         self.end_date = end_date
 
     def _get_data_iter(self, start_date: datetime.datetime, end_date: datetime.datetime):
-        start_date_str = str(start_date)
-        end_date_str = str(end_date)
-        logger.info(f"Retrieving updated ids from {start_date_str} to {end_date_str}")
+        start_date_str = start_date.strftime('%Y-%m-%d') if isinstance(start_date,datetime.datetime) else str(start_date)
+        end_date_str = end_date.strftime('%Y-%m-%d') if isinstance(end_date, datetime.datetime) else str(end_date)
+        Logger.info(f"Retrieving updated ids from {start_date_str} to {end_date_str}")
         sql = self.id_retrieve_sql_template.format(start_date=start_date_str, end_date=end_date_str)
         id_src = self.source_factory(sql)
         ids = id_src.get_data().select(lambda z: z['id']).select(str).to_list()
         partitions = Query.en(ids).feed(fluq.partition_by_count(self.partition_size)).to_list()
-        logger.info(f'Retrieving {len(ids)} records, {len(partitions)} partitions')
+        Logger.info(f'Retrieving {len(ids)} records, {len(partitions)} partitions')
         for index, partition in enumerate(partitions):
             id_list = ','.join(partition)
             sql = self.download_sql_template.format(id_list=id_list)
             src = self.source_factory(sql)
             for item in src.get_data():
                 yield item
-            logger.info(f"Partition {index} is processed")
+            Logger.info(f"Partition {index} is processed")
 
     def get_data(self):
         return Query.en(self._get_data_iter(self.start_date, self.end_date))

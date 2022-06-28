@@ -2,7 +2,7 @@ from typing import *
 from .architecture import CombinedSelector, SelectionContext, SelectorException
 
 from .architecture import _get_selector_name
-from ..._common import OldTGWarning
+from ..._common import Logger
 
 
 
@@ -155,18 +155,27 @@ class FieldGetter(CombinedSelector):
 
     def _internal_call(self, obj, context: SelectionContext):
         if not self.none_propagation:
-            return obj[self.field]
+            try:
+                return obj[self.field]
+            except:
+                return getattr(obj, self.field)
         else:
             if isinstance(obj, dict) and self.field in obj:
                 return obj[self.field]
-            if isinstance(obj, list) and isinstance(self.field, int) and 0 <= self.field < len(obj):
-                return obj[self.field]
-            context.warnings.append(OldTGWarning(
-                "Missing field {field},  code_path {code_path}, data path {data_path}",
+            if (isinstance(obj, list) or isinstance(obj,tuple)):
+                try:
+                    field = int(self.field)
+                except:
+                    return None
+                if 0 <= field < len(obj):
+                    return obj[field]
+            if hasattr(obj,self.field):
+                return getattr(obj,self.field)
+            Logger.warning('Missing field in FieldGetter',
                 field=self.field,
                 code_path=context.get_code_path(),
                 data_path=context.get_data_path()
-            ))
+            )
             return None
 
     def __repr__(self):
@@ -188,12 +197,11 @@ class FunctionFeed(CombinedSelector):
     def _internal_call(self, obj, context: SelectionContext):
         if self.none_propagation:
             if obj is None:
-                context.warnings.append(OldTGWarning(
-                    "None argument for Feed to {callable}, code path {code_path}, data path {data_path}",
+                Logger.warning('None argument in FunctionFeed',
                     callable=str(self.callable),
                     code_path=context.get_code_path(),
                     data_path=context.get_data_path()
-                ))
+                )
                 return None
         return self.callable(obj)
 

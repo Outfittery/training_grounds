@@ -3,8 +3,10 @@ from typing import *
 import pandas as pd
 
 from .architecture import DataFrameTransformer
-from .column_transformers import DataFrameColumnsTransformer
-
+from .column_transformers import DataFrameColumnsTransformer, ContinousTransformer, CategoricalTransformer, TopKPopularStrategy
+from .categorical_column_transformer_2 import CategoricalTransformer2
+from .miscellaneous import OneHotEncoderForDataframe
+from functools import partial
 
 
 class DataFrameTransformerFactory:
@@ -18,9 +20,12 @@ class DataFrameTransformerFactory:
 
         self.continuous_factory = None # type: Optional[Callable]
         self.categorical_factory = None # type: Optional[Callable]
+        self.categorical_2_max_categories = None #type: Optional[int]
 
         self.categorical_rich_factory = None # type:Optional[Callable]
         self.categorical_rich_threshold = None #type: Optional[int]
+
+        self.transformer_ = None
 
     def with_filter(self, filter: Callable) -> 'DataFrameTransformerFactory':
         """
@@ -60,7 +65,6 @@ class DataFrameTransformerFactory:
         self.categorical_factory = factory
         return self
 
-
     def on_rich_category(self, threshold: int, factory: Callable[[List[str]],DataFrameColumnsTransformer])-> 'DataFrameTransformerFactory':
         """
         Specifies the factory that will produce ``DataFrameColumnsTransformer`` for the categorical features that have more than ``threshold`` values
@@ -68,6 +72,10 @@ class DataFrameTransformerFactory:
         """
         self.categorical_rich_threshold = threshold
         self.categorical_rich_factory = factory
+        return self
+
+    def on_categorical_2(self, max_values_per_category=10):
+        self.categorical_2_max_categories = max_values_per_category
         return self
 
     def _create_transformer(self, df: pd.DataFrame) -> 'DataFrameTransformer':
@@ -92,19 +100,21 @@ class DataFrameTransformerFactory:
 
         categorical = [c for c in types.index if c not in continuous]
         if len(categorical)>0:
-            if self.categorical_rich_threshold is not None:
-                cat_value_count = {c: len(df[c].unique()) for c in categorical}
-                rich_categorical = [key for key, value in cat_value_count.items() if value >= self.categorical_rich_threshold]
-                if self.categorical_rich_factory is None:
-                    raise ValueError(f"Rich categorical features are presenting, but the factory is not set. Features are {rich_categorical}")
-                transformers.append(self.categorical_rich_factory(rich_categorical))
-                categorical = [c for c in categorical if c not in rich_categorical]
+            if self.categorical_2_max_categories is not None:
+                transformers.append(CategoricalTransformer2(categorical, self.categorical_2_max_categories))
+            else:
+                if self.categorical_rich_threshold is not None:
+                    cat_value_count = {c: len(df[c].unique()) for c in categorical}
+                    rich_categorical = [key for key, value in cat_value_count.items() if value >= self.categorical_rich_threshold]
+                    if self.categorical_rich_factory is None:
+                        raise ValueError(f"Rich categorical features are presenting, but the factory is not set. Features are {rich_categorical}")
+                    transformers.append(self.categorical_rich_factory(rich_categorical))
+                    categorical = [c for c in categorical if c not in rich_categorical]
 
-
-        if len(categorical)>0:
-            if self.categorical_factory is None:
-                raise ValueError(f"Categorical features are presenting, but factory is not set. Features are {categorical}")
-            transformers.append(self.categorical_factory(categorical))
+                if len(categorical)>0:
+                    if self.categorical_factory is None:
+                        raise ValueError(f"Categorical features are presenting, but factory is not set. Features are {categorical}")
+                    transformers.append(self.categorical_factory(categorical))
 
         return DataFrameTransformer(transformers)
 
@@ -115,8 +125,19 @@ class DataFrameTransformerFactory:
         return self
 
     def transform(self, X):
+        if self.transformer_ is None:
+            raise ValueError('Transformer is None. Did you forget to fit?')
         return self.transformer_.transform(X)
 
     def fit_transform(self, X, y=None):
         self.fit(X, y)
         return self.transform(X)
+
+    @staticmethod
+    def default_factory(features: Optional[List] = None, max_values_per_category: Optional[int] = 25):
+        tr = DataFrameTransformerFactory()
+        if features is not None:
+            tr = tr.with_feature_allow_list(features)
+        tr = tr.on_continuous(ContinousTransformer)
+        tr = tr.on_categorical_2(max_values_per_category)
+        return tr

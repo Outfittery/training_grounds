@@ -1,9 +1,7 @@
 from unittest import TestCase
 from tg.common.delivery.jobs import SSHDockerJobRoutine, JobExecutor, DeliverableJob, DockerOptions
+from tg.common.delivery.packaging import FakeContainerHandler
 from tg.common.test_common.test_delivery.test_jobs.job import Job
-import logging
-
-logger = logging.getLogger()
 
 
 def make_test(executor_selector):
@@ -11,7 +9,7 @@ def make_test(executor_selector):
         Job(),
         '',
         '',
-        '',
+        FakeContainerHandler.Factory(),
         DockerOptions()
     )
     executor = executor_selector(routine)  # type: JobExecutor
@@ -26,4 +24,4 @@ class HetznerTestCase(TestCase):
     def test_local(self):
         executor = make_test(lambda z: z.local)
         out, err = executor.get_logs()
-        self.assertIn('Job::run method', err)
+        self.assertIn('Job::run method', out)

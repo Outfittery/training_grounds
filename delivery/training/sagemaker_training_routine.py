@@ -1,3 +1,4 @@
+from typing import *
 import os
 import boto3
 import sagemaker
@@ -6,7 +7,9 @@ from .architecture import TrainingRoutineBase, TrainingExecutor, AttachedTrainin
 from .. import packaging as pkg
 from ..._common import Loc, S3Handler
 
-
+import shutil
+import subprocess
+from pathlib import Path
 
 _DOCKERFILE_TEMPLATE = '''FROM python:3.7
 
@@ -36,37 +39,63 @@ tg_sagemaker.execute(Entry)
 '''
 
 
-def _upload_container(task, project_name, id, image_tag, repository, region, push=True):
+def open_sagemaker_result(filename, job_id):
+    folder = _TRAINING_RESULTS_LOCATION / (job_id+'.unzipped')
+    if os.path.isdir(folder):
+        shutil.rmtree(folder)
+    os.makedirs(folder)
+    tar_call = ['tar', '-C', folder, '-xvf', filename]
+    subprocess.call(tar_call)
+    return ResultPickleReader(Path(folder))
+
+def download_and_open_sagemaker_result(bucket, project_name, job_id, dont_redownload = False):
+    filename = _TRAINING_RESULTS_LOCATION / f'{job_id}.tar.gz'
+    folder = _TRAINING_RESULTS_LOCATION / job_id
+    if filename.is_file() and folder.is_dir() and dont_redownload:
+        return ResultPickleReader(Path(folder))
+    else:
+        path = f'sagemaker/{project_name}/output/{job_id}/output/model.tar.gz'
+        S3Handler.download_file(
+            bucket,
+            path,
+            filename
+        )
+        return open_sagemaker_result(filename, job_id)
+
+
+
+
+
+
+def _upload_container(task, project_name, id, pusher: pkg.ContainerHandler, push=True):
     packaging_task = pkg.PackagingTask(project_name, id, {'model': task})
     container_task = pkg.ContaineringTask(
         packaging_task,
         'train.py',
         _RUNNER_FILE_TEMPLATE,
         _DOCKERFILE_TEMPLATE,
-        project_name,
-        image_tag
+        pusher.get_image_name(),
+        pusher.get_tag()
     )
     pkg.make_container(container_task)
     if push:
-        pkg.push_contaner_to_aws(project_name, image_tag, region, repository)
+        pusher.push()
 
 
 class SagemakerTrainingRoutine(TrainingRoutineBase):
     def __init__(self,
                  local_dataset_storage,
                  project_name: str,
+                 handler_factory: pkg.ContainerHandler.Factory,
                  aws_role: str,
-                 ecr_repository: str,
-                 region: str,
                  s3_bucket: str,
                  instance_type: str = 'ml.m4.xlarge',
                  use_spots=True,
                  ):
         self.project_name = project_name
+        self.handler_factory = handler_factory
         self.aws_role = aws_role
         self.use_spots = use_spots
-        self.ecr_repository = ecr_repository
-        self.region = region
         self.s3_bucket = s3_bucket
         self.instance_type = instance_type
         super(SagemakerTrainingRoutine, self).__init__(local_dataset_storage)
@@ -87,20 +116,20 @@ class SagemakerLocalExecutor(TrainingExecutor):
         id = _create_id(task.info.get('name', ''))
         task.info['run_at_dataset'] = dataset_version
 
-        output_folder = Loc.temp_path / f'local_training/sagemaker/{id}'
+        output_folder = Loc.temp_path / f'training_results/{id}'
         output_folder = os.path.abspath(output_folder)
         os.makedirs(output_folder, exist_ok=True)
 
-        image_tag = self.routine.project_name + '-' + id
-        _upload_container(task, self.routine.project_name, id, image_tag, self.routine.ecr_repository,
-                          self.routine.region, False)
+        handler = self.routine.handler_factory.create_handler(self.routine.project_name, id)
+        _upload_container(task, self.routine.project_name, id, handler, False)
 
         model = sagemaker.estimator.Estimator(
-            self.routine.project_name + ":" + image_tag,
+            f"{handler.get_image_name()}:{handler.get_tag()}",
             self.routine.aws_role,
             train_instance_count=1,
             train_instance_type='local',
-            output_path=f'file://{output_folder}'
+            output_path=f'file://{output_folder}',
+
         )
         model.fit(f'file://{self.routine.local_dataset_storage.absolute()}/{dataset_version}')
         return id
@@ -128,10 +157,10 @@ class SagemakerRemoteExecutor(TrainingExecutor):
         session = sagemaker.Session(boto_session)
         return session
 
-    def _get_model(self, task, image_tag):
+    def _get_model(self, task, handler: pkg.ContainerHandler):
         sagemaker_name = task.info.get('name', self.routine.project_name).replace('_', '-')
         model = sagemaker.estimator.Estimator(
-            self.routine.ecr_repository + ':' + image_tag,
+            handler.get_remote_name(),
             self.routine.aws_role,
             train_instance_count=1,
             train_instance_type=self.routine.instance_type,
@@ -139,7 +168,8 @@ class SagemakerRemoteExecutor(TrainingExecutor):
             output_path=f's3://{self.routine.s3_bucket}/sagemaker/{self.routine.project_name}/output/',
             sagemaker_session=self._get_session(),
             base_job_name=sagemaker_name,
-            metric_definitions=get_sagemaker_metric_definitions(task)
+            metric_definitions=get_sagemaker_metric_definitions(task),
+
         )
         if self.routine.use_spots:
             model.train_use_spot_instances = self.routine.use_spots,
@@ -159,21 +189,16 @@ class SagemakerRemoteExecutor(TrainingExecutor):
                                   )
 
     def get_result(self, id: str):
-        filename = _TRAINING_RESULTS_LOCATION / f'{id}.tar.gz'
-        S3Handler.download_file(
-            self.routine.s3_bucket,
-            f'sagemaker/{self.routine.project_name}/output/{id}/output/model.tar.gz',
-            filename
-        )
-        return ResultPickleReader.from_tar_gz_file(filename, id)
+        return download_and_open_sagemaker_result(self.routine.s3_bucket, self.routine.project_name, id)
+
 
     def execute(self, task: AbstractTrainingTask, dataset_version: str, wait=True):
         id = _create_id(task.info.get('name', ''))
         task.info['run_at_dataset'] = dataset_version
+        handler = self.routine.handler_factory.create_handler(self.routine.project_name, id)
         image_tag = self.routine.project_name + '-' + id
-        _upload_container(task, self.routine.project_name, id, image_tag, self.routine.ecr_repository,
-                          self.routine.region, True)
-        model = self._get_model(task, image_tag)
+        _upload_container(task, self.routine.project_name, id, handler, True)
+        model = self._get_model(task, handler)
         input_data = f's3://{self.routine.s3_bucket}/sagemaker/{self.routine.project_name}/datasets/{dataset_version}'
-        model.fit(input_data)
+        model.fit(input_data, wait)
         return model._current_job_name

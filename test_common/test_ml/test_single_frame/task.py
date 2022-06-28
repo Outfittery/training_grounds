@@ -1,5 +1,6 @@
 from ....ml.single_frame_training import *
 from sklearn import datasets
+import pandas as pd
 
 def create_task(max_iter=1000):
     return SingleFrameTrainingTask(
