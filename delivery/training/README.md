@@ -33,7 +33,7 @@ We will store it locally. We will not actually run this task on the `Sagemaker`,
 ```python
 from tg.common.ml import single_frame_training as sft
 from tg.common.ml import dft
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import roc_auc_score
 
 task = sft.SingleFrameTrainingTask(
     data_loader = sft.DataFrameLoader('Survived'),
@@ -42,9 +42,9 @@ task = sft.SingleFrameTrainingTask(
             max_iter = 1000),
         transformer = dft.DataFrameTransformerFactory.default_factory(),
         keep_column_names=False),
-    evaluator=sft.Evaluation.multiclass_classification,
+    evaluator=sft.Evaluation.binary_classification,
     splitter=sft.FoldSplitter(),
-    metrics_pool = sft.MetricPool().add_sklearn(accuracy_score)        
+    metrics_pool = sft.MetricPool().add_sklearn(roc_auc_score)        
     )
 ```
 
@@ -90,17 +90,17 @@ As with `SSHDockerRoutine`, there are `attached`, `local` and `remote` accessors
 attached_task_id = routine.attached.execute(task,'titanic')
 ```
 
-    2022-06-27 19:41:09.350865+00:00 INFO: Starting stage 1/1
-    2022-06-27 19:41:09.558283+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220627_214109_9995b5204d7d490781979ad50ceb2464/runs/0/result_df
-    2022-06-27 19:41:09.559445+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220627_214109_9995b5204d7d490781979ad50ceb2464/runs/0/metrics
-    2022-06-27 19:41:09.562344+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220627_214109_9995b5204d7d490781979ad50ceb2464/runs/0/info
-    2022-06-27 19:41:09.572337+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220627_214109_9995b5204d7d490781979ad50ceb2464/runs/0/model
-    2022-06-27 19:41:09.576507+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220627_214109_9995b5204d7d490781979ad50ceb2464/runs/0/training_task
-    2022-06-27 19:41:09.580643+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220627_214109_9995b5204d7d490781979ad50ceb2464/runs/0/train_split
-    2022-06-27 19:41:09.589805+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220627_214109_9995b5204d7d490781979ad50ceb2464/runs/0/test_splits
-    2022-06-27 19:41:09.592056+00:00 INFO: Completed stage 1/1
-    2022-06-27 19:41:09.600195+00:00 INFO: ###METRIC###accuracy_score_test:0.7910447761194029###
-    2022-06-27 19:41:09.606074+00:00 INFO: ###METRIC###accuracy_score_train:0.8057784911717496###
+    2022-06-29 11:31:54.959026+00:00 INFO: Starting stage 1/1
+    2022-06-29 11:31:55.024144+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220629_133154_e9070dfa1b63456abe3cce462444eec4/runs/0/result_df
+    2022-06-29 11:31:55.024998+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220629_133154_e9070dfa1b63456abe3cce462444eec4/runs/0/metrics
+    2022-06-29 11:31:55.025754+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220629_133154_e9070dfa1b63456abe3cce462444eec4/runs/0/info
+    2022-06-29 11:31:55.026717+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220629_133154_e9070dfa1b63456abe3cce462444eec4/runs/0/model
+    2022-06-29 11:31:55.027545+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220629_133154_e9070dfa1b63456abe3cce462444eec4/runs/0/training_task
+    2022-06-29 11:31:55.028901+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220629_133154_e9070dfa1b63456abe3cce462444eec4/runs/0/train_split
+    2022-06-29 11:31:55.029638+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220629_133154_e9070dfa1b63456abe3cce462444eec4/runs/0/test_splits
+    2022-06-29 11:31:55.030052+00:00 INFO: Completed stage 1/1
+    2022-06-29 11:31:55.031555+00:00 INFO: ###METRIC###roc_auc_score_test:0.8538095238095237###
+    2022-06-29 11:31:55.031966+00:00 INFO: ###METRIC###roc_auc_score_train:0.8600247283139194###
 
 
 Unlike `SSHDockerRoutine`, `SagemakerTrainingRoutine` has the output, and `local` and `attached` accessors try to emulate `Sagemaker` behaviour in how the output is handled. They store the output in `Loc.temp` folder, and `execute` method returns a task id to access the result. Let's browse the result.
@@ -124,52 +124,21 @@ Query.folder(attached_folder, '**/*').foreach(lambda z: print(z.relative_to(atta
     runs/0/training_task.pkl
 
 
-We can view the resulting dataframe, and compute a confusion matrix, for instance:
+We can view the resulting dataframe, and compute, for instance, ROC AUC optimat threshold:
 
 
 ```python
+from tg.common.ml.miscellaneous import roc_optimal_threshold
+
 df = pd.read_parquet(attached_folder/'runs/0/result_df.parquet')
-(df
- .loc[df.stage=='test']
- .groupby(['predicted','true'])
- .size()
- .to_frame('cnt')
- .pivot_table(index='predicted',columns='true',values='cnt').fillna(0)
-)
+roc_optimal_threshold(df.true, df.predicted)
+
 ```
 
 
 
 
-<div>
-
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th>true</th>
-      <th>0.0</th>
-      <th>1.0</th>
-    </tr>
-    <tr>
-      <th>predicted</th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0.0</th>
-      <td>140</td>
-      <td>28</td>
-    </tr>
-    <tr>
-      <th>1.0</th>
-      <td>28</td>
-      <td>72</td>
-    </tr>
-  </tbody>
-</table>
-</div>
+    0.3483943081626346
 
 
 
@@ -183,7 +152,7 @@ FileIO.read_pickle(attached_folder/'runs/0/training_task.pkl')
 
 
 
-    <tg.common.ml.single_frame_training.training_task.SingleFrameTrainingTask at 0x7fe68a5fb2e0>
+    <tg.common.ml.single_frame_training.training_task.SingleFrameTrainingTask at 0x7f5e204cf610>
 
 
 
@@ -209,7 +178,7 @@ local_task_id
 
 
 
-    '_20220627_214109_80c8c40453a544cc99e69cd531aaeb71'
+    '_20220629_133155_f54f9a6473c1400ea7a0d7976dd5e989'
 
 
 
@@ -252,47 +221,13 @@ From this `reader`, we can get the paths to the files and open them directly:
 
 ```python
 df = pd.read_parquet(reader.get_path('runs/0/result_df.parquet'))
-(df
- .loc[df.stage=='test']
- .groupby(['predicted','true'])
- .size()
- .to_frame('cnt')
- .pivot_table(index='predicted',columns='true',values='cnt').fillna(0)
-)
+roc_optimal_threshold(df.true, df.predicted)
 ```
 
 
 
 
-<div>
-
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th>true</th>
-      <th>0.0</th>
-      <th>1.0</th>
-    </tr>
-    <tr>
-      <th>predicted</th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0.0</th>
-      <td>140</td>
-      <td>28</td>
-    </tr>
-    <tr>
-      <th>1.0</th>
-      <td>28</td>
-      <td>72</td>
-    </tr>
-  </tbody>
-</table>
-</div>
+    0.3483943081626341
 
 
 
@@ -308,11 +243,11 @@ except:
 ```
 
     Traceback (most recent call last):
-      File "/tmp/ipykernel_4552/225246354.py", line 3, in <module>
+      File "/tmp/ipykernel_12644/225246354.py", line 3, in <module>
         FileIO.read_pickle(reader.get_path('runs/0/training_task.pkl'))
       File "/home/yura/anaconda3/envs/tg/lib/python3.8/site-packages/yo_fluq_ds/_misc/io.py", line 17, in read_pickle
         return pickle.load(file)
-    ModuleNotFoundError: No module named 'titanic___20220627_214109_80c8c40453a544cc99e69cd531aaeb71'
+    ModuleNotFoundError: No module named 'titanic___20220629_133155_f54f9a6473c1400ea7a0d7976dd5e989'
     
 
 

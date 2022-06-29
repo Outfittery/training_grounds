@@ -1,4 +1,5 @@
 from typing import *
+
 from .. import torch as btt
 from ... import batched_training as bt
 
@@ -46,7 +47,6 @@ class _MirrorExtractorFactory(btt.TorchExtractorFactory):
     def __init__(self, settings: MirrorSettings):
         self.settings = settings
 
-
     def create_extractors(self, task, bundle) -> List[bt.Extractor]:
         extractors = [c.create_extractor(task, bundle) for c in self.settings.bindings]
         extractors.append(self.settings.label_extractor)
@@ -65,9 +65,3 @@ class _MirrorNetworkFactory(btt.TorchNetworkFactory):
         )
         network = factory.create_network(task, input)
         return network
-
-
-
-
-
-

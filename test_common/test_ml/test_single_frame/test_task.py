@@ -18,8 +18,8 @@ def metric(result):
     return np.median(accuracies)
 
 
-
 DF = get_data()
+
 
 class TaskTestCase(TestCase):
     def test_simple(self):
@@ -60,9 +60,8 @@ class TaskTestCase(TestCase):
 
     def test_with_wrapper(self):
         task = create_task()
-        task.model_provider = ModelProvider(ModelConstructor('catboost:CatBoostClassifier'),None,ModelProvider.catboost_model_fix)
+        task.model_provider = ModelProvider(ModelConstructor('catboost:CatBoostClassifier'), None, ModelProvider.catboost_model_fix)
         task.model_provider.constructor.kwargs['silent'] = True
         task.model_provider.constructor.kwargs['iterations'] = 5
-        tdf = DF.assign(target=np.where(DF.target==0,0,1))
+        tdf = DF.assign(target=np.where(DF.target == 0, 0, 1))
         task.run(tdf)
-

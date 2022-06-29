@@ -1,5 +1,6 @@
-import re
 from typing import *
+
+import re
 import importlib
 import json
 import os
@@ -9,13 +10,11 @@ import sys
 import tarfile
 
 from yo_fluq_ds import FileIO, Query
-
-from .packaging_dto import PackagingTask, PackageInfo
 from pathlib import Path
 
+from .packaging_dto import PackagingTask, PackageInfo
 from .entry_point import EntryPoint
 from ..._common import Loc
-
 
 
 def _full_module_name(name, version):
@@ -108,19 +107,20 @@ def get_loader_from_installed_package(name: str) -> EntryPoint:
 
 def _read_file(file, fname_ending):
     fname = (Query
-                  .en(file.getmembers())
-                  .where(lambda z: z.name.endswith(fname_ending))
-                  .order_by(lambda z: len(z.name))
-                  .first()
-                  )
+             .en(file.getmembers())
+             .where(lambda z: z.name.endswith(fname_ending))
+             .order_by(lambda z: len(z.name))
+             .first())
     content = file.extractfile(fname).read().decode('utf-8')
     return content
+
 
 def _get_old_module_to_remove(path: Path):
     with tarfile.open(path, 'r:gz') as file:
         egg_info = _read_file(file, '.egg-info/PKG-INFO')
-        module_to_remove = Query.en(egg_info.split('\n')).select(lambda z: z.split(': ')).where(lambda z: z[0]=='Name').select(lambda z: z[1]).single()
+        module_to_remove = Query.en(egg_info.split('\n')).select(lambda z: z.split(': ')).where(lambda z: z[0] == 'Name').select(lambda z: z[1]).single()
         return module_to_remove
+
 
 def _get_module_to_import(path: Path):
     with tarfile.open(path, 'r:gz') as file:
@@ -128,7 +128,7 @@ def _get_module_to_import(path: Path):
         return props['full_module_name']
 
 
-def uninstall_old_version(filepath: Union[Path, str], silent = False):
+def uninstall_old_version(filepath: Union[Path, str], silent=False):
     if isinstance(filepath, str):
         filepath = Path(filepath)
     module_to_remove = _get_old_module_to_remove(filepath)
@@ -139,13 +139,13 @@ def uninstall_old_version(filepath: Union[Path, str], silent = False):
 def install_package_and_get_loader(
         filepath: Union[Path, str],
         try_uninstall_existing=True,
-        silent=False
-    ) -> EntryPoint:
+        silent=False) -> EntryPoint:
     """
     Installs the package from the specified file.
     Args:
         filepath: path to file
         try_uninstall_existing: If True, uninstall existing package of the same name
+        silent: runs pip with -q option, supressing output
     """
     if try_uninstall_existing:
         uninstall_old_version(filepath)
@@ -155,9 +155,8 @@ def install_package_and_get_loader(
     filename = filepath.name
     module_to_import = _get_module_to_import(filepath)
     silent_option = ['-q'] if silent else []
-    subprocess.call([sys.executable, '-m', 'pip', 'install', filepath ] + silent_option)
+    subprocess.call([sys.executable, '-m', 'pip', 'install', filepath] + silent_option)
     return get_loader_from_installed_package(module_to_import)
-
 
 
 _INIT_TEMPLATE = '''

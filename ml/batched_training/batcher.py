@@ -6,9 +6,6 @@ from .batcher_strategy import BatcherStrategy, SimpleBatcherStrategy
 from .data_bundle import DataBundle, IndexedDataBundle
 from .extractors import Extractor
 
-#TODO: remove batch_size from Batcher parameters, make it stateless. Batch_size belongs to settings
-#TODO: remove IndexedDataBundle completely
-#TODO: rebuild extractors that they accept index as the first argument, not the subset of dataframe
 
 class Batcher:
     """
@@ -51,7 +48,6 @@ class Batcher:
         else:
             return self.batching_strategy
 
-
     def get_batch_count(self, db: IndexedDataBundle, force_default_strategy=False) -> int:
         return self._get_strategy(force_default_strategy).get_batch_count(self.batch_size, db.index_frame)
 
@@ -65,6 +61,7 @@ class Batcher:
         Args:
             db:
             batch_index:
+            force_default_strategy:
 
         Returns: a dictionary with batch component, one per key of ``self.transformers``
         """
@@ -88,6 +85,3 @@ class Batcher:
                 raise ValueError(f"Unknown batch element type: {type(df)}")
 
         return mini_batch
-
-
-

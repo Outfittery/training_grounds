@@ -1,6 +1,8 @@
 from typing import *
-from ..._common import DataBundle
+
 import pandas as pd
+
+from ..._common import DataBundle
 
 
 class IndexedDataBundle:
@@ -15,4 +17,3 @@ class IndexedDataBundle:
             return IndexedDataBundle(index, self.bundle)
         else:
             raise ValueError(f'`index` is expected to be pd.Index or pd.Dataframe, but was {type(index)}')
-

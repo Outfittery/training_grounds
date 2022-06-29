@@ -9,12 +9,12 @@ from pathlib import Path
 from ..._common.locations import Loc
 
 
-
 class HackedUnpicker(pickle.Unpickler):
     """
     The class to read pickled files, whose classes changed the name
     """
-    def __init__(self, file_obj, from_module, to_module, additional_replacements = None):
+
+    def __init__(self, file_obj, from_module, to_module, additional_replacements=None):
         super(HackedUnpicker, self).__init__(file_obj)
         self.from_module = from_module
         self.to_module = to_module
@@ -33,9 +33,8 @@ class HackedUnpicker(pickle.Unpickler):
         if self.additional_replacements is not None:
             for key, value in self.additional_replacements.items():
                 if renamed_module.startswith(key):
-                    renamed_module = value+renamed_module[len(key):]
+                    renamed_module = value + renamed_module[len(key):]
                     break
-
 
         return super(HackedUnpicker, self).find_class(renamed_module, name)
 
@@ -44,6 +43,7 @@ class EntryPoint:
     """
     This class describes the TG-package.
     """
+
     def __init__(self,
                  module_name: str,
                  module_version: str,
@@ -75,7 +75,6 @@ class EntryPoint:
         """
         return self.__dict__
 
-
     def get_resources(self) -> List[str]:
         """
         Returns list of resources' names
@@ -87,9 +86,8 @@ class EntryPoint:
         """
         Loads the resource by its name
         """
-        with open(os.path.join(self.resources_location,resource_name), 'rb') as file_obj:
-            return HackedUnpicker(file_obj,self.original_tg_module_name, self.tg_module_name).load()
-
+        with open(os.path.join(self.resources_location, resource_name), 'rb') as file_obj:
+            return HackedUnpicker(file_obj, self.original_tg_module_name, self.tg_module_name).load()
 
     def load_file_in_local_tg(self, filename: str, local_tg: Optional[str] = None):
         """
@@ -98,11 +96,5 @@ class EntryPoint:
         """
         if local_tg is None:
             local_tg = Loc.tg_name
-        with open(filename,'rb') as file_obj:
-            return HackedUnpicker(file_obj,self.tg_module_name,local_tg).load()
-
-
-
-
-
-
+        with open(filename, 'rb') as file_obj:
+            return HackedUnpicker(file_obj, self.tg_module_name, local_tg).load()

@@ -54,7 +54,7 @@ class FeaturizationTestCase(TestCase):
                 'def': MyFeaturizerSimple()
             },
             mem,
-            Loc.temp_path/'tests/featurization_job/source_part',
+            Loc.temp_path / 'tests/featurization_job/source_part',
             None,
             None
         )

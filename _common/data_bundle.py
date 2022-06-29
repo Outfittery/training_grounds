@@ -2,12 +2,12 @@ from typing import *
 
 import os
 import pandas as pd
+import traceback
+import pprint
 
 from pathlib import Path
 from yo_fluq_ds import FileIO, Obj, Query
 from warnings import warn
-import traceback
-import pprint
 
 
 class DataBundle:
@@ -43,7 +43,7 @@ class DataBundle:
     def __setstate__(self, state):
         self.data_frames, self.additional_information = state
 
-    def describe(self, limits: Optional[int]=None):
+    def describe(self, limits: Optional[int] = None):
         result = {}
         for key, value in self.data_frames.items():
             r = {}
@@ -51,23 +51,21 @@ class DataBundle:
             r['index_name'] = value.index.name
             if limits is not None:
                 cols = list(value.columns[:limits])
-                if len(value.columns)>limits:
+                if len(value.columns) > limits:
                     cols.append('...')
                 r['columns'] = cols
                 rows = list(value.index[:limits])
-                if value.shape[0]>limits:
+                if value.shape[0] > limits:
                     rows.append('...')
                 r['index'] = rows
             result[key] = r
         return result
 
-
     def __str__(self):
         return self.describe().__str__()
 
     def __repr__(self):
-        return  self.describe().__str__()
-
+        return self.describe().__str__()
 
     @staticmethod
     def _read_bundle(path: Path):
@@ -79,7 +77,7 @@ class DataBundle:
         data_frames = Query.en(files).to_dictionary(lambda z: z.name.split('.')[0], lambda z: pd.read_parquet(z))
         bundle = DataBundle(**data_frames)
 
-        pkl_fname = str(path/'add_info.pkl')
+        pkl_fname = str(path / 'add_info.pkl')
         if os.path.exists(pkl_fname):
             add_info = FileIO.read_pickle(pkl_fname)
             bundle.additional_information = add_info
@@ -101,6 +99,4 @@ class DataBundle:
         os.makedirs(folder, exist_ok=True)
         for key, value in self.data_frames.items():
             value.to_parquet(folder.joinpath(key + '.parquet'))
-        FileIO.write_pickle(self.additional_information, folder/'add_info.pkl')
-
-
+        FileIO.write_pickle(self.additional_information, folder / 'add_info.pkl')

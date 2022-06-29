@@ -1,10 +1,12 @@
 from typing import *
-import copy
 
-from yo_fluq_ds import KeyValuePair
+import copy
 import pandas as pd
 
+from yo_fluq_ds import KeyValuePair
+
 from .data_bundle import DataBundle, IndexedDataBundle
+
 
 class _ExtractorWithDisabledFit:
     def __init__(self, extractor: 'Extractor'):
@@ -40,7 +42,7 @@ class Extractor:
         raise NotImplementedError()
 
     @staticmethod
-    def make_extraction(ibundle: IndexedDataBundle, extractors: List['Extractor']) -> Dict[str,pd.DataFrame]:
+    def make_extraction(ibundle: IndexedDataBundle, extractors: List['Extractor']) -> Dict[str, pd.DataFrame]:
         result = {'index': ibundle.index_frame}
         for extractor in extractors:
             try:
@@ -49,8 +51,6 @@ class Extractor:
                 raise ValueError(f'Error when extracting from extractor `{extractor.get_name()}`') from e
             result[extractor.get_name()] = rs
         return result
-
-
 
 
 class CombinedExtractor(Extractor):

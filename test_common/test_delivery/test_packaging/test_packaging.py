@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 from yo_fluq_ds import FileIO
 
+
 def _replace_file(suffix):
     path = Path(__file__).parent.joinpath('class_hmr.py')
     FileIO.write_text(_TEMPLATE.format(suffix), path)
@@ -15,7 +16,7 @@ class PackagingTestCase(TestCase):
         _replace_file('A')
 
         # this is an "entry point" of the package. It contains, e.g., the object for featurizer
-        task = PackagingTask('tg_test', '0.0.0',dict(test=_FeaturizerForTestPurposes('Passed')))
+        task = PackagingTask('tg_test', '0.0.0', dict(test=_FeaturizerForTestPurposes('Passed')))
 
         # Here we make a package from this entry point
         info = make_package(task)
@@ -33,12 +34,12 @@ class PackagingTestCase(TestCase):
         # We build two packages with different source code
         _replace_file('A')
         infoA = make_package(
-            PackagingTask('tg_test', '0.0.1',dict(test=_FeaturizerForTestPurposes('PassedA')))
+            PackagingTask('tg_test', '0.0.1', dict(test=_FeaturizerForTestPurposes('PassedA')))
         )
 
         _replace_file('B')
         infoB = make_package(
-            PackagingTask('tg_test', '0.0.2',dict(test=_FeaturizerForTestPurposes('PassedB')))
+            PackagingTask('tg_test', '0.0.2', dict(test=_FeaturizerForTestPurposes('PassedB')))
         )
 
         # Loading the first package and checking if it works
@@ -51,7 +52,7 @@ class PackagingTestCase(TestCase):
         self.assertFalse(os.path.isdir(entryA.resources_location))
 
         self.assertEqual('PassedBB', entryB.load_resource('test')())
-        print('LOCATION '+entryB.resources_location)
+        print('LOCATION ' + entryB.resources_location)
 
         # Cleaning-up
         _replace_file('')

@@ -1,16 +1,16 @@
 from typing import *
-from .packaging_dto import ContaineringTask
-from subprocess import call
 
-from .package import make_package
-from yo_fluq_ds import FileIO
-from pathlib import Path
 import shutil
 import subprocess
 import os
 
-from ..._common.locations import Loc
+from subprocess import call
+from yo_fluq_ds import FileIO
+from pathlib import Path
 
+from .packaging_dto import ContaineringTask
+from .package import make_package
+from ..._common.locations import Loc
 
 
 def make_container(task: ContaineringTask):
@@ -25,15 +25,14 @@ def make_container(task: ContaineringTask):
 
     install_libraries = ''
     for dep_list in task.packaging_task.dependencies:
-        install_libraries+='RUN pip install ' + ' '.join(dep_list.dependencies) + "\n\n"
+        install_libraries += 'RUN pip install ' + ' '.join(dep_list.dependencies) + "\n\n"
 
     props = dict(
         module=packaging_info.module_name,
         tg_name=Loc.tg_name,
-        install_libraries = install_libraries,
+        install_libraries=install_libraries,
         package_filename=packaging_info.path.name
     )
-
 
     entry_file = task.entry_file_template.format(**props)
     FileIO.write_text(entry_file, release.joinpath(task.entry_file_name))
@@ -62,9 +61,10 @@ entry_method(Entry)
 
 '''
 
+
 class ContainerPusher:
     def get_auth_command(self):
-        raise  NotImplementedError()
+        raise NotImplementedError()
 
     def get_remote_name(self, image_name: str, image_tag: str):
         raise NotImplementedError()
@@ -81,7 +81,7 @@ class ContainerHandler:
         raise NotImplementedError()
 
     def get_auth_command(self) -> Optional[List[str]]:
-        raise  NotImplementedError()
+        raise NotImplementedError()
 
     def get_remote_name(self) -> str:
         raise NotImplementedError()

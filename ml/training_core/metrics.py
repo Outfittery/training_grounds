@@ -1,7 +1,8 @@
 from typing import *
-import pandas as pd
-from .arch import Artificier, ArtificierArguments
 
+import pandas as pd
+
+from .arch import Artificier, ArtificierArguments
 
 
 class Metric:
@@ -10,7 +11,6 @@ class Metric:
 
     def measure(self, result_df: pd.DataFrame, source_data: Any) -> List[Any]:
         raise NotImplementedError()
-
 
 
 class SklearnMetric(Metric):
@@ -31,6 +31,7 @@ class MetricPool(Artificier):
     A class representing a collection of metrics.
     Implements FluentAPI, add metrics one by one
     """
+
     def __init__(self):
         self.metrics = []  # type: List[Metric]
 
@@ -45,7 +46,6 @@ class MetricPool(Artificier):
 
         """
         return self.add(SklearnMetric(method, **kwargs))
-
 
     def add(self, metric: Metric) -> 'MetricPool':
         self.metrics.append(metric)
@@ -67,6 +67,6 @@ class MetricPool(Artificier):
                 tdf = df.loc[df.stage == stage]
                 result = metric.measure(tdf, args.source_data)
                 names = metric.get_names()
-                for key, value in zip(names,result):
+                for key, value in zip(names, result):
                     result_metrics[key + '_' + str(stage)] = value
-        args.result.metrics=result_metrics
+        args.result.metrics = result_metrics

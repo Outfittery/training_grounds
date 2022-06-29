@@ -1,7 +1,6 @@
 from typing import *
 
 
-
 class DeliverableJob:
     def get_name_and_version(self) -> Tuple[str, str]:
         raise NotImplementedError()

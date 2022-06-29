@@ -1,10 +1,12 @@
 from typing import *
-from ..extractors import Extractor
-from ..data_bundle import IndexedDataBundle
-from yo_fluq_ds import KeyValuePair, Obj
+
 import pandas as pd
 import copy
 
+from yo_fluq_ds import KeyValuePair, Obj
+
+from ..extractors import Extractor
+from ..data_bundle import IndexedDataBundle
 
 
 class ContextBuilder:
@@ -27,10 +29,10 @@ class ExtractorInnerData:
     def __init__(self, ibundle: IndexedDataBundle, context_size: int):
         self.context_size = context_size
         self.ibundle = ibundle
-        self.context_df = None #type: Optional[pd.DataFrame]
-        self.feature_dfs = {} #type: Dict[str,pd.DataFrame]
-        self.agg_dfs = {} #type: Dict[str,pd.DataFrame]
-        self.result_df = None #type: Optional[pd.DataFrame]
+        self.context_df = None  # type: Optional[pd.DataFrame]
+        self.feature_dfs = {}  # type: Dict[str,pd.DataFrame]
+        self.agg_dfs = {}  # type: Dict[str,pd.DataFrame]
+        self.result_df = None  # type: Optional[pd.DataFrame]
 
 
 class ExtractorToAggregator:
@@ -48,10 +50,10 @@ class ExtractorToAggregator:
                 data.agg_dfs[f'f{extractor_index}a{aggregator_index}'] = adf
 
 
-
 class ExtractorToAggregatorFactory:
     def create_extractors_and_aggregators(self, ibundle: IndexedDataBundle) -> List[ExtractorToAggregator]:
         raise NotImplementedError()
+
 
 class SimpleExtractorToAggregatorFactory(ExtractorToAggregatorFactory):
     def __init__(self, extractor, *aggregators):
@@ -67,12 +69,11 @@ class SimpleExtractorToAggregatorFactory(ExtractorToAggregatorFactory):
 
 
 class AggregationFinalizer:
-    def fit(self, index: pd.DataFrame, features: Dict[str, pd.DataFrame],  aggregations: Dict[str,pd.DataFrame]):
+    def fit(self, index: pd.DataFrame, features: Dict[str, pd.DataFrame], aggregations: Dict[str, pd.DataFrame]):
         pass
 
-    def finalize(self, index: pd.DataFrame,  features: Dict[str, pd.DataFrame],  aggregations: Dict[str, pd.DataFrame]):
+    def finalize(self, index: pd.DataFrame, features: Dict[str, pd.DataFrame], aggregations: Dict[str, pd.DataFrame]):
         raise NotImplementedError()
-
 
 
 class ContextExtractor(Extractor):
@@ -82,13 +83,13 @@ class ContextExtractor(Extractor):
                  context_builder: ContextBuilder,
                  feature_extractor_factory: ExtractorToAggregatorFactory,
                  finalizer: AggregationFinalizer,
-                 debug = False
+                 debug=False
                  ):
         self.name = name
         self.context_size = context_size
         self.context_builder = context_builder
         self.feature_extractor_factory = feature_extractor_factory
-        self.feature_extractor = None #type: Optional[Extractor]
+        self.feature_extractor = None  # type: Optional[Extractor]
         self.finalizer = finalizer
         self.debug = debug
         self.extractors_and_aggregators = None
@@ -114,7 +115,6 @@ class ContextExtractor(Extractor):
         self._extract_till_finalization(data)
         self.finalizer.fit(ibundle.index_frame, data.feature_dfs, data.agg_dfs)
 
-
     def extract(self, ibundle: IndexedDataBundle) -> pd.DataFrame:
         if self.extractors_and_aggregators is None:
             raise ValueError('extractors_and_aggregators is None: have you forgotten to fit?')
@@ -124,6 +124,5 @@ class ContextExtractor(Extractor):
         if self.debug:
             self.data_ = data
         self._extract_till_finalization(data)
-        data.result_df = self.finalizer.finalize(ibundle.index_frame, data.feature_dfs,  data.agg_dfs)
+        data.result_df = self.finalizer.finalize(ibundle.index_frame, data.feature_dfs, data.agg_dfs)
         return data.result_df
-

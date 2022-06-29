@@ -2,8 +2,6 @@ from unittest import TestCase
 from tg.common.test_common.test_ml.test_batched.pythorch_sample_creator import *
 
 
-
-
 class PytorchTestCase(TestCase):
     def test_pytorch_binary_classification(self):
         bundle = create_bundle()
@@ -14,13 +12,11 @@ class PytorchTestCase(TestCase):
         self.assertGreater(result['metrics']['roc_auc_score_test'], 0.7)
         self.assertEqual(10, len(task.history))
 
-
-
     def test_get_batch(self):
         bundle = create_bundle()
         task = create_task()
-        batch = task.generate_sample_batch(bundle,0)
-        self.assertSetEqual({'index','features','targets'}, set(batch))
+        batch = task.generate_sample_batch(bundle, 0)
+        self.assertSetEqual({'index', 'features', 'targets'}, set(batch))
 
     def test_get_metrics(self):
         bundle = create_bundle()
@@ -39,8 +35,5 @@ class PytorchTestCase(TestCase):
         env = InMemoryTrainingEnvironment()
         task.run_with_environment(bundle, env)
         print(env.result['metrics']['roc_auc_score_test'])
-        #for s in env.message_buffer:
+        # for s in env.message_buffer:
         #    print(s)
-
-
-

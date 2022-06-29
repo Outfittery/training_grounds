@@ -3,7 +3,6 @@ from typing import *
 from copy import deepcopy
 
 
-
 class _KrakenCompatibilityWrap:
     def __init__(self, task, splits: List):
         self.splits = splits

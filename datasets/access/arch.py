@@ -1,9 +1,12 @@
 from typing import *
-from yo_fluq_ds import Query, Queryable, FileIO
+
 import os
 import pandas as pd
+
+from yo_fluq_ds import Query, Queryable, FileIO
 from enum import Enum
 from pathlib import Path
+
 from ..._common.locations import Loc
 
 
@@ -22,7 +25,6 @@ class DataSource:
         raise NotImplementedError()
 
 
-
 class MockDfDataSource(DataSource):
     """
     Provides a datasource wrap over pandas dataframe
@@ -37,22 +39,21 @@ class MockDfDataSource(DataSource):
     @staticmethod
     def from_code_list(n_columns, *args):
         column_names = args[:n_columns]
-        rows= []
-        i=n_columns
+        rows = []
+        i = n_columns
         while True:
             row = {}
             broken = False
             for j in range(n_columns):
-                if i+j<len(args):
-                    row[column_names[j]]=args[i+j]
+                if i + j < len(args):
+                    row[column_names[j]] = args[i + j]
                 else:
                     broken = True
             if broken:
                 break
             rows.append(row)
-            i+=n_columns
+            i += n_columns
         return MockDfDataSource(pd.DataFrame(rows))
-
 
 
 class AbstractCacheDataSource(DataSource):
@@ -87,12 +88,12 @@ class CacheMode(Enum):
     Remake = 3
 
     @staticmethod
-    def apply_to_file(cache_mode: 'CacheMode', file_path: Union[str,Path], factory: Callable):
-        if cache_mode==CacheMode.No or cache_mode=='no':
+    def apply_to_file(cache_mode: 'CacheMode', file_path: Union[str, Path], factory: Callable):
+        if cache_mode == CacheMode.No or cache_mode == 'no':
             return factory()
-        if cache_mode==CacheMode.Use or cache_mode=='use':
+        if cache_mode == CacheMode.Use or cache_mode == 'use':
             return FileIO.read_pickle(file_path)
-        if cache_mode==CacheMode.Remake or not Path(file_path).is_file() or cache_mode=='remake':
+        if cache_mode == CacheMode.Remake or not Path(file_path).is_file() or cache_mode == 'remake':
             val = factory()
             FileIO.write_pickle(val, file_path)
             return val
@@ -106,16 +107,13 @@ class CacheMode(Enum):
             return value
         elif value == 'default':
             return CacheMode.Default
-        elif value =='no':
+        elif value == 'no':
             return CacheMode.No
         elif value == 'use':
             return CacheMode.Use
         elif value == 'remake':
             return CacheMode.Remake
         raise ValueError(f'Cannot recognize value {value}')
-
-
-
 
 
 class CacheableDataSource(DataSource):
@@ -137,11 +135,11 @@ class CacheableDataSource(DataSource):
     def cache(self) -> AbstractCacheDataSource:
         return self._file_data_source
 
-    def safe_cache(self, cache_mode: Union[str,CacheMode], count: Optional[int] = None) -> DataSource:
-        if cache_mode == 'no' or cache_mode==CacheMode.No:
+    def safe_cache(self, cache_mode: Union[str, CacheMode], count: Optional[int] = None) -> DataSource:
+        if cache_mode == 'no' or cache_mode == CacheMode.No:
             return self._inner_datasource
-        if (cache_mode == 'use' or cache_mode==CacheMode.Use) and not self.cache().is_available():
+        if (cache_mode == 'use' or cache_mode == CacheMode.Use) and not self.cache().is_available():
             raise ValueError('Reading from cache is forced, but cache was not available. Try using `default` option')
-        if not self.cache().is_available() or cache_mode == 'remake' or cache_mode==CacheMode.Remake:
+        if not self.cache().is_available() or cache_mode == 'remake' or cache_mode == CacheMode.Remake:
             self.make_cache(count)
         return self._file_data_source

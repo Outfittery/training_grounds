@@ -1,12 +1,16 @@
 from typing import *
-from pathlib import Path
-from ...._common import FileSyncer, Loc
-from .updatable_dataset import UpdatableDataset
-from datetime import datetime
-from uuid import uuid4
+
 import os
 import shutil
+
+from pathlib import Path
+from datetime import datetime
+from uuid import uuid4
 from yo_fluq_ds import Query
+
+from ...._common import FileSyncer, Loc
+from .updatable_dataset import UpdatableDataset
+
 
 class UpdatableDatasetScoringInstance:
     def __init__(self,
@@ -29,12 +33,11 @@ class UpdatableDatasetScoringInstance:
         self.start_from_time = start_from_time
         self.current_time = current_time
         self.force_full_update = force_full_update
-        self.is_major_ = None #type: Optional[bool]
-
+        self.is_major_ = None  # type: Optional[bool]
 
     def run(self):
-        src_location = self.job.src_folder/self.src_featurizer
-        dst_location = self.job.dst_folder/self.uid/self.dst_featurizer
+        src_location = self.job.src_folder / self.src_featurizer
+        dst_location = self.job.dst_folder / self.uid / self.dst_featurizer
         os.makedirs(str(dst_location))
 
         dataset = UpdatableDataset(
@@ -48,8 +51,8 @@ class UpdatableDatasetScoringInstance:
             to_timestamp=self.current_time,
 
         ):
-            rdf = self.method(df) #type: pd.DataFrame
-            rdf.to_parquet(dst_location/(str(uuid4())+'.parquet'))
+            rdf = self.method(df)  # type: pd.DataFrame
+            rdf.to_parquet(dst_location / (str(uuid4()) + '.parquet'))
 
         self.job.dst_syncer.upload_folder(os.path.join(self.uid, self.dst_featurizer))
 
@@ -61,7 +64,7 @@ class UpdatableDatasetScoringMethod:
                  dst_featurizer: str,
                  src_syncer: FileSyncer,
                  src_featurizer: str,
-                 method:Callable):
+                 method: Callable):
         self.dst_featurizer = dst_featurizer
         self.src_syncer = src_syncer
         self.src_featurizer = src_featurizer
@@ -74,23 +77,21 @@ class UpdatableDatasetScoringJob:
                  version: str,
                  dst_syncer: FileSyncer,
                  methods: List[UpdatableDatasetScoringMethod],
-                 location: Optional[Union[str,Path]] = None,
+                 location: Optional[Union[str, Path]] = None,
                  ):
         self.name = name
         self.version = version
         self.methods = methods
-        self.records = None #type: Optional[List[UpdatableDataset.DescriptionItem]]
+        self.records = None  # type: Optional[List[UpdatableDataset.DescriptionItem]]
 
         if location is None:
-            self.location = Loc.temp_path/'updatable_dataset_scoring_job'/str(uuid4())
+            self.location = Loc.temp_path / 'updatable_dataset_scoring_job' / str(uuid4())
         else:
             self.location = Path(location)
-
 
         self.src_folder = self.location / 'src'
         self.dst_folder = self.location / 'dst'
         self.dst_syncer = dst_syncer.change_local_folder(self.dst_folder)
-
 
     def get_name_and_version(self):
         return self.name, self.version
@@ -101,16 +102,14 @@ class UpdatableDatasetScoringJob:
         os.makedirs(str(self.dst_folder))
         path = self.dst_syncer.download_file(UpdatableDataset.DescriptionHandler.get_description_filename())
         if path is None:
-            self.records=[]
+            self.records = []
             return None
         self.records = UpdatableDataset.DescriptionHandler.read_parquet(path)
         return self.records[-1].timestamp
 
-
-
     def run(self,
-            current_time:Optional[datetime] = None,
-            force_full_update:bool = False,
+            current_time: Optional[datetime] = None,
+            force_full_update: bool = False,
             custom_revision_id: Optional[str] = None,
             custom_start_time: Optional[datetime] = None
             ):
@@ -147,7 +146,6 @@ class UpdatableDatasetScoringJob:
             instance.run()
             is_major = is_major and instance.is_major_
 
-
         self.records.append(UpdatableDataset.DescriptionItem(
             uid,
             current_time,
@@ -156,4 +154,3 @@ class UpdatableDatasetScoringJob:
         ))
         UpdatableDataset.DescriptionHandler.write_parquet_to_folder(self.records, self.dst_folder)
         self.dst_syncer.upload_file(UpdatableDataset.DescriptionHandler.get_description_filename())
-

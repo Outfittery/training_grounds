@@ -7,11 +7,11 @@ import pandas as pd
 from datetime import datetime
 from pathlib import Path
 from yo_fluq_ds import Query
+from uuid import uuid4
 
 from ...._common import FileSyncer, Loc
 from .._common import PartitionedDatasetRecordHandler, TimePartitionedDatasetBase
 
-from uuid import uuid4
 
 class UpdatableDataset(TimePartitionedDatasetBase['UpdatableDataset.DescriptionItem']):
     def __init__(self,
@@ -37,7 +37,6 @@ class UpdatableDataset(TimePartitionedDatasetBase['UpdatableDataset.DescriptionI
     def filter_relevant_records(self, records: List[DescriptionItem], from_time: datetime, to_time: datetime) -> List[DescriptionItem]:
         return UpdatableDataset._get_current_records(records, from_time, to_time)
 
-
     @staticmethod
     def _get_current_records(
             records: List[DescriptionItem],
@@ -54,7 +53,6 @@ class UpdatableDataset(TimePartitionedDatasetBase['UpdatableDataset.DescriptionI
         if from_timestamp is not None:
             records = [r for r in records if r.timestamp >= from_timestamp]
         return records
-
 
     @staticmethod
     def write_to_updatable_dataset(
@@ -79,11 +77,10 @@ class UpdatableDataset(TimePartitionedDatasetBase['UpdatableDataset.DescriptionI
         records.append(record)
 
         for key, value in data.items():
-            file_path = location/record.name/key/'data.parquet'
+            file_path = location / record.name / key / 'data.parquet'
             os.makedirs(file_path.parent, exist_ok=True)
             value.to_parquet(file_path)
 
         syncer.upload_folder(record.name)
         UpdatableDataset.DescriptionHandler.write_parquet(records, location / UpdatableDataset.DescriptionHandler.get_description_filename())
         syncer.upload_file(UpdatableDataset.DescriptionHandler.get_description_filename())
-

@@ -1,9 +1,8 @@
 from typing import *
-from .architecture import CombinedSelector, SelectionContext, SelectorException
 
+from .architecture import CombinedSelector, SelectionContext, SelectorException
 from .architecture import _get_selector_name
 from ..._common import Logger
-
 
 
 # TODO: add short description of module
@@ -26,7 +25,7 @@ class AbstractPipeline(CombinedSelector):
         raise NotImplementedError()
 
     def get_structure(self):
-        return {key:value for key, value in self._get_selectors(None)}
+        return {key: value for key, value in self._get_selectors(None)}
 
     def _internal_call(self, obj, context: SelectionContext):
         result_chain = tuple()
@@ -57,8 +56,6 @@ class Pipeline(AbstractPipeline):
 
     def get_structure(self):
         return {key: value for key, value in self.selectors}
-
-
 
 
 class MergeException(Exception):
@@ -136,9 +133,9 @@ class Ensemble(AbstractEnsemble):
     def get_structure(self):
         result = {}
         for index, selector in enumerate(self.selectors):
-            result[index]=selector
+            result[index] = selector
         for key, selector in self.named_selectors.items():
-            result[key]=selector
+            result[key] = selector
         return result
 
 
@@ -162,20 +159,20 @@ class FieldGetter(CombinedSelector):
         else:
             if isinstance(obj, dict) and self.field in obj:
                 return obj[self.field]
-            if (isinstance(obj, list) or isinstance(obj,tuple)):
+            if (isinstance(obj, list) or isinstance(obj, tuple)):
                 try:
                     field = int(self.field)
                 except:
                     return None
                 if 0 <= field < len(obj):
                     return obj[field]
-            if hasattr(obj,self.field):
-                return getattr(obj,self.field)
+            if hasattr(obj, self.field):
+                return getattr(obj, self.field)
             Logger.warning('Missing field in FieldGetter',
-                field=self.field,
-                code_path=context.get_code_path(),
-                data_path=context.get_data_path()
-            )
+                           field=self.field,
+                           code_path=context.get_code_path(),
+                           data_path=context.get_data_path()
+                           )
             return None
 
     def __repr__(self):
@@ -198,10 +195,10 @@ class FunctionFeed(CombinedSelector):
         if self.none_propagation:
             if obj is None:
                 Logger.warning('None argument in FunctionFeed',
-                    callable=str(self.callable),
-                    code_path=context.get_code_path(),
-                    data_path=context.get_data_path()
-                )
+                               callable=str(self.callable),
+                               code_path=context.get_code_path(),
+                               data_path=context.get_data_path()
+                               )
                 return None
         return self.callable(obj)
 
@@ -231,7 +228,6 @@ class Listwise(AbstractEnsemble):
         return {'*': self._build_pipeline('*')}
 
 
-
 class Dictwise(AbstractEnsemble):
     """
     Applied the same selector to all the elements of the dictionary
@@ -252,8 +248,6 @@ class Dictwise(AbstractEnsemble):
 
     def get_structure(self):
         return {'*': self._build_pipeline('*')}
-
-
 
 
 def transpose_list_of_dicts_to_dict_of_lists(obj):
@@ -291,5 +285,3 @@ class ListFeaturizer(AbstractPipeline):
 
     def get_structure(self):
         return self._get_selectors(None)
-
-

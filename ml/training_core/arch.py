@@ -1,5 +1,7 @@
 from typing import *
+
 import pandas as pd
+
 from ._hyperparams import _apply_hyperparams
 from ..._common import Logger
 
@@ -40,7 +42,7 @@ class InMemoryTrainingEnvironment(TrainingEnvironment):
     Default environment when the process is launched within current process, usually for debugging
     """
 
-    def __init__(self, silent = False,  notebook = False):
+    def __init__(self, silent=False, notebook=False):
         self.result = {'metrics': {}, 'runs': {}}
         self.notebook = notebook
         self.silent = silent
@@ -57,7 +59,6 @@ class InMemoryTrainingEnvironment(TrainingEnvironment):
     def output_metric(self, metric_name: str, metric_value: float):
         self.result['metrics'][metric_name] = metric_value
         Logger.info(f'###{metric_name}:{metric_value}')
-
 
 
 class AbstractTrainingTask:
@@ -90,7 +91,6 @@ class TrainingResult:
         self.training_task = None  # type: Optional[AbstractTrainingTask]
         self.train_split = None  # type: Optional[pd.Index]
         self.test_splits = None  # type: Optional[Dict[str,pd.Index]]
-
 
 
 class ArtificierArguments:

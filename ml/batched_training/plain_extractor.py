@@ -1,8 +1,12 @@
 from typing import *
-from .extractors import Extractor, DataBundle, IndexedDataBundle
+
 import pandas as pd
-from enum import Enum
 import copy
+
+from enum import Enum
+
+from .extractors import Extractor, DataBundle, IndexedDataBundle
+
 
 class _JoinType(Enum):
     NullIndex = 0
@@ -14,9 +18,9 @@ class _JoinDescription:
     def __init__(self, frame: Optional[str], join_type: _JoinType):
         self.frame = frame
         self.join_type = join_type
-        self.keep_columns = None #type: Optional[List[str]]
+        self.keep_columns = None  # type: Optional[List[str]]
 
-    def _set_columns(self, columns: Union[str,List[str], None]):
+    def _set_columns(self, columns: Union[str, List[str], None]):
         if columns is None:
             self.keep_columns = None
         elif isinstance(columns, list):
@@ -25,17 +29,13 @@ class _JoinDescription:
             self.keep_columns = [columns]
 
 
-
-
-
-
 class PlainExractorBuilder:
     def __init__(self, name: str):
         self.name = name
-        self.joins = [] #type: List[_JoinDescription]
+        self.joins = []  # type: List[_JoinDescription]
 
     def index(self, frame_name=None) -> 'PlainExractorBuilder':
-        if len(self.joins)!=0:
+        if len(self.joins) != 0:
             raise ValueError('`index` method may appear only once, at the very beginning')
         if frame_name is None:
             self.joins.append(_JoinDescription(None, _JoinType.NullIndex))
@@ -43,8 +43,8 @@ class PlainExractorBuilder:
             self.joins.append(_JoinDescription(frame_name, _JoinType.Index))
         return self
 
-    def join(self, frame_name: str, on_columns=Union[str,List[str]]) -> 'PlainExractorBuilder':
-        if len(self.joins)==0:
+    def join(self, frame_name: str, on_columns=Union[str, List[str]]) -> 'PlainExractorBuilder':
+        if len(self.joins) == 0:
             self.joins.append(_JoinDescription(None, _JoinType.NullIndex))
         self.joins[-1]._set_columns(on_columns)
         self.joins.append(_JoinDescription(frame_name, _JoinType.Join))
@@ -52,11 +52,11 @@ class PlainExractorBuilder:
 
     def apply(self,
               transformer: Optional = None,
-              take_columns: Union[str,List[str],None] = None,
+              take_columns: Union[str, List[str], None] = None,
               raise_if_rows_are_missing: bool = True,
               raise_if_nulls_detected: bool = True
               ) -> 'PlainExtractor':
-        if len(self.joins)==0:
+        if len(self.joins) == 0:
             self.joins.append(_JoinDescription(None, _JoinType.NullIndex))
         self.joins[-1]._set_columns(take_columns)
         return PlainExtractor(
@@ -66,6 +66,7 @@ class PlainExractorBuilder:
             raise_if_rows_are_missing,
             raise_if_nulls_detected
         )
+
 
 class PlainExtractor(Extractor):
     def __init__(self,
@@ -101,9 +102,9 @@ class PlainExtractor(Extractor):
             current = current[first_join.keep_columns]
 
         for join_index, join in enumerate(self.joins[0:]):
-            if join_index==0:
+            if join_index == 0:
                 continue
-            if join.join_type!=_JoinType.Join:
+            if join.join_type != _JoinType.Join:
                 raise ValueError('All joins except first must be Join')
             frame = ibundle.bundle[join.frame]
             if join.keep_columns is not None:
@@ -114,27 +115,24 @@ class PlainExtractor(Extractor):
             else:
                 how = 'left'
 
-            join_columns = self.joins[join_index-1].keep_columns
+            join_columns = self.joins[join_index - 1].keep_columns
             current = current.merge(frame, left_on=join_columns, right_index=True, how=how).drop(join_columns, axis=1)
 
             if current.shape[0] < ibundle.index_frame.shape[0]:
                 raise ValueError(f'Error in extractor {self.name}: when merging with {join.frame}, less rows are produced, {current.shape[0]} instead {ibundle.index_frame.shape[0]}. Are some rows missing?')
-            elif current.shape[0]>ibundle.index_frame.shape[0]:
+            elif current.shape[0] > ibundle.index_frame.shape[0]:
                 raise ValueError(f'Error in extractor {self.name}: When merging with {join.frame}, more rows are produced, {current.shape[0]} instead {ibundle.index_frame.shape[0]}. Is index non-unique?)')
-            elif not (current.index==ibundle.index_frame.index).all():
+            elif not (current.index == ibundle.index_frame.index).all():
                 current = current.loc[ibundle.index_frame.index]
-                if not (current.index==ibundle.index_frame.index).all():
+                if not (current.index == ibundle.index_frame.index).all():
                     raise ValueError(f'Error in extractor {self.name}: something wrong happened when merging with {join.frame}: same amount of rows, but indices are different')
 
         return current
-
-
 
     def fit(self, ibundle: IndexedDataBundle):
         if self.transformer is not None:
             frame = self._build_frame(ibundle)
             self.transformer.fit(frame)
-
 
     def extract(self, ibundle: IndexedDataBundle) -> pd.DataFrame:
         frame = self._build_frame(ibundle)

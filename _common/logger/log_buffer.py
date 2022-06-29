@@ -2,10 +2,13 @@ import datetime
 import json
 import sys
 import logging
-from .logger_root import Logger
+
 from yo_fluq_ds import Query
-from .logging_wrap import LoggingWrap
 from io import StringIO
+
+from .logger_root import Logger
+from .logging_wrap import LoggingWrap
+
 
 class LogBuffer:
     def _serialize(self, data):
@@ -13,7 +16,6 @@ class LogBuffer:
             if isinstance(value, datetime.datetime):
                 data[key] = str(value)
         return json.dumps(data)
-
 
     def __init__(self, custom_wrap_factory=None, **keys):
         self.buffer = StringIO()
@@ -36,7 +38,7 @@ class LogBuffer:
 
     def transpose(self, *columns):
         ps = self.parse().to_list()
-        return {c: [z.get(c,'#') for z in ps] for c in columns}
+        return {c: [z.get(c, '#') for z in ps] for c in columns}
 
     def read(self):
         val = self.buffer.getvalue()

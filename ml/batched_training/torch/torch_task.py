@@ -1,12 +1,15 @@
 from typing import *
-from ... import batched_training as bt
-from ...single_frame_training import ModelConstructor
+
 import pandas as pd
 import torch
+
+from yo_fluq_ds import Query
+
+from ... import batched_training as bt
+from ...single_frame_training import ModelConstructor
 from .basis_tasks import AbstractBasisTaskSource
 from .networks.network_commons import TorchNetworkFactory
 from ...._common import Logger
-from yo_fluq_ds import Query
 
 
 class Conventions:
@@ -33,7 +36,7 @@ class TorchTrainingSettings:
                  optimizer_ctor: Optional[OptimizerConstructor] = None,
                  loss_ctor: Optional[ModelConstructor] = None,
                  ):
-        self.optimizer_ctor = optimizer_ctor if optimizer_ctor is not None else OptimizerConstructor('torch.optim:SGD',lr=1)
+        self.optimizer_ctor = optimizer_ctor if optimizer_ctor is not None else OptimizerConstructor('torch.optim:SGD', lr=1)
         self.loss_ctor = loss_ctor if loss_ctor is not None else ModelConstructor('torch.nn:MSELoss')
 
 
@@ -43,7 +46,6 @@ class TorchExtractorFactory:
 
     def preprocess_bundle(self, bundle):
         pass
-
 
 
 class PredefinedExtractorFactory(TorchExtractorFactory):
@@ -83,7 +85,6 @@ class _TorchNetworkHandler(bt.BatchedModelHandler):
         return loss.item()
 
 
-
 class _BasisExtractorInfo:
     def __init__(self, extractor: bt.Extractor, basis_task_name: str):
         self.extractor = extractor
@@ -116,11 +117,9 @@ class TorchTrainingTask(bt.BatchedTrainingTask):
         self.basis_tasks_sources = basis_tasks_sources
         self.basis_tasks = {}
 
-
     def _add_name_part(self, value, array):
         if value is not None:
             array.append(value)
-
 
     def init(self, bundle: bt.DataBundle):
         if self.basis_tasks_sources is not None:
@@ -138,7 +137,7 @@ class TorchTrainingTask(bt.BatchedTrainingTask):
         if not self.settings.continue_training:
             Logger.info('Creating extractors')
             extractors = self.extractor_factory.create_extractors(self, bundle)
-            Logger.info('Extractors: '+ ', '.join([i.get_name() for i in extractors]))
+            Logger.info('Extractors: ' + ', '.join([i.get_name() for i in extractors]))
 
             if 'priority' in bundle.index_frame.columns:
                 strategy = bt.PriorityRandomBatcherStrategy('priority')

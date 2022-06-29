@@ -15,6 +15,7 @@ from .model_handler import BatchedModelHandler
 from ..training_core import AbstractTrainingTask, TrainingEnvironment, Splitter, MetricPool, DataFrameSplit, TrainingResult, ArtificierArguments, IdentitySplitter
 from ..._common import Logger
 
+
 class TrainingSettings:
     """
     Settings of the training process
@@ -22,7 +23,7 @@ class TrainingSettings:
 
     def __init__(self,
                  epoch_count: int = 100,
-                 batch_size: Optional[int] = 10000, #TODO: Optional here is a crutch. When None, Batcher.batch_size will be used
+                 batch_size: Optional[int] = 10000,  # TODO: Optional here is a crutch. When None, Batcher.batch_size will be used
                  continue_training: bool = False,
                  training_time_limit: Optional[timedelta] = None,
                  evaluation_time_limit: Optional[timedelta] = None,
@@ -54,7 +55,6 @@ class TrainingSettings:
         self.delay_after_iteration_in_seconds = delay_after_iteration_in_seconds
         self.index_frame_name_in_bundle = index_frame_name_in_bundle
 
-
     def mini_batches_are_requried(self):
         return self.mini_batch_size is not None
 
@@ -67,12 +67,12 @@ class _TrainingTempData:
         self.first_iteration = first_iteration
         self.iteration = 0
         self.losses = []
-        self.epoch_begins_at = None #type: Optional[datetime]
-        self.train_bundle = None #type: Optional[IndexedDataBundle]
-        self.result = None #type: Optional[TrainingResult]
-        self.batch = None #type: Dict[str, pd.DataFrame]
-        self.mini_batch_indices = None #type: List
-        self.mini_batch = None #type: Dict[str, pd.DataFrame]
+        self.epoch_begins_at = None  # type: Optional[datetime]
+        self.train_bundle = None  # type: Optional[IndexedDataBundle]
+        self.result = None  # type: Optional[TrainingResult]
+        self.batch = None  # type: Dict[str, pd.DataFrame]
+        self.mini_batch_indices = None  # type: List
+        self.mini_batch = None  # type: Dict[str, pd.DataFrame]
 
 
 class BatchedTrainingTask(AbstractTrainingTask):
@@ -91,7 +91,7 @@ class BatchedTrainingTask(AbstractTrainingTask):
                  settings: Optional[TrainingSettings] = None,
                  artificiers: Optional[List[Any]] = None,
                  late_initialization: Callable[['BatchedTrainingTask', DataBundle], None] = None,
-                 debug = False
+                 debug=False
                  ):
         super(BatchedTrainingTask, self).__init__()
         self.batcher = batcher
@@ -104,7 +104,7 @@ class BatchedTrainingTask(AbstractTrainingTask):
         self.late_initialization = late_initialization
         self.debug = debug
 
-    #region Initialization
+    # region Initialization
 
     def _get_split(self, ibundle: IndexedDataBundle):
         initial_split = DataFrameSplit(ibundle.index_frame, [], None)
@@ -113,7 +113,6 @@ class BatchedTrainingTask(AbstractTrainingTask):
             raise ValueError('Splitter must provide exactly one split in case of batch training')
         split = split[0]
         return split
-
 
     def _instantiate_all(self, ibundle: IndexedDataBundle):
         self.history = []
@@ -143,7 +142,6 @@ class BatchedTrainingTask(AbstractTrainingTask):
         ibundle = IndexedDataBundle(bundle[self.settings.index_frame_name_in_bundle], bundle)
         return ibundle
 
-
     def _prepare_all(self, bundle: Union[str, Path, DataBundle], env: Optional[TrainingEnvironment]) -> _TrainingTempData:
         if env is None:
             env = TrainingEnvironment()
@@ -170,7 +168,7 @@ class BatchedTrainingTask(AbstractTrainingTask):
         self.batcher.preprocess_bundle(ibundle)
 
         split = self._get_split(ibundle)
-        split_msg = f'Splits: train {len(split.train)}, '+ ', '.join([f"{key} {len(value)}" for key, value in split.tests.items()])
+        split_msg = f'Splits: train {len(split.train)}, ' + ', '.join([f"{key} {len(value)}" for key, value in split.tests.items()])
         Logger.info(split_msg)
 
         if not self.settings.continue_training:
@@ -182,15 +180,13 @@ class BatchedTrainingTask(AbstractTrainingTask):
             first_iteration = len(self.history)
         return _TrainingTempData(ibundle, env, split, first_iteration)
 
-
-    def generate_sample_batch(self, bundle: DataBundle, batch_index: int = 0, from_split = None, force_default_strategy = False):
+    def generate_sample_batch(self, bundle: DataBundle, batch_index: int = 0, from_split=None, force_default_strategy=False):
         temp_data = self._prepare_all(bundle, None)
         if from_split is None:
             ibundle = temp_data.original_ibundle.change_index(temp_data.split.train)
         else:
             ibundle = temp_data.original_ibundle.change_index(temp_data.split.tests[from_split])
         return self.batcher.get_batch(ibundle, batch_index, force_default_strategy)
-
 
     def get_metric_names(self):
         expected_stages = self.splitter.get_subset_names()
@@ -204,9 +200,9 @@ class BatchedTrainingTask(AbstractTrainingTask):
         metrics.append('iteration')
         return metrics
 
-    #endregion
+    # endregion
 
-    #region Prediction
+    # region Prediction
 
     def _evaluation_for_one_stage(self, ibundle: IndexedDataBundle, stage_name: str):
         dfs = []
@@ -237,21 +233,20 @@ class BatchedTrainingTask(AbstractTrainingTask):
             dfs.append(df)
         return pd.concat(dfs, sort=False)
 
-    def predict(self, ibundle: Union[str,Path,DataBundle,IndexedDataBundle]):
+    def predict(self, ibundle: Union[str, Path, DataBundle, IndexedDataBundle]):
         ibundle = self._ensure_bundle(ibundle)
         self.batcher.preprocess_bundle(ibundle)
         return self._evaluation_for_one_stage(ibundle, 'prediction')
 
-    #endregion
+    # endregion
 
-    #region Training
+    # region Training
 
     def _wait_till_end_of_quite_hours(self):
         if self.settings.is_quite_time is not None:
             while self.settings.is_quite_time(datetime.now()):
                 time.sleep(60)
                 Logger.info("Quite time")
-
 
     def _training_report(self, temp_data: _TrainingTempData):
         result = TrainingResult()
@@ -290,7 +285,6 @@ class BatchedTrainingTask(AbstractTrainingTask):
         temp_data.iteration += 1
         temp_data.losses = []
 
-
     def _check_training_time_conditions(self, temp_data: _TrainingTempData, batch_number: int):
         self._wait_till_end_of_quite_hours()
         iteration_begin = datetime.now()
@@ -318,7 +312,6 @@ class BatchedTrainingTask(AbstractTrainingTask):
             temp_data.losses.append(loss)
         self._training_report(temp_data)
 
-
     def _train_epoch_with_minibatches(self, temp_data: _TrainingTempData):
         temp_data.losses = []
         temp_data.epoch_begins_at = datetime.now()
@@ -330,7 +323,7 @@ class BatchedTrainingTask(AbstractTrainingTask):
         for i in range(0, batch_count):
             if terminate:
                 break
-            batch =  self.batcher.get_batch(temp_data.train_bundle, i)
+            batch = self.batcher.get_batch(temp_data.train_bundle, i)
             temp_data.batch = batch
             mini_epochs = self.settings.mini_epoch_count or 1
             for j in range(0, mini_epochs):
@@ -352,7 +345,6 @@ class BatchedTrainingTask(AbstractTrainingTask):
         if self.settings.mini_reporting_conventional:
             self._training_report(temp_data)
 
-
     def run_with_environment(self, _bundle: Union[str, Path, DataBundle], env: Optional[TrainingEnvironment] = None):
         temp_data = self._prepare_all(_bundle, env)
         Logger.info('Initialization completed')
@@ -370,9 +362,4 @@ class BatchedTrainingTask(AbstractTrainingTask):
             if self.settings.delay_after_iteration_in_seconds is not None:
                 time.sleep(self.settings.delay_after_iteration_in_seconds)
 
-
-
-
-
-
-    #endregion
+    # endregion

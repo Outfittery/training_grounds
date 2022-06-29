@@ -36,13 +36,13 @@ class SentenceContextBuilder(btc.ContextBuilder):
     def build_context(self, ibundle, context_size):
         df = ibundle.index_frame[['sentence_id']]
         df = df.merge(ibundle.bundle.src.set_index('sentence_id'), left_on='sentence_id', right_index=True)
-        df = df[['word_position','word_id','word']]
-        df = df.loc[df.word_position<context_size]
+        df = df[['word_position', 'word_id', 'word']]
+        df = df.loc[df.word_position < context_size]
         df = df.set_index('word_position', append=True)
         return df
 
 
-df = pd.read_parquet(Path(__file__).parent/'lstm_task.parquet')
+df = pd.read_parquet(Path(__file__).parent / 'lstm_task.parquet')
 db = translate_to_sequential(df)
 
 
@@ -50,8 +50,6 @@ class TestExtractorFactory(btt.TorchExtractorFactory):
     def __init__(self, plain_context: Optional[int], lstm_context: Optional[int] = None):
         self.plain_context = plain_context
         self.lstm_context = lstm_context
-
-
 
     def build_context_extractor(self, context_length):
         context_extractor = btc.ContextExtractor(
@@ -104,7 +102,7 @@ class TestNetworkFactory(btt.TorchNetworkFactory):
             return btn.FeedForwardNetwork.Factory(
                 btn.ExtractingNetwork.Factory('lstm_features'),
                 btn.LSTMNetwork.Factory(self.hidden_size),
-                btn.FullyConnectedNetwork.Factory([self.hidden_size,1])
+                btn.FullyConnectedNetwork.Factory([self.hidden_size, 1])
             ).create_network(task, input)
 
 
@@ -118,6 +116,7 @@ def build_task(extractor):
     )
     return task
 
+
 class TorchLstmTestCase(TestCase):
     def test_plain(self):
         task = build_task(TestExtractorFactory(4))
@@ -126,8 +125,8 @@ class TorchLstmTestCase(TestCase):
 
     def test_plain_minibatches(self):
         task = build_task(TestExtractorFactory(4))
-        task.settings.mini_epoch_count=5
-        task.settings.mini_batch_size=5
+        task.settings.mini_epoch_count = 5
+        task.settings.mini_batch_size = 5
         task.run(db)
         self.assertGreaterEqual(task.history[-1]['roc_auc_score_display'], 0.55)
 
@@ -138,7 +137,7 @@ class TorchLstmTestCase(TestCase):
 
     def test_lstm_minibatches(self):
         task = build_task(TestExtractorFactory(None, 4))
-        task.settings.mini_epoch_count=5
-        task.settings.mini_batch_size=5
+        task.settings.mini_epoch_count = 5
+        task.settings.mini_batch_size = 5
         task.run(db)
         self.assertGreaterEqual(task.history[-1]['roc_auc_score_display'], 0.55)

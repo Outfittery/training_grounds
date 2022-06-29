@@ -9,6 +9,7 @@ import os
 
 data = Query.en(range(5)).select(lambda z: dict(a=z)).to_dataframe()
 
+
 class MyFeaturizerSimple(DataframeFeaturizer):
     def __init__(self):
         super(MyFeaturizerSimple, self).__init__()
@@ -26,13 +27,14 @@ class MyFeaturizerBatch(DataframeFeaturizer):
 
 
 def get_files(location):
-    return Query.folder(location,'**/*').where(lambda z: z.is_file()).select(lambda z: z.relative_to(location)).order_by(lambda z: z).to_list()
+    return Query.folder(location, '**/*').where(lambda z: z.is_file()).select(lambda z: z.relative_to(location)).order_by(lambda z: z).to_list()
+
 
 class FeaturizationJobTestCase(TestCase):
     def test_two(self):
-        path1 = Loc.temp_path/'tests/featurization_job_mem_test_case/local'
-        path2 = Loc.temp_path/'tests/featurization_job_mem_test_case/control'
-        path3 = Loc.temp_path/'tests/featurization_job_mem_test_case/dataset'
+        path1 = Loc.temp_path / 'tests/featurization_job_mem_test_case/local'
+        path2 = Loc.temp_path / 'tests/featurization_job_mem_test_case/control'
+        path3 = Loc.temp_path / 'tests/featurization_job_mem_test_case/dataset'
         shutil.rmtree(path1.parent, ignore_errors=True)
         os.makedirs(path1.parent)
 
@@ -58,11 +60,6 @@ class FeaturizationJobTestCase(TestCase):
 
         self.assertListEqual(get_files(path1), get_files(path2))
 
-        ds = Dataset(path3, MemoryFileSyncer(None,'batched', mem.cache))
+        ds = Dataset(path3, MemoryFileSyncer(None, 'batched', mem.cache))
         ds.download()
-        self.assertListEqual(get_files(path1/'batched'), get_files(path3))
-
-
-
-
-
+        self.assertListEqual(get_files(path1 / 'batched'), get_files(path3))

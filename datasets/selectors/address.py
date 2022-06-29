@@ -26,7 +26,7 @@ class Address(CombinedSelector):
                 for part in item.split('.'):
                     addr_calls.append(FieldGetter(part, none_propagation))
             elif isinstance(item, int):
-                addr_calls.append(FieldGetter(item,none_propagation))
+                addr_calls.append(FieldGetter(item, none_propagation))
             elif isinstance(item, CombinedSelector):
                 addr_calls.append(item)
             elif callable(item):
@@ -36,7 +36,7 @@ class Address(CombinedSelector):
         return addr_calls
 
     @staticmethod
-    def on(obj, none_propagation = False):
+    def on(obj, none_propagation=False):
         return _AddressOn(obj, none_propagation)
 
     @staticmethod

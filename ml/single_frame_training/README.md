@@ -383,8 +383,8 @@ result = task.run(tdf)
       0%|          | 0/1 [00:00<?, ?it/s]
 
 
-    2022-06-27 19:28:56.739258+00:00 INFO: Starting stage 1/1
-    2022-06-27 19:28:56.799082+00:00 INFO: Completed stage 1/1
+    2022-06-29 11:26:31.526335+00:00 INFO: Starting stage 1/1
+    2022-06-29 11:26:32.465762+00:00 INFO: Completed stage 1/1
 
 
 Essential components are:
@@ -635,7 +635,7 @@ result['runs'][0]['model']
 
     Pipeline(steps=[('ColumnNamesKeeper', ColumnNamesKeeper()),
                     ('Transformer',
-                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f2b378cadf0>),
+                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f966f5d28b0>),
                     ('ColumnNamesKeeperAfterTransformation', ColumnNamesKeeper()),
                     ('Model', LogisticRegression())])
 
@@ -899,28 +899,28 @@ pd.DataFrame([run['metrics'] for run in result['runs'].values()])
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.862917</td>
-      <td>0.998319</td>
+      <td>0.867440</td>
+      <td>0.998059</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.826485</td>
-      <td>0.998715</td>
+      <td>0.840949</td>
+      <td>0.998938</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.851331</td>
-      <td>0.997248</td>
+      <td>0.843953</td>
+      <td>0.997413</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.815813</td>
-      <td>0.999520</td>
+      <td>0.816106</td>
+      <td>0.999443</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.887391</td>
-      <td>0.997797</td>
+      <td>0.886486</td>
+      <td>0.997604</td>
     </tr>
   </tbody>
 </table>
@@ -1034,13 +1034,13 @@ result['runs'][0]['model']
 
     Pipeline(steps=[('ColumnNamesKeeper', ColumnNamesKeeper()),
                     ('Transformer',
-                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f2b34097bb0>),
+                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f966d4ccbe0>),
                     ('ColumnNamesKeeperAfterTransformation', ColumnNamesKeeper()),
                     ('Model',
                      Pipeline(steps=[('CategoricalVariablesSetter',
-                                      <tg.common.ml.single_frame_training.model_provider.CatBoostWrap object at 0x7f2b34088280>),
+                                      <tg.common.ml.single_frame_training.model_provider.CatBoostWrap object at 0x7f9691fc8910>),
                                      ('Model',
-                                      <catboost.core.CatBoostClassifier object at 0x7f2b3826e8b0>)]))])
+                                      <catboost.core.CatBoostClassifier object at 0x7f966c16c040>)]))])
 
 
 
@@ -1309,7 +1309,7 @@ result['runs'][0]['model']
 
     Pipeline(steps=[('ColumnNamesKeeper', ColumnNamesKeeper()),
                     ('Transformer',
-                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f2b192db580>),
+                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f9648f03730>),
                     ('ColumnNamesKeeperAfterTransformation', ColumnNamesKeeper()),
                     ('Model', LogisticRegression(C=1))])
 
@@ -1347,7 +1347,7 @@ result['runs'][0]['model']
 
     Pipeline(steps=[('ColumnNamesKeeper', ColumnNamesKeeper()),
                     ('Transformer',
-                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f2b2049aca0>),
+                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f96580c9fa0>),
                     ('ColumnNamesKeeperAfterTransformation', ColumnNamesKeeper()),
                     ('Model', LogisticRegression())])
 
@@ -1359,7 +1359,7 @@ Kraken does exactly one thing: it executes any given method over set of paramete
 
 
 ```python
-from tg.common.ml.kraken import Kraken
+from tg.common.ml.miscellaneous import Kraken
 
 config = [
     {'a': 1, 'b': 2},

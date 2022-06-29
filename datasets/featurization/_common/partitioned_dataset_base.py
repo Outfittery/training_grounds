@@ -7,15 +7,16 @@ import pandas as pd
 from datetime import datetime
 from pathlib import Path
 from yo_fluq_ds import Query, Queryable, fluq
+from uuid import uuid4
 
 from ...._common import FileSyncer, Loc
 from ...access import CacheMode
 from ..simple.dataset import Dataset, LambdaDataFrameSource
 from .index_filters import SimpleIndexFilter
 
-from uuid import uuid4
 
 T = TypeVar('T')
+
 
 class PartitionedDatasetRecordHandler(Generic[T]):
     def __init__(self, description_filename, type, name_field):
@@ -33,7 +34,7 @@ class PartitionedDatasetRecordHandler(Generic[T]):
         Query.en(records).select(lambda z: z.__dict__).to_dataframe().to_parquet(filename)
 
     def write_parquet_to_folder(self, records: List[T], folder):
-        self.write_parquet(records, folder/self.get_description_filename())
+        self.write_parquet(records, folder / self.get_description_filename())
 
     def get_name_from_record(self, record: T):
         return getattr(record, self.name_field)
@@ -57,18 +58,15 @@ class TimePartitionedDatasetBase(Generic[T]):
     def filter_relevant_records(self, records: List[T], from_time: datetime, to_time: datetime) -> List[T]:
         raise NotImplementedError()
 
-
     def get_description(self) -> List[T]:
         return self.record_handler.read_parquet(self.location / self.record_handler.get_description_filename())
 
     def get_desription_as_df(self) -> pd.DataFrame:
-        return pd.read_parquet(self.location/self.record_handler.get_description_filename())
-
-
+        return pd.read_parquet(self.location / self.record_handler.get_description_filename())
 
     def spawn_child_dataset(self, partition_name):
         return Dataset(
-            self.location/partition_name/self.featurizer_name,
+            self.location / partition_name / self.featurizer_name,
             None if self.syncer is None else self.syncer.cd(os.path.join(partition_name, self.featurizer_name))
         )
 
@@ -80,7 +78,7 @@ class TimePartitionedDatasetBase(Generic[T]):
                  to_timestamp: Optional[datetime] = None,
                  cache_mode: Union[str, CacheMode, None] = CacheMode.Default,
                  with_progress_bar: bool = False,
-                 ) :
+                 ):
         cache_mode = CacheMode.parse(cache_mode)
         if cache_mode == CacheMode.No:
             cache_mode = CacheMode.Remake
@@ -101,7 +99,7 @@ class TimePartitionedDatasetBase(Generic[T]):
         datasets_to_download = []
         for rec in records:
             child = self.spawn_child_dataset(self.record_handler.get_name_from_record(rec))
-            if not child.is_available()  or cache_mode == CacheMode.Remake:
+            if not child.is_available() or cache_mode == CacheMode.Remake:
                 datasets_to_download.append(child)
 
         download_query = Query.en(datasets_to_download)

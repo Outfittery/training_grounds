@@ -1,27 +1,29 @@
 from typing import *
-from .logger_interface import LoggerInterface
+
 import logging
 import simplejson
 import sys
-from logging import getLogger, StreamHandler, Formatter, LogRecord
 import datetime
-from dateutil import tz
 import traceback
 import platform
 
+from logging import getLogger, StreamHandler, Formatter, LogRecord
+from dateutil import tz
+
+from .logger_interface import LoggerInterface
+
+
 class FieldsCompatibleFormatter(Formatter):
     def __init__(self,
-                 formatting_method: Callable[[Dict],str],
+                 formatting_method: Callable[[Dict], str],
                  ):
         super(FieldsCompatibleFormatter, self).__init__()
-        self.fields = {} #type: Dict
-        self.temp_fields = {} #type: Dict
+        self.fields = {}  # type: Dict
+        self.temp_fields = {}  # type: Dict
         self.formatting_method = formatting_method
-
 
     def set_fields(self, fields):
         self.fields = fields
-
 
     def format(self, record: LogRecord) -> str:
         data = self.collect_data(record, self.fields)
@@ -60,8 +62,8 @@ class LoggingWrap(LoggerInterface):
     def __init__(self,
                  name: str,
                  level: int,
-                 formatting_method: Callable[[Dict],str],
-                 stack_shift: Optional[int]  = 4
+                 formatting_method: Callable[[Dict], str],
+                 stack_shift: Optional[int] = 4
                  ):
         self._logger = getLogger(name)
         self._logger.setLevel(level)
@@ -70,11 +72,10 @@ class LoggingWrap(LoggerInterface):
         self._logger.addHandler(self._handler)
         self.stack_shift = stack_shift
         version = tuple(platform.python_version().split('.'))
-        if version<=('3','8','0'):
+        if version <= ('3', '8', '0'):
             self.stack_shift = None
 
-
-    def set_extra_fields(self, fields: Dict[str,Dict]):
+    def set_extra_fields(self, fields: Dict[str, Dict]):
         self._formatter.set_fields(fields)
 
     def output(self, method, object):
@@ -85,6 +86,3 @@ class LoggingWrap(LoggerInterface):
 
     def close(self):
         self._logger.handlers.remove(self._handler)
-
-
-

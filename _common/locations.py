@@ -1,9 +1,10 @@
 from typing import *
+
 import os
 import subprocess
 import uuid
-from pathlib import Path
 
+from pathlib import Path
 
 
 def _get_git_user():
@@ -14,6 +15,7 @@ def _get_git_user():
         return username
     except:
         return 'default'
+
 
 def _norm_relative_path(p):
     path = Path(__file__).parent.joinpath(p)
@@ -31,12 +33,10 @@ class LocationsClass:
         self.tg_name = 'tg'
         self.git_username = _get_git_user()
 
-    def get_default_temp_path(self, prefix: str, location: Optional[Union[str,Path]] = None) -> Path:
+    def get_default_temp_path(self, prefix: str, location: Optional[Union[str, Path]] = None) -> Path:
         if location is None:
-            return self.temp_path/prefix/str(uuid.uuid4())
+            return self.temp_path / prefix / str(uuid.uuid4())
         return Path(location)
-
-
 
 
 Loc = LocationsClass()

@@ -1,4 +1,5 @@
 from typing import *
+
 from .. import TrainingSettings, MetricPool
 from .. import torch as btt
 from .arch import MirrorSettings, _MirrorExtractorFactory, _MirrorNetworkFactory
@@ -22,4 +23,3 @@ class MirrorTrainingTask(btt.TorchTrainingTask):
             metric_pool,
             basis_tasks_sources
         )
-

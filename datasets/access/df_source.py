@@ -1,9 +1,13 @@
 from typing import *
+
 import pandas as pd
-from .arch import CacheMode, DataSource
-from pathlib import Path
 import os
+
+from pathlib import Path
+
+from .arch import CacheMode, DataSource
 from ..._common import DataBundle
+
 
 class DataFrameSource:
     def get_df(self) -> pd.DataFrame:
@@ -12,7 +16,7 @@ class DataFrameSource:
     def get_default_filename(self):
         return None
 
-    def get_cached_df(self, filename: Optional[Union[Path,str]] = None, cache_mode: Union[str,CacheMode] = 'default'):
+    def get_cached_df(self, filename: Optional[Union[Path, str]] = None, cache_mode: Union[str, CacheMode] = 'default'):
         if filename is None:
             filename = self.get_default_filename()
             if filename is None:
@@ -22,6 +26,7 @@ class DataFrameSource:
             filename,
             self.get_df
         )
+
 
 class DataFrameSourceOverDataSource(DataFrameSource):
     def __init__(self, src: DataSource):

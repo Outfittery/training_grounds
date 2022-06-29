@@ -93,10 +93,10 @@ class SelectorTestCase(TestCase):
     def test_selector_with_function(self):
         def f(v):
             if isinstance(v, str):
-                return v+'1'
+                return v + '1'
             else:
-                return v-1
+                return v - 1
         self.assertSelect(
-            {'b': 4, 'x': '51', 'u':1},
-            Selector().select(['b', f], x= ['b', str, f]).with_prefix('a.x').select('u')
+            {'b': 4, 'x': '51', 'u': 1},
+            Selector().select(['b', f], x=['b', str, f]).with_prefix('a.x').select('u')
         )

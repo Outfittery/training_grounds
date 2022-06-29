@@ -31,10 +31,7 @@ class UpdatableFeaturizationJobTestCase(TestCase):
                 'batched': featurizer_batched
             },
             mem,
-            Loc.temp_path/'tests/updatable_featurization_job_empty'
+            Loc.temp_path / 'tests/updatable_featurization_job_empty'
         )
         job.run()
         self.assertEqual(0, len(mem.cache))
-
-
-

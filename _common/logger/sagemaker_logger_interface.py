@@ -1,5 +1,6 @@
 from .logger_interface import LoggerInterface
 
+
 class SagemakerLoggerInterface(LoggerInterface):
     def output(self, method, object):
         print(f'{method.upper()}: {object}', flush=True)

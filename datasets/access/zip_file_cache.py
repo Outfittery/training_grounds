@@ -1,15 +1,14 @@
 from typing import *
+
 import pickle
 import shutil
-
-from pathlib import Path
-
-from .arch import AbstractCacheDataSource
-
-from yo_fluq_ds import agg, Queryable, FileIO, Query
-
 import os
 
+from pathlib import Path
+from yo_fluq_ds import agg, Queryable, FileIO, Query
+
+from .arch import AbstractCacheDataSource
+import zipfile
 
 
 class ZippedFileDataSource(AbstractCacheDataSource):
@@ -19,12 +18,11 @@ class ZippedFileDataSource(AbstractCacheDataSource):
     Buffering is important: when opening zip-file, it's table of contents is read, so if we have 1 file per record,
     opening a file takes a long time and consumes a lot of memory
     """
+
     def __init__(self, path, buffer_size=1000):
         path = str(path)
         self.path = path
         self.buffer_size = buffer_size
-
-
 
     def cache_from(self, src: Queryable, cnt=None) -> None:
         """
@@ -48,7 +46,6 @@ class ZippedFileDataSource(AbstractCacheDataSource):
             os.remove(full_path)
         shutil.move(tmp_path, full_path)
 
-
     def is_available(self):
         return os.path.isfile(self.path)
 
@@ -59,7 +56,6 @@ class ZippedFileDataSource(AbstractCacheDataSource):
                     continue
                 for element in pickle.loads(zfile.read(name)):
                     yield element
-
 
     def get_data(self) -> Queryable:
         length = None
@@ -73,7 +69,6 @@ class ZippedFileDataSource(AbstractCacheDataSource):
 
 
 
-import zipfile
 
 
 class _ToZipFolderBuffered(agg.PushQueryElement):
@@ -105,8 +100,7 @@ class _ToZipFolderBuffered(agg.PushQueryElement):
         instance.buffer.append(element)
         if len(instance.buffer) >= self.buffer_size:
             self._flush(instance)
-        self.length+=1
-
+        self.length += 1
 
     def on_report(self, instance):
         return None
@@ -115,6 +109,3 @@ class _ToZipFolderBuffered(agg.PushQueryElement):
         self._flush(instance)
         instance.file.writestr('length', str(self.length).encode('utf-8'))
         instance.file.__exit__(exc_type, exc_val, exc_tb)
-
-
-

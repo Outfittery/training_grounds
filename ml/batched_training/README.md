@@ -456,10 +456,10 @@ test_df.loc[batch].groupby('x').size()
 
 
     x
-    1    1016
-    2    2025
-    3    2975
-    4    3984
+    1     974
+    2    1974
+    3    3087
+    4    3965
     dtype: int64
 
 
@@ -1168,8 +1168,8 @@ batch['labels'].groupby('Survived').size()
 
 
     Survived
-    0.0    51
-    1.0    47
+    0.0    50
+    1.0    45
     dtype: int64
 
 
@@ -1191,8 +1191,8 @@ test_batch['labels'].groupby('Survived').size()
 
 
     Survived
-    0.0    323
-    1.0    254
+    0.0    331
+    1.0    261
     dtype: int64
 
 
@@ -1315,36 +1315,36 @@ task = bt.BatchedTrainingTask(
 result = task.run(ibundle_fixed)
 ```
 
-    2022-06-27 19:29:58.428635+00:00 INFO: Training starts. Info: {}
-    2022-06-27 19:29:58.430847+00:00 INFO: Ensuring/loading bundle. Bundle before:
-    <tg.common.ml.batched_training.data_bundle.IndexedDataBundle object at 0x7f99f8e024f0>
-    2022-06-27 19:29:58.433336+00:00 INFO: Bundle loaded
+    2022-06-29 11:28:18.320342+00:00 INFO: Training starts. Info: {}
+    2022-06-29 11:28:18.321589+00:00 INFO: Ensuring/loading bundle. Bundle before:
+    <tg.common.ml.batched_training.data_bundle.IndexedDataBundle object at 0x7f8bd25395b0>
+    2022-06-29 11:28:18.322290+00:00 INFO: Bundle loaded
     {'index': {'shape': (891, 5), 'index_name': 'PassengerId', 'columns': ['Name', 'Ticket', 'Cabin', 'Survived', 'priority'], 'index': [1, 2, 3, 4, 5, '...']}, 'passengers': {'shape': (891, 4), 'index_name': 'Name', 'columns': ['Sex', 'Age', 'SibSp', 'Parch'], 'index': ['Braund, Mr. Owen Harris', 'Cumings, Mrs. John Bradley (Florence Briggs Thayer)', 'Heikkinen, Miss. Laina', 'Futrelle, Mrs. Jacques Heath (Lily May Peel)', 'Allen, Mr. William Henry', '...']}, 'tickets': {'shape': (681, 3), 'index_name': 'Ticket', 'columns': ['Pclass', 'Fare', 'Embarked'], 'index': ['A/5 21171', 'PC 17599', 'STON/O2. 3101282', '113803', '373450', '...']}}
-    2022-06-27 19:29:58.438464+00:00 INFO: Index frame is set to index, shape is (891, 5)
-    2022-06-27 19:29:58.445809+00:00 INFO: Skipping late initialization
-    2022-06-27 19:29:58.447953+00:00 INFO: Preprocessing bundle by batcher
-    2022-06-27 19:29:58.472113+00:00 INFO: Splits: train 712, test 179, display 143
-    2022-06-27 19:29:58.474187+00:00 INFO: New training. Instantiating the system
-    2022-06-27 19:29:58.478148+00:00 INFO: Fitting the transformers
-    2022-06-27 19:29:58.702007+00:00 INFO: Instantiating model
-    2022-06-27 19:29:58.752867+00:00 INFO: Initialization completed
-    2022-06-27 19:29:58.759070+00:00 INFO: Epoch 0 of 1
-    2022-06-27 19:29:58.759905+00:00 INFO: Training: 0/8
-    2022-06-27 19:29:58.894238+00:00 INFO: Training: 1/8
-    2022-06-27 19:29:58.968001+00:00 INFO: Training: 2/8
-    2022-06-27 19:29:59.029186+00:00 INFO: Training: 3/8
-    2022-06-27 19:29:59.145526+00:00 INFO: Training: 4/8
-    2022-06-27 19:29:59.265845+00:00 INFO: Training: 5/8
-    2022-06-27 19:29:59.431313+00:00 INFO: Training: 6/8
-    2022-06-27 19:29:59.588380+00:00 INFO: Training: 7/8
-    2022-06-27 19:29:59.764171+00:00 INFO: test: 0/2
-    2022-06-27 19:29:59.935129+00:00 INFO: test: 1/2
-    2022-06-27 19:30:00.151570+00:00 INFO: display: 0/2
-    2022-06-27 19:30:00.344605+00:00 INFO: display: 1/2
-    2022-06-27 19:30:00.527466+00:00 INFO: ###roc_auc_score_test:0.7768115942028986
-    2022-06-27 19:30:00.531099+00:00 INFO: ###roc_auc_score_display:0.6655913978494623
-    2022-06-27 19:30:00.537008+00:00 INFO: ###loss:0.2480677142739296
-    2022-06-27 19:30:00.547391+00:00 INFO: ###iteration:0
+    2022-06-29 11:28:18.324531+00:00 INFO: Index frame is set to index, shape is (891, 5)
+    2022-06-29 11:28:18.325349+00:00 INFO: Skipping late initialization
+    2022-06-29 11:28:18.325862+00:00 INFO: Preprocessing bundle by batcher
+    2022-06-29 11:28:18.330539+00:00 INFO: Splits: train 712, test 179, display 143
+    2022-06-29 11:28:18.331074+00:00 INFO: New training. Instantiating the system
+    2022-06-29 11:28:18.332409+00:00 INFO: Fitting the transformers
+    2022-06-29 11:28:18.435844+00:00 INFO: Instantiating model
+    2022-06-29 11:28:18.438288+00:00 INFO: Initialization completed
+    2022-06-29 11:28:18.442028+00:00 INFO: Epoch 0 of 1
+    2022-06-29 11:28:18.442853+00:00 INFO: Training: 0/8
+    2022-06-29 11:28:18.495135+00:00 INFO: Training: 1/8
+    2022-06-29 11:28:18.588787+00:00 INFO: Training: 2/8
+    2022-06-29 11:28:18.742102+00:00 INFO: Training: 3/8
+    2022-06-29 11:28:18.873698+00:00 INFO: Training: 4/8
+    2022-06-29 11:28:18.951669+00:00 INFO: Training: 5/8
+    2022-06-29 11:28:19.006398+00:00 INFO: Training: 6/8
+    2022-06-29 11:28:19.053355+00:00 INFO: Training: 7/8
+    2022-06-29 11:28:19.102285+00:00 INFO: test: 0/2
+    2022-06-29 11:28:19.158308+00:00 INFO: test: 1/2
+    2022-06-29 11:28:19.207947+00:00 INFO: display: 0/2
+    2022-06-29 11:28:19.245361+00:00 INFO: display: 1/2
+    2022-06-29 11:28:19.288458+00:00 INFO: ###roc_auc_score_test:0.6849802371541502
+    2022-06-29 11:28:19.288982+00:00 INFO: ###roc_auc_score_display:0.706236559139785
+    2022-06-29 11:28:19.289805+00:00 INFO: ###loss:0.2511553727090359
+    2022-06-29 11:28:19.291345+00:00 INFO: ###iteration:0
 
 
 As you can see, `TrainingTasks` logs quite extensively on the initialization process, so in case of error it's relativaly easy to understand the source of error. 
@@ -1469,27 +1469,27 @@ prediction
   <tbody>
     <tr>
       <th>1</th>
-      <td>0.394233</td>
+      <td>0.406591</td>
       <td>0.0</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.671026</td>
+      <td>0.641442</td>
       <td>1.0</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.483621</td>
+      <td>0.487278</td>
       <td>1.0</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.651865</td>
+      <td>0.600821</td>
       <td>1.0</td>
     </tr>
     <tr>
       <th>5</th>
-      <td>0.387574</td>
+      <td>0.406437</td>
       <td>0.0</td>
     </tr>
   </tbody>
@@ -1537,11 +1537,11 @@ task.model_handler.network(batch['features'])[:5]
 
 
 
-    tensor([[0.4233],
-            [0.4036],
-            [0.4089],
-            [0.4441],
-            [0.4253]], grad_fn=<SliceBackward>)
+    tensor([[0.4874],
+            [0.4980],
+            [0.4886],
+            [0.4964],
+            [0.4976]], grad_fn=<SliceBackward>)
 
 
 
@@ -1570,28 +1570,28 @@ task.model_handler.predict(batch).head()
   </thead>
   <tbody>
     <tr>
-      <th>423</th>
-      <td>0.423282</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>493</th>
-      <td>0.403562</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>431</th>
-      <td>0.408860</td>
+      <th>432</th>
+      <td>0.487402</td>
       <td>1.0</td>
     </tr>
     <tr>
-      <th>788</th>
-      <td>0.444078</td>
+      <th>854</th>
+      <td>0.498024</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>118</th>
+      <td>0.488602</td>
       <td>0.0</td>
     </tr>
     <tr>
-      <th>835</th>
-      <td>0.425296</td>
+      <th>671</th>
+      <td>0.496439</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>814</th>
+      <td>0.497650</td>
       <td>0.0</td>
     </tr>
   </tbody>
@@ -1728,8 +1728,8 @@ task.data_.batch['index'].groupby('Survived').size()
 
 
     Survived
-    0.0    57
-    1.0    37
+    0.0    41
+    1.0    48
     dtype: int64
 
 

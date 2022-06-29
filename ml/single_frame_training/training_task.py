@@ -90,7 +90,7 @@ class SingleFrameTrainingTask(AbstractTrainingTask):
 
         all_artificiers = ([] if self.metrics_pool is None else [self.metrics_pool]) + ([] if self.artificers is None else self.artificers)
 
-        args = ArtificierArguments(result,dfs)
+        args = ArtificierArguments(result, dfs)
         for artificer in all_artificiers:
             artificer.run(args)
 
@@ -102,14 +102,10 @@ class SingleFrameTrainingTask(AbstractTrainingTask):
         iteration_result.info['iteration'] = iteration
         return iteration_result
 
-
     def _average_metrics(self, metrics_base):
         df = pd.DataFrame(metrics_base)
         metrics = Query.series(df.mean(axis=0)).to_dictionary()
         return metrics
-
-
-
 
     def _get_splits(self, data, env=None):
         dfs = self.data_loader.get_data(data)
@@ -133,7 +129,6 @@ class SingleFrameTrainingTask(AbstractTrainingTask):
             env = TrainingEnvironment()
 
         dfs = self._get_splits(data, env)
-
 
         stages_count = len(dfs)
         if self.with_tqdm and env.supports_tqdm():
@@ -165,7 +160,6 @@ class SingleFrameTrainingTask(AbstractTrainingTask):
             return []
         metrics = [metric + '_' + stage for metric in self.metrics_pool.get_metrics_names() for stage in expected_stages]
         return metrics
-
 
     def make_kraken_task(self, configs: List[Any], data) -> Tuple[Callable, List[Any]]:
         return _make_kraken_task(self, configs, data)

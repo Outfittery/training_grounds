@@ -1,3 +1,5 @@
+from typing import *
+
 from .....common.ml.batched_training import *
 from .....common.ml.dft import *
 from .....common.ml.batched_training import torch as btorch
@@ -7,13 +9,13 @@ import pandas as pd
 import torch.nn
 import torch.optim
 from sklearn.metrics import roc_auc_score
-
-from typing import *
+from torch.nn.modules.loss import _Loss
 
 import torch
-import pandas as pd
 
-from torch.nn.modules.loss import _Loss
+
+
+
 
 class TorchClassificationModelHandler(BatchedModelHandler):
     def __init__(self,
@@ -26,8 +28,8 @@ class TorchClassificationModelHandler(BatchedModelHandler):
         self.network_factory = network_factory
         self.optimizer_factory = optimizer_factory
         self.loss = loss
-        self.network = None #type: Optional[torch.nn.Module]
-        self.optimizer = None #type: Optional[torch.optim.Optimizer]
+        self.network = None  # type: Optional[torch.nn.Module]
+        self.optimizer = None  # type: Optional[torch.optim.Optimizer]
 
     def instantiate(self, task, input):
         self.network = self.network_factory(task, input)
@@ -53,15 +55,15 @@ class TorchClassificationModelHandler(BatchedModelHandler):
         df = pd.DataFrame(dict(predicted=output, true=y[y.columns[0]]))
         return df
 
+
 def create_bundle():
     iris = datasets.load_iris()
     df_features = pd.DataFrame(iris['data'], columns=['f1', 'f2', 'f3', 'f4'])
     df_targets = pd.DataFrame(iris['target'], columns=['label'])
-    df_targets.label = df_targets.label==1
+    df_targets.label = df_targets.label == 1
     index_df = pd.DataFrame(dict(features=df_features.index, targets=df_targets.index))
-    bundle = DataBundle(index = index_df, features=df_features, targets=df_targets)
+    bundle = DataBundle(index=index_df, features=df_features, targets=df_targets)
     return bundle
-
 
 
 def create_task():
@@ -77,7 +79,7 @@ def create_task():
 
     model_handler = TorchClassificationModelHandler(
         'targets',
-        lambda task, input: btorch.FullyConnectedNetwork.Factory([100,1]).prepend_extraction('features').create_network(task, input),
+        lambda task, input: btorch.FullyConnectedNetwork.Factory([100, 1]).prepend_extraction('features').create_network(task, input),
         lambda parameters: torch.optim.SGD(parameters, lr=1)
     )
 

@@ -1,7 +1,5 @@
-
 from typing import *
 
-from yo_fluq_ds import OrderedEnum, Query, fluq
 import pickle
 import os
 import copy
@@ -9,8 +7,8 @@ import sys
 import pandas as pd
 import numpy as np
 
+from yo_fluq_ds import OrderedEnum, Query, fluq
 from collections import OrderedDict
-
 
 
 EXTENTION = '.kraken.pkl'
@@ -126,17 +124,13 @@ class Kraken:
         output = []  # type: Optional[List[IterationResult]]
 
         if parallel_kwargs is None:
-            output = (
-                Query
-                    .en(configs)
-                    .select(executor.process)
-            )
+            output = (Query
+                      .en(configs)
+                      .select(executor.process))
         else:
-            output = (
-                Query
-                    .en(configs)
-                    .parallel_select(executor.process, **parallel_kwargs)
-            )
+            output = (Query
+                      .en(configs)
+                      .parallel_select(executor.process, **parallel_kwargs))
 
         if with_tqdm:
             output = output.feed(fluq.with_progress_bar(total=len(configs)))
@@ -162,8 +156,9 @@ class Kraken:
                 yield pickle.load(f)
 
     @staticmethod
-    def load(folder, pd_extractor=lambda df, _: df, exclude_config_fields=None) -> Union[
-        List[IterationResult], pd.DataFrame]:
+    def load(folder,
+             pd_extractor=lambda df, _: df,
+             exclude_config_fields=None) -> Union[List[IterationResult], pd.DataFrame]:
         loading = Kraken.load_results_iter(folder)
         if pd_extractor is None:
             return list(loading)

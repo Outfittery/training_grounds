@@ -1,6 +1,7 @@
 from unittest import TestCase
 from tg.common.tools_bak.fix_absolute_import import *
 
+
 class FixAbsolutePathTestCase(TestCase):
     def test_relative_module_name(self):
         t = build_replacement(
@@ -22,4 +23,3 @@ class FixAbsolutePathTestCase(TestCase):
             None,
             find_module_name('from  sklearn import')
         )
-

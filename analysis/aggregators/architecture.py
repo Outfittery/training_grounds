@@ -1,17 +1,19 @@
 from typing import *
+
 import numpy as np
 import pandas as pd
+
 
 class Aggregator:
     def __add__(self, other):
         if not isinstance(other, Aggregator):
             raise ValueError("The argument must be an aggregator")
         aggregators = ()
-        for ag in [self,other]:
+        for ag in [self, other]:
             if isinstance(ag, CombinedAggregator):
-                aggregators+=ag.aggregators
+                aggregators += ag.aggregators
             else:
-                aggregators+=(ag,)
+                aggregators += (ag,)
         return CombinedAggregator(aggregators)
 
 
@@ -30,7 +32,7 @@ class PandasAggregator(Aggregator):
 
     def __call__(self, obj):
         result = obj.aggregate(self.kwargs)
-        if isinstance(result,pd.Series):
+        if isinstance(result, pd.Series):
             result = result.to_frame()
         result.columns = ['_'.join(c) for c in result.columns]
         return result
@@ -38,11 +40,10 @@ class PandasAggregator(Aggregator):
 
 class CustomAggregator(Aggregator):
     def __init__(self, columns, aggregator: Callable[[pd.Series, Dict], None]):
-        if columns is not None and not isinstance(columns,list) and not isinstance(columns, tuple):
+        if columns is not None and not isinstance(columns, list) and not isinstance(columns, tuple):
             columns = [columns]
         self.columns = columns
         self.aggregator = aggregator
-
 
     def _get_groupby_columns(self, grby):
         return [g.name for g in grby.grouper._groupings]
@@ -51,15 +52,15 @@ class CustomAggregator(Aggregator):
         values = group
         if not isinstance(values, tuple):
             values = (values,)
-        for key, value in zip(grby_columns,values):
-            row[key]=value
+        for key, value in zip(grby_columns, values):
+            row[key] = value
 
     def _produce_df(self, rows, index):
         df = pd.DataFrame(rows)
         if index is not None:
             df = df.set_index(index)
-        if df.shape[0]==0 or df.shape[1] == 0:
-            return  df
+        if df.shape[0] == 0 or df.shape[1] == 0:
+            return df
         all_tuples = True
         for c in df.columns:
             if not isinstance(c, tuple):
@@ -67,8 +68,6 @@ class CustomAggregator(Aggregator):
         if all_tuples:
             df.columns = pd.MultiIndex.from_tuples(df.columns)
         return df
-
-
 
     def _apply_on_grby_df(self, grby):
         grby_columns = self._get_groupby_columns(grby)
@@ -126,7 +125,3 @@ class CustomAggregator(Aggregator):
             return self._apply_on_grby_df(obj)
         else:
             raise TypeError(f"Aggregator is called upon {type(obj)}")
-
-
-
-

@@ -2,28 +2,30 @@ from typing import *
 
 import pandas as pd
 
+from functools import partial
+
 from .architecture import DataFrameTransformer
 from .column_transformers import DataFrameColumnsTransformer, ContinousTransformer, CategoricalTransformer, TopKPopularStrategy
 from .categorical_column_transformer_2 import CategoricalTransformer2
 from .miscellaneous import OneHotEncoderForDataframe
-from functools import partial
 
 
 class DataFrameTransformerFactory:
     """
     This class generated ``DataFrameTransformer`` by a provided rules
     """
+
     def __init__(self):
-        self.feature_filter = None # type: Optional[Callable]
-        self.feature_allow_list = None #type: Optional[List]
-        self.feature_block_list = None #type: Optional[List]
+        self.feature_filter = None  # type: Optional[Callable]
+        self.feature_allow_list = None  # type: Optional[List]
+        self.feature_block_list = None  # type: Optional[List]
 
-        self.continuous_factory = None # type: Optional[Callable]
-        self.categorical_factory = None # type: Optional[Callable]
-        self.categorical_2_max_categories = None #type: Optional[int]
+        self.continuous_factory = None  # type: Optional[Callable]
+        self.categorical_factory = None  # type: Optional[Callable]
+        self.categorical_2_max_categories = None  # type: Optional[int]
 
-        self.categorical_rich_factory = None # type:Optional[Callable]
-        self.categorical_rich_threshold = None #type: Optional[int]
+        self.categorical_rich_factory = None  # type:Optional[Callable]
+        self.categorical_rich_threshold = None  # type: Optional[int]
 
         self.transformer_ = None
 
@@ -49,23 +51,21 @@ class DataFrameTransformerFactory:
         self.feature_block_list = block_list
         return self
 
-
-    def on_continuous(self, factory: Callable[[List[str]],DataFrameColumnsTransformer])-> 'DataFrameTransformerFactory':
+    def on_continuous(self, factory: Callable[[List[str]], DataFrameColumnsTransformer]) -> 'DataFrameTransformerFactory':
         """
         Specifies the factory that will produce ``DataFrameColumnsTransformer`` for the continuous features.
         """
         self.continuous_factory = factory
         return self
 
-
-    def on_categorical(self, factory: Callable[[List[str]],DataFrameColumnsTransformer])-> 'DataFrameTransformerFactory':
+    def on_categorical(self, factory: Callable[[List[str]], DataFrameColumnsTransformer]) -> 'DataFrameTransformerFactory':
         """
         Specifies the factory that will produce ``DataFrameColumnsTransformer`` for the categorical features
         """
         self.categorical_factory = factory
         return self
 
-    def on_rich_category(self, threshold: int, factory: Callable[[List[str]],DataFrameColumnsTransformer])-> 'DataFrameTransformerFactory':
+    def on_rich_category(self, threshold: int, factory: Callable[[List[str]], DataFrameColumnsTransformer]) -> 'DataFrameTransformerFactory':
         """
         Specifies the factory that will produce ``DataFrameColumnsTransformer`` for the categorical features that have more than ``threshold`` values
 
@@ -93,13 +93,13 @@ class DataFrameTransformerFactory:
 
         types = df[features].dtypes
         continuous = list(types.loc[(types == 'float32') | (types == 'float64')].index)
-        if len(continuous)>0:
+        if len(continuous) > 0:
             if self.continuous_factory is None:
                 raise ValueError(f"Continuous features are presenting, but the factory is not set. Features are {continuous}")
             transformers.append(self.continuous_factory(continuous))
 
         categorical = [c for c in types.index if c not in continuous]
-        if len(categorical)>0:
+        if len(categorical) > 0:
             if self.categorical_2_max_categories is not None:
                 transformers.append(CategoricalTransformer2(categorical, self.categorical_2_max_categories))
             else:
@@ -111,13 +111,12 @@ class DataFrameTransformerFactory:
                     transformers.append(self.categorical_rich_factory(rich_categorical))
                     categorical = [c for c in categorical if c not in rich_categorical]
 
-                if len(categorical)>0:
+                if len(categorical) > 0:
                     if self.categorical_factory is None:
                         raise ValueError(f"Categorical features are presenting, but factory is not set. Features are {categorical}")
                     transformers.append(self.categorical_factory(categorical))
 
         return DataFrameTransformer(transformers)
-
 
     def fit(self, X, y=None):
         self.transformer_ = self._create_transformer(X)

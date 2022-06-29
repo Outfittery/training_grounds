@@ -9,7 +9,6 @@ from yo_fluq_ds import Query
 import logging
 
 
-
 class LoggerTestCase(TestCase):
     def test_simple(self):
         buffer = LogBuffer()
@@ -34,24 +33,24 @@ class LoggerTestCase(TestCase):
     def test_fields(self):
         buffer = LogBuffer(base_key='x')
         Logger.info('t1')
-        Logger.push_keys(session_key = 'y')
+        Logger.push_keys(session_key='y')
         Logger.info('t2')
-        Logger.push_keys(session_key_1 = 'z')
+        Logger.push_keys(session_key_1='z')
         Logger.info('t3')
         Logger.clear_keys()
         Logger.info('t4')
-        rs = buffer.transpose('base_key','session_key','session_key_1','message')
+        rs = buffer.transpose('base_key', 'session_key', 'session_key_1', 'message')
         self.assertDictEqual(
             {'base_key': ['x', 'x', 'x', 'x'], 'session_key': ['#', 'y', 'y', '#'], 'session_key_1': ['#', '#', 'z', '#'], 'message': ['t1', 't2', 't3', 't4']},
             rs
         )
 
     def test_compatibilty_with_python_logging(self):
-        buffer = LogBuffer(base_key = 'x')
+        buffer = LogBuffer(base_key='x')
         Logger.info('t1')
         logger = logging.getLogger('tg')
         logger.info('t2')
-        rs = buffer.transpose('base_key','message')
+        rs = buffer.transpose('base_key', 'message')
         self.assertDictEqual({'base_key': ['x', 'x'], 'message': ['t1', 't2']}, rs)
 
     def test_levels(self):
@@ -59,7 +58,7 @@ class LoggerTestCase(TestCase):
         Logger.info('t1')
         Logger.warning('t2')
         Logger.error('t3')
-        rs = buffer.transpose('levelname','message')
+        rs = buffer.transpose('levelname', 'message')
         self.assertDictEqual(
             {'levelname': ['INFO', 'WARNING', 'ERROR'], 'message': ['t1', 't2', 't3']},
             rs
@@ -95,7 +94,7 @@ class LoggerTestCase(TestCase):
             Logger.info('Info exception')
             Logger.error('Error exception')
         Logger.info('After try-except')
-        rs = buffer.transpose('message','exception_value', 'exception_type')
+        rs = buffer.transpose('message', 'exception_value', 'exception_type')
         self.assertDictEqual(
             {'message': ['Before try-except', 'Before exception', 'Info exception', 'Error exception', 'After try-except'],
              'exception_value': ['#', '#', 'ERROR', 'ERROR', '#'],
@@ -104,19 +103,7 @@ class LoggerTestCase(TestCase):
             rs)
         self.assertIn('exception_details', buffer.parse().skip(2).first())
 
-
-
-
     def test_object_as_argument(self):
         buffer = LogBuffer()
-        Logger.info(dict(a=1,b=2))
+        Logger.info(dict(a=1, b=2))
         self.assertEqual("{'a': 1, 'b': 2}", buffer.parse().single()['message'])
-
-
-
-
-
-
-
-
-

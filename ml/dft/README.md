@@ -730,16 +730,16 @@ except ValueError as exp:
     traceback.print_exc() #We catch the exception so the Notebook could proceed uninterrupted
 ```
 
-    2022-06-27 19:28:53.100086+00:00 WARNING: Missing column in ContinuousTransformer
-    2022-06-27 19:28:53.103057+00:00 WARNING: Missing column in ContinuousTransformer
+    2022-06-29 11:26:20.794521+00:00 WARNING: Missing column in ContinuousTransformer
+    2022-06-29 11:26:20.815565+00:00 WARNING: Missing column in ContinuousTransformer
 
 
     Traceback (most recent call last):
-      File "/tmp/ipykernel_31087/2155061853.py", line 14, in <module>
+      File "/tmp/ipykernel_10870/2155061853.py", line 14, in <module>
         tr.transform(test_df)
-      File "/home/yura/Desktop/repos/tg/tg/common/ml/dft/architecture.py", line 49, in transform
+      File "/home/yura/Desktop/repos/tg/tg/common/ml/dft/architecture.py", line 48, in transform
         for res in transformer.transform(df):
-      File "/home/yura/Desktop/repos/tg/tg/common/ml/dft/column_transformers.py", line 92, in transform
+      File "/home/yura/Desktop/repos/tg/tg/common/ml/dft/column_transformers.py", line 90, in transform
         missing = self.missing_indicator.transform(subdf)
       File "/home/yura/anaconda3/envs/tg/lib/python3.8/site-packages/sklearn/impute/_base.py", line 885, in transform
         raise ValueError(
@@ -760,11 +760,11 @@ tr.fit(df)
 tr.transform(test_df)
 ```
 
-    2022-06-27 19:28:53.133821+00:00 WARNING: Missing column in ContinuousTransformer
-    2022-06-27 19:28:53.135301+00:00 WARNING: Missing column in ContinuousTransformer
-    2022-06-27 19:28:53.140779+00:00 WARNING: Unexpected None in MissingIndicatorWithReporting
-    2022-06-27 19:28:53.142468+00:00 WARNING: Unexpected None in MissingIndicatorWithReporting
-    2022-06-27 19:28:53.143747+00:00 WARNING: Unexpected None in MissingIndicatorWithReporting
+    2022-06-29 11:26:20.902429+00:00 WARNING: Missing column in ContinuousTransformer
+    2022-06-29 11:26:20.905555+00:00 WARNING: Missing column in ContinuousTransformer
+    2022-06-29 11:26:20.919916+00:00 WARNING: Unexpected None in MissingIndicatorWithReporting
+    2022-06-29 11:26:20.920809+00:00 WARNING: Unexpected None in MissingIndicatorWithReporting
+    2022-06-29 11:26:20.922630+00:00 WARNING: Unexpected None in MissingIndicatorWithReporting
 
 
 
@@ -811,11 +811,11 @@ Logger.initialize_kibana()
 tr.transform(test_df)
 ```
 
-    {"@timestamp": "2022-06-27 19:28:53.160523+00:00", "message": "Missing column in ContinuousTransformer", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/column_transformers.py", "path_line": 77, "column": "Pclass"}
-    {"@timestamp": "2022-06-27 19:28:53.164905+00:00", "message": "Missing column in ContinuousTransformer", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/column_transformers.py", "path_line": 77, "column": "Parch"}
-    {"@timestamp": "2022-06-27 19:28:53.169612+00:00", "message": "Unexpected None in MissingIndicatorWithReporting", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/miscellaneous.py", "path_line": 36, "column": "Pclass"}
-    {"@timestamp": "2022-06-27 19:28:53.170205+00:00", "message": "Unexpected None in MissingIndicatorWithReporting", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/miscellaneous.py", "path_line": 36, "column": "Parch"}
-    {"@timestamp": "2022-06-27 19:28:53.170654+00:00", "message": "Unexpected None in MissingIndicatorWithReporting", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/miscellaneous.py", "path_line": 36, "column": "Fare"}
+    {"@timestamp": "2022-06-29 11:26:20.970802+00:00", "message": "Missing column in ContinuousTransformer", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/column_transformers.py", "path_line": 75, "column": "Pclass"}
+    {"@timestamp": "2022-06-29 11:26:20.979440+00:00", "message": "Missing column in ContinuousTransformer", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/column_transformers.py", "path_line": 75, "column": "Parch"}
+    {"@timestamp": "2022-06-29 11:26:20.986437+00:00", "message": "Unexpected None in MissingIndicatorWithReporting", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/miscellaneous.py", "path_line": 36, "column": "Pclass"}
+    {"@timestamp": "2022-06-29 11:26:20.986971+00:00", "message": "Unexpected None in MissingIndicatorWithReporting", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/miscellaneous.py", "path_line": 36, "column": "Parch"}
+    {"@timestamp": "2022-06-29 11:26:20.988168+00:00", "message": "Unexpected None in MissingIndicatorWithReporting", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/miscellaneous.py", "path_line": 36, "column": "Fare"}
 
 
 
@@ -1091,7 +1091,7 @@ tr.fit(df.loc[~df.Embarked.isnull()])
 tr.transform(df.loc[df.Embarked.isnull()])
 ```
 
-    {"@timestamp": "2022-06-27 19:28:53.270541+00:00", "message": "Unexpected value in MostPopularStrategy", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/column_transformers.py", "path_line": 124, "column": "Embarked", "value": "NONE"}
+    {"@timestamp": "2022-06-29 11:26:21.162381+00:00", "message": "Unexpected value in MostPopularStrategy", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/column_transformers.py", "path_line": 122, "column": "Embarked", "value": "NONE"}
 
 
 

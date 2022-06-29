@@ -1,6 +1,7 @@
 from yo_fluq_ds import Query
 from enum import Enum
 
+
 class Autonamer:
     def __init__(self, build_method):
         self.build_method = build_method
@@ -34,4 +35,3 @@ class Autonamer:
             task.info['name'] += name_suffix
             result.append(task)
         return result
-

@@ -1,15 +1,17 @@
 from typing import *
+
 import os
 import boto3
 import sagemaker
+import shutil
+import subprocess
+
+from pathlib import Path
 
 from .architecture import TrainingRoutineBase, TrainingExecutor, AttachedTrainingExecutor, AbstractTrainingTask, ResultPickleReader, _create_id, _TRAINING_RESULTS_LOCATION
 from .. import packaging as pkg
 from ..._common import Loc, S3Handler
 
-import shutil
-import subprocess
-from pathlib import Path
 
 _DOCKERFILE_TEMPLATE = '''FROM python:3.7
 
@@ -40,7 +42,7 @@ tg_sagemaker.execute(Entry)
 
 
 def open_sagemaker_result(filename, job_id):
-    folder = _TRAINING_RESULTS_LOCATION / (job_id+'.unzipped')
+    folder = _TRAINING_RESULTS_LOCATION / (job_id + '.unzipped')
     if os.path.isdir(folder):
         shutil.rmtree(folder)
     os.makedirs(folder)
@@ -48,7 +50,8 @@ def open_sagemaker_result(filename, job_id):
     subprocess.call(tar_call)
     return ResultPickleReader(Path(folder))
 
-def download_and_open_sagemaker_result(bucket, project_name, job_id, dont_redownload = False):
+
+def download_and_open_sagemaker_result(bucket, project_name, job_id, dont_redownload=False):
     filename = _TRAINING_RESULTS_LOCATION / f'{job_id}.tar.gz'
     folder = _TRAINING_RESULTS_LOCATION / job_id
     if filename.is_file() and folder.is_dir() and dont_redownload:
@@ -61,10 +64,6 @@ def download_and_open_sagemaker_result(bucket, project_name, job_id, dont_redown
             filename
         )
         return open_sagemaker_result(filename, job_id)
-
-
-
-
 
 
 def _upload_container(task, project_name, id, pusher: pkg.ContainerHandler, push=True):
@@ -190,7 +189,6 @@ class SagemakerRemoteExecutor(TrainingExecutor):
 
     def get_result(self, id: str):
         return download_and_open_sagemaker_result(self.routine.s3_bucket, self.routine.project_name, id)
-
 
     def execute(self, task: AbstractTrainingTask, dataset_version: str, wait=True):
         id = _create_id(task.info.get('name', ''))

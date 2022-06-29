@@ -7,7 +7,6 @@ from datetime import datetime, timedelta
 from sklearn.model_selection import train_test_split
 
 
-
 class DataFrameSplit:
     TRAIN_NAME = 'train'
 
@@ -182,7 +181,6 @@ class TimeSplitter(Splitter):
         return [self.test_name]
 
 
-
 class OneTimeSplitter(Splitter):
     def __init__(self, date_column: str, test_fraction: float, test_name='test'):
         self.date_column = date_column
@@ -266,8 +264,7 @@ class PredefinedSplitter(Splitter):
         rdfs.train = dfs.df.loc[dfs.df[self.field_name].isin(self.train_values)].index
         rdfs.tests = {}
         for test in self.test_values:
-            idx = dfs.df.loc[dfs.df[self.field_name]==test].index
-            if len(idx)>0:
+            idx = dfs.df.loc[dfs.df[self.field_name] == test].index
+            if len(idx) > 0:
                 rdfs.tests[test] = idx
         return [rdfs]
-

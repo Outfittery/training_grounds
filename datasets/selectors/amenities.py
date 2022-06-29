@@ -5,7 +5,6 @@ import numpy as np
 from .combinators import Pipeline
 
 
-
 def _flatten_dict_rec(result, current_key, d):
     if isinstance(d, dict):
         if current_key != '':

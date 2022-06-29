@@ -28,12 +28,11 @@ class SplitsTestCase(TestCase):
             self.assertEqual(300, len(c.tests['test']))
             self.assertEqual(0, len(set(c.train).intersection(c.tests['test'])))
 
-
     def test_custom_fold(self):
         df = pd.Series(list(range(10))).to_frame('x')
-        df['y'] = (df.x/2).astype('int')
-        dfs = DataFrameSplit(df,['y'],'x')
-        splitter = FoldSplitter(10,0.4,custom_split_column='y')
+        df['y'] = (df.x / 2).astype('int')
+        dfs = DataFrameSplit(df, ['y'], 'x')
+        splitter = FoldSplitter(10, 0.4, custom_split_column='y')
         dfs = splitter(dfs)
         for c in dfs:
             in_train = c.df.loc[c.train]
@@ -42,7 +41,6 @@ class SplitsTestCase(TestCase):
             self.assertEqual(4, in_test.shape[0])
             intersection = set(in_train.x).intersection(set(in_test.x))
             self.assertEqual(0, len(intersection))
-
 
     def test_two_fold(self):
         dfs = self.createDfs()
@@ -91,18 +89,14 @@ class SplitsTestCase(TestCase):
         self.assertIsInstance(y, pd.Series)
 
     def test_one_time_split(self):
-        df = Query.en(range(100)).select(lambda z: dict(tm=datetime(2019,1,1)+timedelta(days=z), x=z, y=z)).to_dataframe()
+        df = Query.en(range(100)).select(lambda z: dict(tm=datetime(2019, 1, 1) + timedelta(days=z), x=z, y=z)).to_dataframe()
         dfs = DataFrameSplit(df, ['x'], 'y')
 
-        oneTimeSplit = OneTimeSplitter('tm',0.3)
-        dfs = oneTimeSplit(dfs) 
+        oneTimeSplit = OneTimeSplitter('tm', 0.3)
+        dfs = oneTimeSplit(dfs)
         self.assertEqual(1, len(dfs))
         dfs = dfs[0]
         self.assertEqual(70, dfs.train.shape[0])
         self.assertEqual(30, dfs.tests['test'].shape[0])
         self.assertEqual(69, max(dfs.df.loc[dfs.train].x))
         self.assertEqual(70, min(dfs.df.loc[dfs.tests['test']].x))
-
-
-
-

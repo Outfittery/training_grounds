@@ -1,5 +1,6 @@
-import pandas as pd
 from typing import *
+
+import pandas as pd
 import copy
 import numpy as np
 
@@ -7,10 +8,8 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
 
 from .architecture import DataFrameColumnsTransformer
-
 from .miscellaneous import MissingIndicatorWithReporting
 from ..._common import Logger
-
 
 
 class ContinousTransformer(DataFrameColumnsTransformer):
@@ -44,7 +43,6 @@ class ContinousTransformer(DataFrameColumnsTransformer):
 
         self.columns_ = None
         self.columns_ignored_because_of_none_ = None
-
 
     def fit(self, df):
         self.columns_ = self.columns
@@ -83,9 +81,9 @@ class ContinousTransformer(DataFrameColumnsTransformer):
             if self.preprocessor is not None:
                 result = self.preprocessor(result)
             if self.imputer is not None:
-                result = pd.DataFrame(self.imputer.transform(result), index = df.index, columns = self.columns_, dtype='float')
+                result = pd.DataFrame(self.imputer.transform(result), index=df.index, columns=self.columns_, dtype='float')
             if self.scaler is not None:
-                result = pd.DataFrame(self.scaler.transform(result), index = df.index, columns = self.columns_, dtype='float')
+                result = pd.DataFrame(self.scaler.transform(result), index=df.index, columns=self.columns_, dtype='float')
             yield result
 
             if self.missing_indicator is not None:
@@ -150,10 +148,7 @@ class TopKPopularStrategy(ReplacementStrategy):
             index=column.index
         )
 
-#TODO: extremely inefficient
-#DO: groupby.size by each value. Figure out borderline. Less that this borderline will get most popular, others will get additional unknown. Knowns will be mapped to integers
-#Make a bd np.matrix, fill with indices, then add column names
-#If no transformation is required, let integers be
+
 class CategoricalTransformer(DataFrameColumnsTransformer):
     """
     Transformer of categorical variable.

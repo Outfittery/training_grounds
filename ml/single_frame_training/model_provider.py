@@ -10,7 +10,6 @@ from sklearn.pipeline import Pipeline
 from ..training_core import DataFrameSplit
 
 
-
 class AbstractModelProvider:
     def get_model(self, dfs: DataFrameSplit) -> Any:
         raise NotImplementedError()
@@ -20,6 +19,7 @@ class ModelConstructor:
     """
     Class that describes the constructor of the class and its parameters
     """
+
     def __init__(self, type_name: str, **kwargs: Any):
         """
         Args:
@@ -28,7 +28,6 @@ class ModelConstructor:
         """
         self.type_name = type_name
         self.kwargs = kwargs
-
 
     @staticmethod
     def _load_semicolor_part(part):
@@ -64,10 +63,11 @@ class ModelConstructor:
         return instance
 
 
-class ColumnNamesKeeper(BaseEstimator,TransformerMixin):
+class ColumnNamesKeeper(BaseEstimator, TransformerMixin):
     """
     This fake sklearn "estimator" remembers the names and types of the columns when fitting
     """
+
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
         return df
 
@@ -81,21 +81,21 @@ class CatBoostWrap:
     def __init__(self, algorithm):
         self.algorithm = algorithm
 
-    def fit(self, X: pd.DataFrame, y = None):
+    def fit(self, X: pd.DataFrame, y=None):
         types = X.dtypes
-        categorical = types.loc[types!='float'].index
+        categorical = types.loc[types != 'float'].index
         self.algorithm.set_params(cat_features=list(categorical))
 
     def transform(self, X: pd.DataFrame):
         return X
 
-    def fit_transform(self,X: pd.DataFrame, y = None):
-        self.fit(X,y)
+    def fit_transform(self, X: pd.DataFrame, y=None):
+        self.fit(X, y)
         return X
 
 
 class ModelProvider(AbstractModelProvider):
-    def __init__(self,  constructor: Callable, transformer: Optional = None, model_fix: Optional[Callable] = None, keep_column_names = True):
+    def __init__(self, constructor: Callable, transformer: Optional = None, model_fix: Optional[Callable] = None, keep_column_names=True):
         self.transformer = transformer
         self.constructor = constructor
         self.model_fix = model_fix
@@ -115,15 +115,15 @@ class ModelProvider(AbstractModelProvider):
         if self.keep_column_names:
             steps.append(('ColumnNamesKeeper', ColumnNamesKeeper()))
         if transformer is not None:
-            steps.append(('Transformer',transformer))
+            steps.append(('Transformer', transformer))
             if self.keep_column_names:
                 steps.append(('ColumnNamesKeeperAfterTransformation', ColumnNamesKeeper()))
-        steps.append(('Model',instance))
-        if len(steps)==1:
+        steps.append(('Model', instance))
+        if len(steps) == 1:
             return steps[0][1]
         else:
             return Pipeline(steps)
 
     @staticmethod
     def catboost_model_fix(instance):
-        return Pipeline([('CategoricalVariablesSetter',CatBoostWrap(instance)),('Model',instance)])
+        return Pipeline([('CategoricalVariablesSetter', CatBoostWrap(instance)), ('Model', instance)])

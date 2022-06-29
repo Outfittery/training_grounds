@@ -1,18 +1,20 @@
-from matplotlib import pyplot as plt
-from matplotlib.axes import Axes
-import pandas as pd
-import numpy as np
 from typing import *
 from yo_fluq_ds._fluq._common import *
+
+import pandas as pd
+import numpy as np
+
+from matplotlib import pyplot as plt
+from matplotlib.axes import Axes
 
 
 def default_ax(ax):
     if ax is None:
-        _, ax = plt.subplots(1,1)
+        _, ax = plt.subplots(1, 1)
     return ax
 
 
-def _assign(df: pd.DataFrame, items, name: str, smth: Union[str,pd.Series]):
+def _assign(df: pd.DataFrame, items, name: str, smth: Union[str, pd.Series]):
     if smth is None:
         raise ValueError('Parameter for {0} cannot be None'.format(name))
     elif isinstance(smth, pd.Series):
@@ -22,17 +24,17 @@ def _assign(df: pd.DataFrame, items, name: str, smth: Union[str,pd.Series]):
     else:
         column = df[smth]
 
-    for item, value in zip(items,column):
-        setattr(item,name,value)
+    for item, value in zip(items, column):
+        setattr(item, name, value)
 
-def _get_name(smth: Union[None,str,pd.Series]):
+
+def _get_name(smth: Union[None, str, pd.Series]):
     if smth is None:
         return None
-    elif isinstance(smth,pd.Series):
+    elif isinstance(smth, pd.Series):
         return smth.name
     else:
         return str(smth)
-
 
 
 class _DbarItem:
@@ -60,12 +62,12 @@ class _DbarItem:
 
         if value_format is not None and self.caption is None:
             if self.error is not None:
-                self.caption = value_format.format(self.value,self.error)
+                self.caption = value_format.format(self.value, self.error)
             else:
                 self.caption = value_format.format(self.value)
 
         if self.error is None:
-            self.solid_bar_min = min(self.value,0)
+            self.solid_bar_min = min(self.value, 0)
             self.solid_bar_max = max(self.value, 0)
             self.transparent_bar_min = None
             self.transparent_bar_max = None
@@ -100,28 +102,26 @@ class _DbarItem:
         self.x = self.group_index * self.group_width + self.color_index * self.color_width
 
 
-
-
 def _plot_dbar_vertical(ax, items: List[_DbarItem], group_label, value_label):
     gitems = Query.en(items).group_by(lambda z: z.color_index).select(list).to_list()
     for color_items in gitems:
         rects = ax.bar(
             Query.en(color_items).select(lambda z: z.x).to_list(),
-            Query.en(color_items).select(lambda z: z.solid_bar_max-z.solid_bar_min).to_list(),
+            Query.en(color_items).select(lambda z: z.solid_bar_max - z.solid_bar_min).to_list(),
             width=color_items[0].color_width,
             label=color_items[0].color,
-            bottom = Query.en(color_items).select(lambda z: z.solid_bar_min).to_list()
+            bottom=Query.en(color_items).select(lambda z: z.solid_bar_min).to_list()
         )
 
         with_low = Query.en(color_items).where(lambda z: z.transparent_bar_min is not None and z.transparent_bar_max is not None).to_list()
-        if len(with_low)>0:
+        if len(with_low) > 0:
             ax.bar(
                 Query.en(with_low).select(lambda z: z.x).to_list(),
-                Query.en(with_low).select(lambda z: z.transparent_bar_max-z.transparent_bar_min).to_list(),
+                Query.en(with_low).select(lambda z: z.transparent_bar_max - z.transparent_bar_min).to_list(),
                 width=with_low[0].color_width,
                 color='white',
                 alpha=0.6,
-                bottom = Query.en(with_low).select(lambda z: z.transparent_bar_min).to_list(),
+                bottom=Query.en(with_low).select(lambda z: z.transparent_bar_min).to_list(),
             )
 
         for item, rect in zip(color_items, rects):
@@ -133,7 +133,7 @@ def _plot_dbar_vertical(ax, items: List[_DbarItem], group_label, value_label):
                 item.caption,
                 ha='center', va='bottom')
 
-    labels = Query.en(items).distinct(lambda z: z.group_index).to_series(lambda z: z.group,lambda z: z.group_index)
+    labels = Query.en(items).distinct(lambda z: z.group_index).to_series(lambda z: z.group, lambda z: z.group_index)
     ax.xaxis.set_ticks([x * items[0].group_width + items[0].group_draw_width / 2 - items[0].color_width / 2 for x in labels.index])
     ax.xaxis.set_ticklabels(labels)
     if group_label is not None:
@@ -150,7 +150,7 @@ def _plot_dbar_horizontal(ax, items: List[_DbarItem], group_label, value_label):
             Query.en(color_items).select(lambda z: z.solid_bar_max - z.solid_bar_min).to_list(),
             height=color_items[0].color_width,
             label=color_items[0].color,
-            left = Query.en(color_items).select(lambda z: z.solid_bar_min).to_list()
+            left=Query.en(color_items).select(lambda z: z.solid_bar_min).to_list()
         )
         with_low = Query.en(color_items).where(lambda z: z.transparent_bar_min is not None and z.transparent_bar_max is not None).to_list()
 
@@ -161,7 +161,7 @@ def _plot_dbar_horizontal(ax, items: List[_DbarItem], group_label, value_label):
                 height=with_low[0].color_width,
                 color='white',
                 alpha=0.6,
-                left = Query.en(with_low).select(lambda z: z.transparent_bar_min).to_list(),
+                left=Query.en(with_low).select(lambda z: z.transparent_bar_min).to_list(),
             )
 
         for item, rect in zip(color_items, rects):
@@ -181,6 +181,7 @@ def _plot_dbar_horizontal(ax, items: List[_DbarItem], group_label, value_label):
         ax.set_ylabel(group_label)
     ax.set_xlabel(value_label)
     return ax
+
 
 class GrBarPlotDrawer:
     def __init__(self):
@@ -251,12 +252,7 @@ def grbar_plot(
          error_column: Union[str, pd.Series, None] = None,
          caption_column: Union[str, pd.Series, None] = None,
          value_format: Optional[str] = None,
-         ax = None,
-         orient = 'v'
+         ax=None,
+         orient='v'
          ):
-    return GrBarPlotDrawer().draw(df,value_column, color_column, group_column, error_column, caption_column, value_format, ax, orient)
-
-
-
-
-
+    return GrBarPlotDrawer().draw(df, value_column, color_column, group_column, error_column, caption_column, value_format, ax, orient)

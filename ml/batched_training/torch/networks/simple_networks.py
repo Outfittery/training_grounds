@@ -1,8 +1,12 @@
 from typing import *
+
 import pandas as pd
 import torch
-from .network_commons import TorchNetworkFactory, AnnotatedTensor
+
 from .extracting_network import *
+
+from .network_commons import TorchNetworkFactory, AnnotatedTensor
+
 
 def _update_sizes_with_argument(argument_name, argument, sizes, modificator):
     if argument is None:
@@ -18,11 +22,11 @@ def _update_sizes_with_argument(argument_name, argument, sizes, modificator):
 class FullyConnectedNetwork(torch.nn.Module):
     def __init__(self,
                  sizes: List[int],
-                 input: Union[None,torch.Tensor,int] = None,
+                 input: Union[None, torch.Tensor, int] = None,
                  output: Union[None, torch.Tensor, int] = None):
         super(FullyConnectedNetwork, self).__init__()
-        sizes = _update_sizes_with_argument('input', input, sizes, lambda s, v: [v]+s)
-        sizes = _update_sizes_with_argument('output', output, sizes, lambda s, v: s+[v])
+        sizes = _update_sizes_with_argument('input', input, sizes, lambda s, v: [v] + s)
+        sizes = _update_sizes_with_argument('output', output, sizes, lambda s, v: s + [v])
         self.layers = torch.nn.ModuleList()
         for i in range(len(sizes) - 1):
             self.layers.append(torch.nn.Linear(sizes[i], sizes[i + 1]))
@@ -39,10 +43,9 @@ class FullyConnectedNetwork(torch.nn.Module):
         return UniversalFactory(
             FullyConnectedNetwork,
             'input',
-            'N'+'-'.join([str(c) for c in sizes]),
-            sizes = sizes, output=output
+            'N' + '-'.join([str(c) for c in sizes]),
+            sizes=sizes, output=output
         )
-
 
 
 class ParallelNetwork(torch.nn.Module):
@@ -65,5 +68,3 @@ class ParallelNetwork(torch.nn.Module):
             for key, factory in self.factories.items():
                 networks[key] = factory.create_network(task, input)
             return ParallelNetwork(**networks)
-
-

@@ -59,11 +59,11 @@ Using the `.attached` accesor, we can run job in the same Python process that yo
 routine.attached.execute()
 ```
 
-    2022-06-27 19:40:31.016162+00:00 INFO: Featurization Job job at version v1 has started
-    2022-06-27 19:40:31.017706+00:00 INFO: Fetching data
-    2022-06-27 19:40:31.075090+00:00 INFO: Data fetched, finalizing
-    2022-06-27 19:40:31.098569+00:00 INFO: Uploading data
-    2022-06-27 19:40:31.099733+00:00 INFO: Featurization job completed
+    2022-06-29 11:31:39.676343+00:00 INFO: Featurization Job job at version v1 has started
+    2022-06-29 11:31:39.677742+00:00 INFO: Fetching data
+    2022-06-29 11:31:39.736577+00:00 INFO: Data fetched, finalizing
+    2022-06-29 11:31:39.758025+00:00 INFO: Uploading data
+    2022-06-29 11:31:39.759078+00:00 INFO: Featurization job completed
 
 
 The `.local` accessor builds package and container, then executes the container locally. This step allows debugging the following things:
@@ -93,14 +93,14 @@ output, errors = routine.local.get_logs()
 print(output)
 ```
 
-    2022-06-27 19:40:54.883388+00:00 INFO: Welcome to Training Grounds. This is Job execution via Docker/SSH
-    2022-06-27 19:40:54.930855+00:00 INFO: Executing job job version v1
-    2022-06-27 19:40:54.931020+00:00 INFO: Featurization Job job at version v1 has started
-    2022-06-27 19:40:54.931552+00:00 INFO: Fetching data
-    2022-06-27 19:40:55.228919+00:00 INFO: Data fetched, finalizing
-    2022-06-27 19:40:55.310273+00:00 INFO: Uploading data
-    2022-06-27 19:40:55.312840+00:00 INFO: Featurization job completed
-    2022-06-27 19:40:55.313731+00:00 INFO: Job completed
+    2022-06-29 11:31:51.269987+00:00 INFO: Welcome to Training Grounds. This is Job execution via Docker/SSH
+    2022-06-29 11:31:51.280496+00:00 INFO: Executing job job version v1
+    2022-06-29 11:31:51.281005+00:00 INFO: Featurization Job job at version v1 has started
+    2022-06-29 11:31:51.282482+00:00 INFO: Fetching data
+    2022-06-29 11:31:51.358743+00:00 INFO: Data fetched, finalizing
+    2022-06-29 11:31:51.383703+00:00 INFO: Uploading data
+    2022-06-29 11:31:51.384298+00:00 INFO: Featurization job completed
+    2022-06-29 11:31:51.384440+00:00 INFO: Job completed
     
 
 

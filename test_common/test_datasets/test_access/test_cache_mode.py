@@ -2,14 +2,16 @@ from unittest import TestCase
 from tg.common.datasets.access import *
 from yo_fluq_ds import Query
 
+
 class MockDataSource(DataSource):
     def __init__(self):
         self.access_count = 0
 
     def get_data(self):
-        self.access_count+=1
-        return Query.en([1,2,3])
-    
+        self.access_count += 1
+        return Query.en([1, 2, 3])
+
+
 class MockCache(AbstractCacheDataSource):
     def __init__(self):
         super(MockCache, self).__init__()
@@ -19,29 +21,30 @@ class MockCache(AbstractCacheDataSource):
 
     def cache_from(self, src, cnt=None):
         self.cache = src.to_list()
-        self.writes_count+=1
+        self.writes_count += 1
 
     def is_available(self) -> bool:
         return self.cache is not None
 
     def get_data(self):
-        self.reads_count+=1
+        self.reads_count += 1
         return Query.en(self.cache)
 
-def create_source(default = None):
+
+def create_source(default=None):
     return CacheableDataSource(
         MockDataSource(),
         MockCache(),
         default
     )
 
+
 class CacheTestCase(TestCase):
     def check(self, src, access_count, writes_count, reads_count):
         self.assertEqual(
             (access_count, writes_count, reads_count),
-            (src._inner_datasource.access_count,src._file_data_source.writes_count, src._file_data_source.reads_count)
+            (src._inner_datasource.access_count, src._file_data_source.writes_count, src._file_data_source.reads_count)
         )
-
 
     def no_cache_scenarios(self, src_factory, getter):
         src = src_factory()
@@ -54,7 +57,7 @@ class CacheTestCase(TestCase):
     def use_cache_scenario_0(self, src_factory, getter):
         src = src_factory()
         self.check(src, 0, 0, 0)
-        self.assertRaises(ValueError,lambda: getter(src).get_data().to_list())
+        self.assertRaises(ValueError, lambda: getter(src).get_data().to_list())
 
     def use_cache_scenario_1(self, src_factory, getter):
         src = src_factory()
@@ -76,7 +79,6 @@ class CacheTestCase(TestCase):
         self.use_cache_scenario_0(src_factory, getter)
         self.use_cache_scenario_1(src_factory, getter)
         self.use_cache_scenario_2(src_factory, getter)
-
 
     def remake_scenarios(self, src_factory, getter):
         src = src_factory()

@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 
 
-
 class BatcherStrategy:
     def get_batch_count(self, batch_size: int, df: pd.DataFrame) -> int:
         raise NotImplementedError()
@@ -28,7 +27,7 @@ class PriorityRandomBatcherStrategy(BatcherStrategy):
                  priority_column: Optional[str] = None,
                  dataset_size_factor: float = 1.0,
                  random_state: Optional[int] = None,
-                 deduplicate = True):
+                 deduplicate=True):
         self.priority_column = priority_column
         self.dataset_size_factor = dataset_size_factor
         self.random_state = random_state

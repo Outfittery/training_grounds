@@ -1,5 +1,7 @@
 from typing import *
+
 import pandas as pd
+
 from .extractors import Extractor, DataBundle
 from .plain_extractor import PlainExtractor
 from .batcher import Batcher, IndexedDataBundle
@@ -39,10 +41,9 @@ class PrecomputingExtractor(Extractor):
         for i in range(batcher.get_batch_count(ibundle)):
             batch = batcher.get_batch(ibundle, i)
             if key is None:
-                key = [c for c in batch.keys() if c!='index'][0]
+                key = [c for c in batch.keys() if c != 'index'][0]
             dfs.append(batch[key])
         return dfs
-
 
     def _fill_bundle(self, ibundle: IndexedDataBundle):
         dfs = self._precompute(ibundle)
@@ -52,11 +53,9 @@ class PrecomputingExtractor(Extractor):
             df = pd.DataFrame([])
         ibundle.bundle[self.name] = df
 
-
     def preprocess_bundle(self, ibundle: IndexedDataBundle):
         if self.fitted:
             self._fill_bundle(ibundle)
-
 
     def fit(self, ibundle: IndexedDataBundle):
         self._inner_fit(ibundle)
@@ -64,6 +63,3 @@ class PrecomputingExtractor(Extractor):
 
     def extract(self, ibundle: IndexedDataBundle) -> pd.DataFrame:
         return self.extractor_from_preprocessed.extract(ibundle)
-
-
-

@@ -103,11 +103,11 @@ job.run()
 mem.get_parquet(list(mem.cache)[0]).head()
 ```
 
-    2022-06-27 19:39:59.245526+00:00 INFO: Featurization Job job at version v1 has started
-    2022-06-27 19:39:59.247769+00:00 INFO: Fetching data
-    2022-06-27 19:39:59.338822+00:00 INFO: Data fetched, finalizing
-    2022-06-27 19:39:59.409466+00:00 INFO: Uploading data
-    2022-06-27 19:39:59.410950+00:00 INFO: Featurization job completed
+    2022-06-29 11:31:13.562269+00:00 INFO: Featurization Job job at version v1 has started
+    2022-06-29 11:31:13.564887+00:00 INFO: Fetching data
+    2022-06-29 11:31:13.624379+00:00 INFO: Data fetched, finalizing
+    2022-06-29 11:31:13.642881+00:00 INFO: Uploading data
+    2022-06-29 11:31:13.644062+00:00 INFO: Featurization job completed
 
 
 
@@ -246,7 +246,7 @@ desc
 
 
 
-    {'task': <tg.common.delivery.packaging.packaging_dto.PackagingTask at 0x7efc84636c70>,
+    {'task': <tg.common.delivery.packaging.packaging_dto.PackagingTask at 0x7f4eac68ea60>,
      'module_name': 'titanic_featurization__1',
      'path': PosixPath('/home/yura/Desktop/repos/tg/temp/release/package/titanic_featurization__1-1.tar.gz'),
      'properties': {'module_name': 'titanic_featurization',
@@ -365,11 +365,11 @@ Now, we can run this container locally:
 !docker run titanic-featurization:test
 ```
 
-    2022-06-27 19:40:27.972884+00:00 INFO: Featurization Job job at version v1 has started
-    2022-06-27 19:40:27.973239+00:00 INFO: Fetching data
-    2022-06-27 19:40:28.069563+00:00 INFO: Data fetched, finalizing
-    2022-06-27 19:40:28.130125+00:00 INFO: Uploading data
-    2022-06-27 19:40:28.130755+00:00 INFO: Featurization job completed
+    2022-06-29 11:31:36.813383+00:00 INFO: Featurization Job job at version v1 has started
+    2022-06-29 11:31:36.814066+00:00 INFO: Fetching data
+    2022-06-29 11:31:36.903384+00:00 INFO: Data fetched, finalizing
+    2022-06-29 11:31:37.007742+00:00 INFO: Uploading data
+    2022-06-29 11:31:37.009237+00:00 INFO: Featurization job completed
 
 
 This `make_container` function is not "standard" or "universal": it just allows building the containers that are suitable for Sagemaker tasks and featurization jobs. So if you need some more sophisticated containering, please check the source code of this function to understand how to create an analog for it. Most of the complicated job is done by packaging, so `make_container` really just fills templates with values and executes some shell commands.

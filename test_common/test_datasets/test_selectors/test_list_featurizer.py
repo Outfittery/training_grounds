@@ -1,12 +1,15 @@
 from unittest import TestCase
 from tg.common.datasets.selectors import ListFeaturizer, SelectorException
 
+
 def element_to_dict(element):
     result = {d: int(element[0]) for d in element[1:]}
     return result
 
-def _throwing(*args,**kwargs):
+
+def _throwing(*args, **kwargs):
     raise ValueError()
+
 
 class ListFeaturizerTestCase(TestCase):
     def assertFeatures(self, result, *elements):
@@ -48,12 +51,11 @@ class ListFeaturizerTestCase(TestCase):
                 element_to_dict,
                 _throwing
             )
-            ft(['1a','2b'])
+            ft(['1a', '2b'])
             self.fail('Did not throw')
         except SelectorException as exp:
-            self.assertHistory(exp,0,'ListFeaturizer','ListFeaturizer','dict_fields_to_value')
-            self.assertEqual(exp.context.call_stack.called_object_name,'_throwing')
-
+            self.assertHistory(exp, 0, 'ListFeaturizer', 'ListFeaturizer', 'dict_fields_to_value')
+            self.assertEqual(exp.context.call_stack.called_object_name, '_throwing')
 
     def test_failure_in_selector(self):
         try:
@@ -61,7 +63,7 @@ class ListFeaturizerTestCase(TestCase):
                 _throwing,
                 lambda z: z
             )
-            ft(['1a','2b'])
+            ft(['1a', '2b'])
         except SelectorException as exp:
             self.assertHistory(exp, 0, 'ListFeaturizer', 'ListFeaturizer', 'list_element_to_dict')
-            self.assertEqual(exp.context.call_stack.called_object_name,'_throwing')
+            self.assertEqual(exp.context.call_stack.called_object_name, '_throwing')

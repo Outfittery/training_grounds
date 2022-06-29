@@ -8,8 +8,6 @@ from .architecture import DeliverableJob, JobExecutor, DockerOptions
 from ..packaging import make_container, ContainerHandler
 
 
-
-
 ENTRY_FILE_TEMPLATE = '''
 import {module}.{tg_name}.common.delivery.jobs.ssh_docker_job_execution as feat
 from {module} import Entry
@@ -149,7 +147,7 @@ class RemoteJobExecutor(JobExecutor):
         ssh = get_ssh(self.routine.remote_host_address, self.routine.remote_host_user)
         auth_command = self.routine.handler.get_auth_command()
         if auth_command is not None:
-            subprocess.call(ssh+auth_command)
+            subprocess.call(ssh + auth_command)
         subprocess.call(ssh + ['docker', 'pull', self.routine.handler.get_remote_name()])
         subprocess.call(ssh + get_docker_run_cmd(self.routine.handler.get_remote_name(), '"', self.routine._options))
 

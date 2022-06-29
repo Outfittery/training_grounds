@@ -1,7 +1,9 @@
 from typing import *
+
 from logging import getLogger
 from copy import deepcopy
 from collections import Iterable
+
 
 class LoggerInterface:
     def output(self, method, object):

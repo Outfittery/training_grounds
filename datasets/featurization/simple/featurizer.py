@@ -5,7 +5,6 @@ import pandas as pd
 from collections import Counter, defaultdict
 
 
-
 # helper method needed to pickel defauldict
 def dc():
     return defaultdict(Counter)
@@ -44,7 +43,7 @@ class DataframeFeaturizer(StreamFeaturizer):
     def observe_data_point(self, item) -> Optional[pd.DataFrame]:
         rows = self._featurize(item)
         self.buffer.extend(rows)
-        if self.buffer_size is not None and len(self.buffer)>=self.buffer_size:
+        if self.buffer_size is not None and len(self.buffer) >= self.buffer_size:
             return self._flush()
 
     def _flush(self) -> pd.DataFrame:
@@ -55,7 +54,7 @@ class DataframeFeaturizer(StreamFeaturizer):
 
     def finish(self) -> Optional[pd.DataFrame]:
         self._validate()
-        if len(self.buffer)>0:
+        if len(self.buffer) > 0:
             return self._flush()
 
 

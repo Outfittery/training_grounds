@@ -170,7 +170,7 @@ from tg.common import Logger
 Logger.info('Message with default logger')
 ```
 
-    2022-06-27 19:37:48.287262+00:00 INFO: Message with default logger
+    2022-06-29 11:25:40.725100+00:00 INFO: Message with default logger
 
 
 
@@ -179,7 +179,7 @@ Logger.initialize_kibana()
 Logger.info('Message with Kibana logger')
 ```
 
-    {"@timestamp": "2022-06-27 19:37:48.292745+00:00", "message": "Message with Kibana logger", "levelname": "INFO", "logger": "tg", "path": "/tmp/ipykernel_1236/2907404717.py", "path_line": 2}
+    {"@timestamp": "2022-06-29 11:25:40.731002+00:00", "message": "Message with Kibana logger", "levelname": "INFO", "logger": "tg", "path": "/tmp/ipykernel_10453/2907404717.py", "path_line": 2}
 
 
 As said before, you may define a custom session keys:
@@ -192,8 +192,8 @@ Logger.clear_keys()
 Logger.info('Message without a key')
 ```
 
-    {"@timestamp": "2022-06-27 19:37:48.300363+00:00", "message": "Message with a key", "levelname": "INFO", "logger": "tg", "path": "/tmp/ipykernel_1236/71300885.py", "path_line": 2, "test_key": "test"}
-    {"@timestamp": "2022-06-27 19:37:48.301611+00:00", "message": "Message without a key", "levelname": "INFO", "logger": "tg", "path": "/tmp/ipykernel_1236/71300885.py", "path_line": 4}
+    {"@timestamp": "2022-06-29 11:25:40.735955+00:00", "message": "Message with a key", "levelname": "INFO", "logger": "tg", "path": "/tmp/ipykernel_10453/71300885.py", "path_line": 2, "test_key": "test"}
+    {"@timestamp": "2022-06-29 11:25:40.736932+00:00", "message": "Message without a key", "levelname": "INFO", "logger": "tg", "path": "/tmp/ipykernel_10453/71300885.py", "path_line": 4}
 
 
 If exception information is available, it will be put in the keys:
@@ -206,7 +206,7 @@ except:
     Logger.error('Error')
 ```
 
-    {"@timestamp": "2022-06-27 19:37:48.306262+00:00", "message": "Error", "levelname": "ERROR", "logger": "tg", "path": "/tmp/ipykernel_1236/1975102656.py", "path_line": 4, "exception_type": "<class 'ValueError'>", "exception_value": "Error", "exception_details": "Traceback (most recent call last):\n  File \"/tmp/ipykernel_1236/1975102656.py\", line 2, in <module>\n    raise ValueError('Error')\nValueError: Error\n"}
+    {"@timestamp": "2022-06-29 11:25:40.741880+00:00", "message": "Error", "levelname": "ERROR", "logger": "tg", "path": "/tmp/ipykernel_10453/1975102656.py", "path_line": 4, "exception_type": "<class 'ValueError'>", "exception_value": "Error", "exception_details": "Traceback (most recent call last):\n  File \"/tmp/ipykernel_10453/1975102656.py\", line 2, in <module>\n    raise ValueError('Error')\nValueError: Error\n"}
 
 
 To change the default way of logging, inherit `tg.common._common.logger.LoggerRoot` in `tg.your_project`, and then import from there. It will also affect all the logging within `TG` framework.
@@ -519,7 +519,7 @@ uid1, uid2, uid3
 
     ('841c3d4a-c8e2-4791-b43b-113f6dc74725',
      '841c3d4a-c8e2-4791-b43b-113f6dc74725',
-     '97eafd64-4544-4982-a682-4ee221c8d6f7')
+     '58175cb2-f81b-4bcf-8171-8ce7b0b050ca')
 
 
 
@@ -859,7 +859,7 @@ combined_selector = Ensemble(
 combined_selector(obj)
 ```
 
-    2022-06-27 19:28:38.748037+00:00 WARNING: Missing field in FieldGetter
+    2022-06-29 11:25:47.709543+00:00 WARNING: Missing field in FieldGetter
 
 
 
@@ -933,7 +933,7 @@ titanic_selector = Pipeline(
 titanic_selector(obj)
 ```
 
-    2022-06-27 19:28:38.768354+00:00 WARNING: Missing field in FieldGetter
+    2022-06-29 11:25:47.804921+00:00 WARNING: Missing field in FieldGetter
 
 
 
@@ -953,7 +953,7 @@ titanic_selector(obj)
      'trip_SibSp': 0,
      'trip_Patch': 0,
      'trip_Relatives': 0,
-     'processed': datetime.datetime(2022, 6, 27, 21, 28, 38, 769388)}
+     'processed': datetime.datetime(2022, 6, 29, 13, 25, 47, 807034)}
 
 
 
@@ -995,8 +995,8 @@ print(json.dumps(representation, indent=1)[:300]+"...")
          "name": {
           "0": "[?Name]",
           "1": {
-           "length": "<function get_length at 0x7fd80a3c2040>",
-           "title": "<function get_title at 0x7fd80a428ca0>"
+           "length": "<function get_length at 0x7f4e28699160>",
+           "title": "<function get_title at 0x7f4e287d7790>"
           }
          },
          "Sex": {
@@ -1068,8 +1068,8 @@ representation[0]['passenger'][0]
 
     {0: {0: '[?passenger]'},
      1: {'name': {0: '[?Name]',
-       1: {'length': '<function get_length at 0x7fd80a3c2040>',
-        'title': '<function get_title at 0x7fd80a428ca0>'}},
+       1: {'length': '<function get_length at 0x7f4e28699160>',
+        'title': '<function get_title at 0x7f4e287d7790>'}},
       'Sex': {0: '[?Sex]'},
       'Age': {0: '[?Age]'}}}
 
@@ -1217,9 +1217,9 @@ The combination of `DataSource` and `Featurizer` allows you to quickly build the
 source.get_data().take(3).select(titanic_selector).to_dataframe()
 ```
 
-    2022-06-27 19:28:38.853372+00:00 WARNING: Missing field in FieldGetter
-    2022-06-27 19:28:38.854069+00:00 WARNING: Missing field in FieldGetter
-    2022-06-27 19:28:38.854707+00:00 WARNING: Missing field in FieldGetter
+    2022-06-29 11:25:48.257767+00:00 WARNING: Missing field in FieldGetter
+    2022-06-29 11:25:48.259413+00:00 WARNING: Missing field in FieldGetter
+    2022-06-29 11:25:48.260495+00:00 WARNING: Missing field in FieldGetter
 
 
 
@@ -1265,7 +1265,7 @@ source.get_data().take(3).select(titanic_selector).to_dataframe()
       <td>1</td>
       <td>0</td>
       <td>1</td>
-      <td>2022-06-27 21:28:38.853902</td>
+      <td>2022-06-29 13:25:48.259125</td>
     </tr>
     <tr>
       <th>1</th>
@@ -1283,7 +1283,7 @@ source.get_data().take(3).select(titanic_selector).to_dataframe()
       <td>1</td>
       <td>0</td>
       <td>1</td>
-      <td>2022-06-27 21:28:38.854524</td>
+      <td>2022-06-29 13:25:48.260271</td>
     </tr>
     <tr>
       <th>2</th>
@@ -1301,7 +1301,7 @@ source.get_data().take(3).select(titanic_selector).to_dataframe()
       <td>0</td>
       <td>0</td>
       <td>0</td>
-      <td>2022-06-27 21:28:38.855246</td>
+      <td>2022-06-29 13:25:48.261200</td>
     </tr>
   </tbody>
 </table>
@@ -1541,11 +1541,11 @@ job = FeaturizationJob(
 job.run()
 ```
 
-    2022-06-27 19:28:42.858650+00:00 INFO: Featurization Job job at version v1 has started
-    2022-06-27 19:28:42.861149+00:00 INFO: Fetching data
-    2022-06-27 19:28:42.961584+00:00 INFO: Data fetched, finalizing
-    2022-06-27 19:28:43.025426+00:00 INFO: Uploading data
-    2022-06-27 19:28:43.026883+00:00 INFO: Featurization job completed
+    2022-06-29 11:25:55.397205+00:00 INFO: Featurization Job job at version v1 has started
+    2022-06-29 11:25:55.400349+00:00 INFO: Fetching data
+    2022-06-29 11:25:55.511306+00:00 INFO: Data fetched, finalizing
+    2022-06-29 11:25:55.598581+00:00 INFO: Uploading data
+    2022-06-29 11:25:55.601867+00:00 INFO: Featurization job completed
 
 
 Some notes: 
@@ -1565,7 +1565,7 @@ list(mem.cache)
 
 
 
-    ['passengers/70a1cf74-68a2-4fc2-a8cc-6820901dcd35.parquet']
+    ['passengers/d24a7be5-5871-497a-9558-28b4df7d7744.parquet']
 
 
 
@@ -1703,20 +1703,20 @@ job.run()
 list(mem.cache)
 ```
 
-    2022-06-27 19:28:43.077634+00:00 INFO: Featurization Job job at version v1 has started
-    2022-06-27 19:28:43.078705+00:00 INFO: Fetching data
-    2022-06-27 19:28:43.157156+00:00 INFO: Data fetched, finalizing
-    2022-06-27 19:28:43.163353+00:00 INFO: Uploading data
-    2022-06-27 19:28:43.164478+00:00 INFO: Featurization job completed
+    2022-06-29 11:25:55.697649+00:00 INFO: Featurization Job job at version v1 has started
+    2022-06-29 11:25:55.700836+00:00 INFO: Fetching data
+    2022-06-29 11:25:55.774199+00:00 INFO: Data fetched, finalizing
+    2022-06-29 11:25:55.778471+00:00 INFO: Uploading data
+    2022-06-29 11:25:55.779497+00:00 INFO: Featurization job completed
 
 
 
 
 
-    ['passengers/2cef2bf5-ef73-485e-8939-f3eb54873832.parquet',
-     'passengers/7456ec6e-40e8-4bf1-b96a-5fccc68e619c.parquet',
-     'passengers/a9e67a6d-c435-41b1-bfff-1a13c8d4fc63.parquet',
-     'passengers/2784951e-6392-414e-8a90-d02e013696cf.parquet']
+    ['passengers/a13a9eca-2b73-4061-8a1f-e949b2a22a9e.parquet',
+     'passengers/d3b69a43-71aa-40ca-8bee-8f04c0749aae.parquet',
+     'passengers/0766c94b-d180-47ce-a33f-4e1f427e621e.parquet',
+     'passengers/5a27b574-592a-4d3f-b7f7-8ed996cafd2d.parquet']
 
 
 
@@ -1776,11 +1776,11 @@ job.run()
 mem.get_parquet(0).sort_values('Age').head()
 ```
 
-    2022-06-27 19:28:43.190870+00:00 INFO: Featurization Job job at version v1 has started
-    2022-06-27 19:28:43.193145+00:00 INFO: Fetching data
-    2022-06-27 19:28:43.251880+00:00 INFO: Data fetched, finalizing
-    2022-06-27 19:28:43.262021+00:00 INFO: Uploading data
-    2022-06-27 19:28:43.262974+00:00 INFO: Featurization job completed
+    2022-06-29 11:25:55.802560+00:00 INFO: Featurization Job job at version v1 has started
+    2022-06-29 11:25:55.804675+00:00 INFO: Fetching data
+    2022-06-29 11:25:55.859091+00:00 INFO: Data fetched, finalizing
+    2022-06-29 11:25:55.871411+00:00 INFO: Uploading data
+    2022-06-29 11:25:55.872501+00:00 INFO: Featurization job completed
 
 
 
@@ -1942,18 +1942,18 @@ job.run()
 list(dataset_buffer.cache)
 ```
 
-    2022-06-27 19:28:43.289208+00:00 INFO: Featurization Job job at version v1 has started
-    2022-06-27 19:28:43.291136+00:00 INFO: Fetching data
-    2022-06-27 19:28:43.347860+00:00 INFO: Data fetched, finalizing
-    2022-06-27 19:28:43.363004+00:00 INFO: Uploading data
-    2022-06-27 19:28:43.364114+00:00 INFO: Featurization job completed
+    2022-06-29 11:25:55.902147+00:00 INFO: Featurization Job job at version v1 has started
+    2022-06-29 11:25:55.905046+00:00 INFO: Fetching data
+    2022-06-29 11:25:55.959682+00:00 INFO: Data fetched, finalizing
+    2022-06-29 11:25:55.974348+00:00 INFO: Uploading data
+    2022-06-29 11:25:55.975421+00:00 INFO: Featurization job completed
 
 
 
 
 
-    ['cabins/fde2b5e9-3cfa-4685-9da5-a0be9fadbfb6.parquet',
-     'passengers/1d3160ef-40e9-43d6-af11-e0c0ba789413.parquet']
+    ['cabins/0d6136cb-7833-498e-ae3c-5775b4d8db5c.parquet',
+     'passengers/5b02583b-258a-4a09-a77b-aa066c281180.parquet']
 
 
 
@@ -3180,54 +3180,54 @@ for i in [0,2,4,6]:
     job.run(current_time = time(i),custom_revision_id=str(i))
 ```
 
-    2022-06-27 19:28:46.523703+00:00 INFO: Starting lesvik job test_featurization_job, version v1
-    2022-06-27 19:28:46.524324+00:00 INFO: Additional settings limit NONE, reporting NONE
-    2022-06-27 19:28:46.524953+00:00 INFO: 0 previous revisions are found
-    2022-06-27 19:28:46.525745+00:00 INFO: Running with id 0 at 2020-01-01 00:00:00, revision is MAJOR
-    2022-06-27 19:28:46.527909+00:00 INFO: Featurization Job test_featurization_job at version v1 has started
-    2022-06-27 19:28:46.533304+00:00 INFO: Fetching data
-    2022-06-27 19:28:46.601873+00:00 INFO: Data fetched, finalizing
-    2022-06-27 19:28:46.616490+00:00 INFO: Uploading data
-    2022-06-27 19:28:46.617495+00:00 INFO: Featurization job completed
-    2022-06-27 19:28:46.617919+00:00 INFO: 891 were processed
-    2022-06-27 19:28:46.618350+00:00 INFO: Uploading new description
-    2022-06-27 19:28:46.621492+00:00 INFO: Job finished
-    2022-06-27 19:28:46.621916+00:00 INFO: Starting lesvik job test_featurization_job, version v1
-    2022-06-27 19:28:46.622640+00:00 INFO: Additional settings limit NONE, reporting NONE
-    2022-06-27 19:28:46.626653+00:00 INFO: 1 previous revisions are found
-    2022-06-27 19:28:46.627149+00:00 INFO: Running with id 2 at 2020-01-03 00:00:00, revision is MINOR
-    2022-06-27 19:28:46.627524+00:00 INFO: Featurization Job test_featurization_job at version v1 has started
-    2022-06-27 19:28:46.632681+00:00 INFO: Fetching data
-    2022-06-27 19:28:46.645002+00:00 INFO: Data fetched, finalizing
-    2022-06-27 19:28:46.651358+00:00 INFO: Uploading data
-    2022-06-27 19:28:46.652436+00:00 INFO: Featurization job completed
-    2022-06-27 19:28:46.652897+00:00 INFO: 168 were processed
-    2022-06-27 19:28:46.653307+00:00 INFO: Uploading new description
-    2022-06-27 19:28:46.656803+00:00 INFO: Job finished
-    2022-06-27 19:28:46.659087+00:00 INFO: Starting lesvik job test_featurization_job, version v1
-    2022-06-27 19:28:46.659531+00:00 INFO: Additional settings limit NONE, reporting NONE
-    2022-06-27 19:28:46.666662+00:00 INFO: 2 previous revisions are found
-    2022-06-27 19:28:46.667215+00:00 INFO: Running with id 4 at 2020-01-05 00:00:00, revision is MINOR
-    2022-06-27 19:28:46.667586+00:00 INFO: Featurization Job test_featurization_job at version v1 has started
-    2022-06-27 19:28:46.671935+00:00 INFO: Fetching data
-    2022-06-27 19:28:46.678229+00:00 INFO: Data fetched, finalizing
-    2022-06-27 19:28:46.683663+00:00 INFO: Uploading data
-    2022-06-27 19:28:46.684565+00:00 INFO: Featurization job completed
-    2022-06-27 19:28:46.684980+00:00 INFO: 77 were processed
-    2022-06-27 19:28:46.685392+00:00 INFO: Uploading new description
-    2022-06-27 19:28:46.688722+00:00 INFO: Job finished
-    2022-06-27 19:28:46.689138+00:00 INFO: Starting lesvik job test_featurization_job, version v1
-    2022-06-27 19:28:46.689487+00:00 INFO: Additional settings limit NONE, reporting NONE
-    2022-06-27 19:28:46.698186+00:00 INFO: 3 previous revisions are found
-    2022-06-27 19:28:46.699658+00:00 INFO: Running with id 6 at 2020-01-07 00:00:00, revision is MINOR
-    2022-06-27 19:28:46.700191+00:00 INFO: Featurization Job test_featurization_job at version v1 has started
-    2022-06-27 19:28:46.704410+00:00 INFO: Fetching data
-    2022-06-27 19:28:46.755171+00:00 INFO: Data fetched, finalizing
-    2022-06-27 19:28:46.771760+00:00 INFO: Uploading data
-    2022-06-27 19:28:46.774265+00:00 INFO: Featurization job completed
-    2022-06-27 19:28:46.776489+00:00 INFO: 644 were processed
-    2022-06-27 19:28:46.777205+00:00 INFO: Uploading new description
-    2022-06-27 19:28:46.783469+00:00 INFO: Job finished
+    2022-06-29 11:26:03.261567+00:00 INFO: Starting lesvik job test_featurization_job, version v1
+    2022-06-29 11:26:03.277132+00:00 INFO: Additional settings limit NONE, reporting NONE
+    2022-06-29 11:26:03.282088+00:00 INFO: 0 previous revisions are found
+    2022-06-29 11:26:03.288185+00:00 INFO: Running with id 0 at 2020-01-01 00:00:00, revision is MAJOR
+    2022-06-29 11:26:03.289030+00:00 INFO: Featurization Job test_featurization_job at version v1 has started
+    2022-06-29 11:26:03.340973+00:00 INFO: Fetching data
+    2022-06-29 11:26:03.633662+00:00 INFO: Data fetched, finalizing
+    2022-06-29 11:26:03.702876+00:00 INFO: Uploading data
+    2022-06-29 11:26:03.718642+00:00 INFO: Featurization job completed
+    2022-06-29 11:26:03.727209+00:00 INFO: 891 were processed
+    2022-06-29 11:26:03.733663+00:00 INFO: Uploading new description
+    2022-06-29 11:26:03.746654+00:00 INFO: Job finished
+    2022-06-29 11:26:03.756778+00:00 INFO: Starting lesvik job test_featurization_job, version v1
+    2022-06-29 11:26:03.763333+00:00 INFO: Additional settings limit NONE, reporting NONE
+    2022-06-29 11:26:03.817718+00:00 INFO: 1 previous revisions are found
+    2022-06-29 11:26:03.823352+00:00 INFO: Running with id 2 at 2020-01-03 00:00:00, revision is MINOR
+    2022-06-29 11:26:03.827042+00:00 INFO: Featurization Job test_featurization_job at version v1 has started
+    2022-06-29 11:26:03.842276+00:00 INFO: Fetching data
+    2022-06-29 11:26:04.061011+00:00 INFO: Data fetched, finalizing
+    2022-06-29 11:26:04.125535+00:00 INFO: Uploading data
+    2022-06-29 11:26:04.130914+00:00 INFO: Featurization job completed
+    2022-06-29 11:26:04.145041+00:00 INFO: 168 were processed
+    2022-06-29 11:26:04.156672+00:00 INFO: Uploading new description
+    2022-06-29 11:26:04.186135+00:00 INFO: Job finished
+    2022-06-29 11:26:04.195257+00:00 INFO: Starting lesvik job test_featurization_job, version v1
+    2022-06-29 11:26:04.199670+00:00 INFO: Additional settings limit NONE, reporting NONE
+    2022-06-29 11:26:04.238758+00:00 INFO: 2 previous revisions are found
+    2022-06-29 11:26:04.245789+00:00 INFO: Running with id 4 at 2020-01-05 00:00:00, revision is MINOR
+    2022-06-29 11:26:04.248288+00:00 INFO: Featurization Job test_featurization_job at version v1 has started
+    2022-06-29 11:26:04.299640+00:00 INFO: Fetching data
+    2022-06-29 11:26:04.362860+00:00 INFO: Data fetched, finalizing
+    2022-06-29 11:26:04.446087+00:00 INFO: Uploading data
+    2022-06-29 11:26:04.456450+00:00 INFO: Featurization job completed
+    2022-06-29 11:26:04.461207+00:00 INFO: 77 were processed
+    2022-06-29 11:26:04.464120+00:00 INFO: Uploading new description
+    2022-06-29 11:26:04.490373+00:00 INFO: Job finished
+    2022-06-29 11:26:04.496681+00:00 INFO: Starting lesvik job test_featurization_job, version v1
+    2022-06-29 11:26:04.500821+00:00 INFO: Additional settings limit NONE, reporting NONE
+    2022-06-29 11:26:04.522798+00:00 INFO: 3 previous revisions are found
+    2022-06-29 11:26:04.529496+00:00 INFO: Running with id 6 at 2020-01-07 00:00:00, revision is MINOR
+    2022-06-29 11:26:04.531885+00:00 INFO: Featurization Job test_featurization_job at version v1 has started
+    2022-06-29 11:26:04.570020+00:00 INFO: Fetching data
+    2022-06-29 11:26:04.890657+00:00 INFO: Data fetched, finalizing
+    2022-06-29 11:26:04.926858+00:00 INFO: Uploading data
+    2022-06-29 11:26:04.930933+00:00 INFO: Featurization job completed
+    2022-06-29 11:26:04.934933+00:00 INFO: 644 were processed
+    2022-06-29 11:26:04.944799+00:00 INFO: Uploading new description
+    2022-06-29 11:26:04.979617+00:00 INFO: Job finished
 
 
 I have given a meaningful names to revisions with `custom_uid` argument. This is not necessary in general, as the order of revision is reflected in `description.parquet`.
@@ -3291,7 +3291,7 @@ desc_df
       <td>2020-01-01</td>
       <td>True</td>
       <td>v1</td>
-      <td>8f0bab6c-df5b-4bc3-b6ab-2522cd787888.parquet</td>
+      <td>2cb63775-bd23-424e-86f6-53571c8a5e78.parquet</td>
       <td>891.0</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -3303,7 +3303,7 @@ desc_df
       <td>2020-01-03</td>
       <td>False</td>
       <td>v1</td>
-      <td>be38c867-56e5-458b-9a85-e5518ef4f025.parquet</td>
+      <td>91a3728e-e71a-4bc4-9d75-9ca0f98071f1.parquet</td>
       <td>NaN</td>
       <td>168.0</td>
       <td>NaN</td>
@@ -3315,7 +3315,7 @@ desc_df
       <td>2020-01-05</td>
       <td>False</td>
       <td>v1</td>
-      <td>39ffd0ae-63f7-4644-964d-2e38998fe668.parquet</td>
+      <td>9aed7cbc-69fb-430f-94c0-f474989d6cdc.parquet</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>77.0</td>
@@ -3327,7 +3327,7 @@ desc_df
       <td>2020-01-07</td>
       <td>False</td>
       <td>v1</td>
-      <td>28346ab8-5aa2-431b-9484-5cba9a30f454.parquet</td>
+      <td>7edc4146-9e1e-4933-b247-dabac3ed4d79.parquet</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -3482,7 +3482,7 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-01 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>07091c46-a2e3-452d-b1c8-2ed5bdca4c11.parquet</td>
+      <td>0cde96b0-b0d2-4a4b-aae8-cd3e60e13da3.parquet</td>
       <td>891.0</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -3494,7 +3494,7 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-03 01:00:00</td>
       <td>False</td>
       <td></td>
-      <td>2572de70-39c4-432c-86b9-99c480749a57.parquet</td>
+      <td>c6c93292-128a-440e-88bc-435a19263ed8.parquet</td>
       <td>NaN</td>
       <td>168.0</td>
       <td>NaN</td>
@@ -3506,7 +3506,7 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-05 01:00:00</td>
       <td>False</td>
       <td></td>
-      <td>a2e88c8a-4f4d-4936-bf49-f1d23de346b5.parquet</td>
+      <td>989a1c5b-fc49-415a-83c2-e791c7c34d64.parquet</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>77.0</td>
@@ -3518,7 +3518,7 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-07 01:00:00</td>
       <td>False</td>
       <td></td>
-      <td>f8bc5246-c2c6-4305-bf3a-5f911c2c8087.parquet</td>
+      <td>4225285e-a51d-4bc2-aefe-db4b25a4a94f.parquet</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -3592,7 +3592,7 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-01 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>3505ad46-d75c-41c1-8bb0-92f0cbb3bfcb.parquet</td>
+      <td>62bb6578-6d93-4dde-bd69-f6ce1f3da982.parquet</td>
       <td>891.0</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -3604,9 +3604,9 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-03 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>c1314e6e-e5e3-4af0-9acc-d1fca409c605.parquet</td>
+      <td>70b46abc-ac87-4989-9ec7-30cfcc9fbeda.parquet</td>
+      <td>723.0</td>
       <td>NaN</td>
-      <td>168.0</td>
       <td>NaN</td>
       <td>NaN</td>
     </tr>
@@ -3616,9 +3616,9 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-03 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>2c793de3-9046-4f08-9cf4-2881cb46f501.parquet</td>
-      <td>723.0</td>
+      <td>7f1d5826-0540-4184-b7d8-7671f43f89db.parquet</td>
       <td>NaN</td>
+      <td>168.0</td>
       <td>NaN</td>
       <td>NaN</td>
     </tr>
@@ -3628,7 +3628,19 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-05 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>e2029fec-a0bf-400d-a296-827343773dd3.parquet</td>
+      <td>a30ae553-b1de-442f-88d8-768a22f8095e.parquet</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>77.0</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4</td>
+      <td>2020-01-05 01:00:00</td>
+      <td>True</td>
+      <td></td>
+      <td>5f4bba93-f5e4-4809-94ab-a52c505e744a.parquet</td>
       <td>646.0</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -3640,31 +3652,7 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-05 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>02396733-33cc-40b0-9d5e-2751677c334d.parquet</td>
-      <td>NaN</td>
-      <td>168.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>4</td>
-      <td>2020-01-05 01:00:00</td>
-      <td>True</td>
-      <td></td>
-      <td>3cf02629-f21a-48d9-ad38-6db68a59b343.parquet</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>77.0</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>6</td>
-      <td>2020-01-07 01:00:00</td>
-      <td>True</td>
-      <td></td>
-      <td>f882fdec-0c0d-475b-8df5-c4760b48a410.parquet</td>
+      <td>253ea2fb-6a8b-43ae-9278-a1ddef144c13.parquet</td>
       <td>NaN</td>
       <td>168.0</td>
       <td>NaN</td>
@@ -3676,7 +3664,19 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-07 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>62b4c9cb-4eda-4ee4-be4a-5d3798b2f1ef.parquet</td>
+      <td>51ce3cc1-35fd-4d4a-b9d2-47a83446527f.parquet</td>
+      <td>NaN</td>
+      <td>168.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>6</td>
+      <td>2020-01-07 01:00:00</td>
+      <td>True</td>
+      <td></td>
+      <td>082391ad-82fe-45d0-aac5-c4a2f145b867.parquet</td>
       <td>2.0</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -3688,11 +3688,11 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-07 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>811c8db6-3769-45f3-ba65-69979d351e74.parquet</td>
+      <td>d0f1ffb8-1106-4071-a156-bbc12696554b.parquet</td>
       <td>NaN</td>
       <td>NaN</td>
+      <td>77.0</td>
       <td>NaN</td>
-      <td>644.0</td>
     </tr>
     <tr>
       <th>3</th>
@@ -3700,11 +3700,11 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-07 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>7cd03fe5-bef1-4df6-a23b-6281b74fcdb1.parquet</td>
+      <td>10d1ac90-b76e-4ace-a951-aa279b148f82.parquet</td>
       <td>NaN</td>
       <td>NaN</td>
-      <td>77.0</td>
       <td>NaN</td>
+      <td>644.0</td>
     </tr>
   </tbody>
 </table>
@@ -4472,16 +4472,16 @@ except ValueError as exp:
     traceback.print_exc() #We catch the exception so the Notebook could proceed uninterrupted
 ```
 
-    2022-06-27 19:28:53.100086+00:00 WARNING: Missing column in ContinuousTransformer
-    2022-06-27 19:28:53.103057+00:00 WARNING: Missing column in ContinuousTransformer
+    2022-06-29 11:26:20.794521+00:00 WARNING: Missing column in ContinuousTransformer
+    2022-06-29 11:26:20.815565+00:00 WARNING: Missing column in ContinuousTransformer
 
 
     Traceback (most recent call last):
-      File "/tmp/ipykernel_31087/2155061853.py", line 14, in <module>
+      File "/tmp/ipykernel_10870/2155061853.py", line 14, in <module>
         tr.transform(test_df)
-      File "/home/yura/Desktop/repos/tg/tg/common/ml/dft/architecture.py", line 49, in transform
+      File "/home/yura/Desktop/repos/tg/tg/common/ml/dft/architecture.py", line 48, in transform
         for res in transformer.transform(df):
-      File "/home/yura/Desktop/repos/tg/tg/common/ml/dft/column_transformers.py", line 92, in transform
+      File "/home/yura/Desktop/repos/tg/tg/common/ml/dft/column_transformers.py", line 90, in transform
         missing = self.missing_indicator.transform(subdf)
       File "/home/yura/anaconda3/envs/tg/lib/python3.8/site-packages/sklearn/impute/_base.py", line 885, in transform
         raise ValueError(
@@ -4502,11 +4502,11 @@ tr.fit(df)
 tr.transform(test_df)
 ```
 
-    2022-06-27 19:28:53.133821+00:00 WARNING: Missing column in ContinuousTransformer
-    2022-06-27 19:28:53.135301+00:00 WARNING: Missing column in ContinuousTransformer
-    2022-06-27 19:28:53.140779+00:00 WARNING: Unexpected None in MissingIndicatorWithReporting
-    2022-06-27 19:28:53.142468+00:00 WARNING: Unexpected None in MissingIndicatorWithReporting
-    2022-06-27 19:28:53.143747+00:00 WARNING: Unexpected None in MissingIndicatorWithReporting
+    2022-06-29 11:26:20.902429+00:00 WARNING: Missing column in ContinuousTransformer
+    2022-06-29 11:26:20.905555+00:00 WARNING: Missing column in ContinuousTransformer
+    2022-06-29 11:26:20.919916+00:00 WARNING: Unexpected None in MissingIndicatorWithReporting
+    2022-06-29 11:26:20.920809+00:00 WARNING: Unexpected None in MissingIndicatorWithReporting
+    2022-06-29 11:26:20.922630+00:00 WARNING: Unexpected None in MissingIndicatorWithReporting
 
 
 
@@ -4553,11 +4553,11 @@ Logger.initialize_kibana()
 tr.transform(test_df)
 ```
 
-    {"@timestamp": "2022-06-27 19:28:53.160523+00:00", "message": "Missing column in ContinuousTransformer", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/column_transformers.py", "path_line": 77, "column": "Pclass"}
-    {"@timestamp": "2022-06-27 19:28:53.164905+00:00", "message": "Missing column in ContinuousTransformer", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/column_transformers.py", "path_line": 77, "column": "Parch"}
-    {"@timestamp": "2022-06-27 19:28:53.169612+00:00", "message": "Unexpected None in MissingIndicatorWithReporting", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/miscellaneous.py", "path_line": 36, "column": "Pclass"}
-    {"@timestamp": "2022-06-27 19:28:53.170205+00:00", "message": "Unexpected None in MissingIndicatorWithReporting", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/miscellaneous.py", "path_line": 36, "column": "Parch"}
-    {"@timestamp": "2022-06-27 19:28:53.170654+00:00", "message": "Unexpected None in MissingIndicatorWithReporting", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/miscellaneous.py", "path_line": 36, "column": "Fare"}
+    {"@timestamp": "2022-06-29 11:26:20.970802+00:00", "message": "Missing column in ContinuousTransformer", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/column_transformers.py", "path_line": 75, "column": "Pclass"}
+    {"@timestamp": "2022-06-29 11:26:20.979440+00:00", "message": "Missing column in ContinuousTransformer", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/column_transformers.py", "path_line": 75, "column": "Parch"}
+    {"@timestamp": "2022-06-29 11:26:20.986437+00:00", "message": "Unexpected None in MissingIndicatorWithReporting", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/miscellaneous.py", "path_line": 36, "column": "Pclass"}
+    {"@timestamp": "2022-06-29 11:26:20.986971+00:00", "message": "Unexpected None in MissingIndicatorWithReporting", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/miscellaneous.py", "path_line": 36, "column": "Parch"}
+    {"@timestamp": "2022-06-29 11:26:20.988168+00:00", "message": "Unexpected None in MissingIndicatorWithReporting", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/miscellaneous.py", "path_line": 36, "column": "Fare"}
 
 
 
@@ -4833,7 +4833,7 @@ tr.fit(df.loc[~df.Embarked.isnull()])
 tr.transform(df.loc[df.Embarked.isnull()])
 ```
 
-    {"@timestamp": "2022-06-27 19:28:53.270541+00:00", "message": "Unexpected value in MostPopularStrategy", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/column_transformers.py", "path_line": 124, "column": "Embarked", "value": "NONE"}
+    {"@timestamp": "2022-06-29 11:26:21.162381+00:00", "message": "Unexpected value in MostPopularStrategy", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/tg/tg/common/ml/dft/column_transformers.py", "path_line": 122, "column": "Embarked", "value": "NONE"}
 
 
 
@@ -6019,8 +6019,8 @@ result = task.run(tdf)
       0%|          | 0/1 [00:00<?, ?it/s]
 
 
-    2022-06-27 19:28:56.739258+00:00 INFO: Starting stage 1/1
-    2022-06-27 19:28:56.799082+00:00 INFO: Completed stage 1/1
+    2022-06-29 11:26:31.526335+00:00 INFO: Starting stage 1/1
+    2022-06-29 11:26:32.465762+00:00 INFO: Completed stage 1/1
 
 
 Essential components are:
@@ -6271,7 +6271,7 @@ result['runs'][0]['model']
 
     Pipeline(steps=[('ColumnNamesKeeper', ColumnNamesKeeper()),
                     ('Transformer',
-                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f2b378cadf0>),
+                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f966f5d28b0>),
                     ('ColumnNamesKeeperAfterTransformation', ColumnNamesKeeper()),
                     ('Model', LogisticRegression())])
 
@@ -6535,28 +6535,28 @@ pd.DataFrame([run['metrics'] for run in result['runs'].values()])
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.862917</td>
-      <td>0.998319</td>
+      <td>0.867440</td>
+      <td>0.998059</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.826485</td>
-      <td>0.998715</td>
+      <td>0.840949</td>
+      <td>0.998938</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.851331</td>
-      <td>0.997248</td>
+      <td>0.843953</td>
+      <td>0.997413</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.815813</td>
-      <td>0.999520</td>
+      <td>0.816106</td>
+      <td>0.999443</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.887391</td>
-      <td>0.997797</td>
+      <td>0.886486</td>
+      <td>0.997604</td>
     </tr>
   </tbody>
 </table>
@@ -6670,13 +6670,13 @@ result['runs'][0]['model']
 
     Pipeline(steps=[('ColumnNamesKeeper', ColumnNamesKeeper()),
                     ('Transformer',
-                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f2b34097bb0>),
+                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f966d4ccbe0>),
                     ('ColumnNamesKeeperAfterTransformation', ColumnNamesKeeper()),
                     ('Model',
                      Pipeline(steps=[('CategoricalVariablesSetter',
-                                      <tg.common.ml.single_frame_training.model_provider.CatBoostWrap object at 0x7f2b34088280>),
+                                      <tg.common.ml.single_frame_training.model_provider.CatBoostWrap object at 0x7f9691fc8910>),
                                      ('Model',
-                                      <catboost.core.CatBoostClassifier object at 0x7f2b3826e8b0>)]))])
+                                      <catboost.core.CatBoostClassifier object at 0x7f966c16c040>)]))])
 
 
 
@@ -6945,7 +6945,7 @@ result['runs'][0]['model']
 
     Pipeline(steps=[('ColumnNamesKeeper', ColumnNamesKeeper()),
                     ('Transformer',
-                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f2b192db580>),
+                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f9648f03730>),
                     ('ColumnNamesKeeperAfterTransformation', ColumnNamesKeeper()),
                     ('Model', LogisticRegression(C=1))])
 
@@ -6983,7 +6983,7 @@ result['runs'][0]['model']
 
     Pipeline(steps=[('ColumnNamesKeeper', ColumnNamesKeeper()),
                     ('Transformer',
-                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f2b2049aca0>),
+                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f96580c9fa0>),
                     ('ColumnNamesKeeperAfterTransformation', ColumnNamesKeeper()),
                     ('Model', LogisticRegression())])
 
@@ -6995,7 +6995,7 @@ Kraken does exactly one thing: it executes any given method over set of paramete
 
 
 ```python
-from tg.common.ml.kraken import Kraken
+from tg.common.ml.miscellaneous import Kraken
 
 config = [
     {'a': 1, 'b': 2},
@@ -7562,10 +7562,10 @@ test_df.loc[batch].groupby('x').size()
 
 
     x
-    1    1016
-    2    2025
-    3    2975
-    4    3984
+    1     974
+    2    1974
+    3    3087
+    4    3965
     dtype: int64
 
 
@@ -8274,8 +8274,8 @@ batch['labels'].groupby('Survived').size()
 
 
     Survived
-    0.0    51
-    1.0    47
+    0.0    50
+    1.0    45
     dtype: int64
 
 
@@ -8297,8 +8297,8 @@ test_batch['labels'].groupby('Survived').size()
 
 
     Survived
-    0.0    323
-    1.0    254
+    0.0    331
+    1.0    261
     dtype: int64
 
 
@@ -8421,36 +8421,36 @@ task = bt.BatchedTrainingTask(
 result = task.run(ibundle_fixed)
 ```
 
-    2022-06-27 19:29:58.428635+00:00 INFO: Training starts. Info: {}
-    2022-06-27 19:29:58.430847+00:00 INFO: Ensuring/loading bundle. Bundle before:
-    <tg.common.ml.batched_training.data_bundle.IndexedDataBundle object at 0x7f99f8e024f0>
-    2022-06-27 19:29:58.433336+00:00 INFO: Bundle loaded
+    2022-06-29 11:28:18.320342+00:00 INFO: Training starts. Info: {}
+    2022-06-29 11:28:18.321589+00:00 INFO: Ensuring/loading bundle. Bundle before:
+    <tg.common.ml.batched_training.data_bundle.IndexedDataBundle object at 0x7f8bd25395b0>
+    2022-06-29 11:28:18.322290+00:00 INFO: Bundle loaded
     {'index': {'shape': (891, 5), 'index_name': 'PassengerId', 'columns': ['Name', 'Ticket', 'Cabin', 'Survived', 'priority'], 'index': [1, 2, 3, 4, 5, '...']}, 'passengers': {'shape': (891, 4), 'index_name': 'Name', 'columns': ['Sex', 'Age', 'SibSp', 'Parch'], 'index': ['Braund, Mr. Owen Harris', 'Cumings, Mrs. John Bradley (Florence Briggs Thayer)', 'Heikkinen, Miss. Laina', 'Futrelle, Mrs. Jacques Heath (Lily May Peel)', 'Allen, Mr. William Henry', '...']}, 'tickets': {'shape': (681, 3), 'index_name': 'Ticket', 'columns': ['Pclass', 'Fare', 'Embarked'], 'index': ['A/5 21171', 'PC 17599', 'STON/O2. 3101282', '113803', '373450', '...']}}
-    2022-06-27 19:29:58.438464+00:00 INFO: Index frame is set to index, shape is (891, 5)
-    2022-06-27 19:29:58.445809+00:00 INFO: Skipping late initialization
-    2022-06-27 19:29:58.447953+00:00 INFO: Preprocessing bundle by batcher
-    2022-06-27 19:29:58.472113+00:00 INFO: Splits: train 712, test 179, display 143
-    2022-06-27 19:29:58.474187+00:00 INFO: New training. Instantiating the system
-    2022-06-27 19:29:58.478148+00:00 INFO: Fitting the transformers
-    2022-06-27 19:29:58.702007+00:00 INFO: Instantiating model
-    2022-06-27 19:29:58.752867+00:00 INFO: Initialization completed
-    2022-06-27 19:29:58.759070+00:00 INFO: Epoch 0 of 1
-    2022-06-27 19:29:58.759905+00:00 INFO: Training: 0/8
-    2022-06-27 19:29:58.894238+00:00 INFO: Training: 1/8
-    2022-06-27 19:29:58.968001+00:00 INFO: Training: 2/8
-    2022-06-27 19:29:59.029186+00:00 INFO: Training: 3/8
-    2022-06-27 19:29:59.145526+00:00 INFO: Training: 4/8
-    2022-06-27 19:29:59.265845+00:00 INFO: Training: 5/8
-    2022-06-27 19:29:59.431313+00:00 INFO: Training: 6/8
-    2022-06-27 19:29:59.588380+00:00 INFO: Training: 7/8
-    2022-06-27 19:29:59.764171+00:00 INFO: test: 0/2
-    2022-06-27 19:29:59.935129+00:00 INFO: test: 1/2
-    2022-06-27 19:30:00.151570+00:00 INFO: display: 0/2
-    2022-06-27 19:30:00.344605+00:00 INFO: display: 1/2
-    2022-06-27 19:30:00.527466+00:00 INFO: ###roc_auc_score_test:0.7768115942028986
-    2022-06-27 19:30:00.531099+00:00 INFO: ###roc_auc_score_display:0.6655913978494623
-    2022-06-27 19:30:00.537008+00:00 INFO: ###loss:0.2480677142739296
-    2022-06-27 19:30:00.547391+00:00 INFO: ###iteration:0
+    2022-06-29 11:28:18.324531+00:00 INFO: Index frame is set to index, shape is (891, 5)
+    2022-06-29 11:28:18.325349+00:00 INFO: Skipping late initialization
+    2022-06-29 11:28:18.325862+00:00 INFO: Preprocessing bundle by batcher
+    2022-06-29 11:28:18.330539+00:00 INFO: Splits: train 712, test 179, display 143
+    2022-06-29 11:28:18.331074+00:00 INFO: New training. Instantiating the system
+    2022-06-29 11:28:18.332409+00:00 INFO: Fitting the transformers
+    2022-06-29 11:28:18.435844+00:00 INFO: Instantiating model
+    2022-06-29 11:28:18.438288+00:00 INFO: Initialization completed
+    2022-06-29 11:28:18.442028+00:00 INFO: Epoch 0 of 1
+    2022-06-29 11:28:18.442853+00:00 INFO: Training: 0/8
+    2022-06-29 11:28:18.495135+00:00 INFO: Training: 1/8
+    2022-06-29 11:28:18.588787+00:00 INFO: Training: 2/8
+    2022-06-29 11:28:18.742102+00:00 INFO: Training: 3/8
+    2022-06-29 11:28:18.873698+00:00 INFO: Training: 4/8
+    2022-06-29 11:28:18.951669+00:00 INFO: Training: 5/8
+    2022-06-29 11:28:19.006398+00:00 INFO: Training: 6/8
+    2022-06-29 11:28:19.053355+00:00 INFO: Training: 7/8
+    2022-06-29 11:28:19.102285+00:00 INFO: test: 0/2
+    2022-06-29 11:28:19.158308+00:00 INFO: test: 1/2
+    2022-06-29 11:28:19.207947+00:00 INFO: display: 0/2
+    2022-06-29 11:28:19.245361+00:00 INFO: display: 1/2
+    2022-06-29 11:28:19.288458+00:00 INFO: ###roc_auc_score_test:0.6849802371541502
+    2022-06-29 11:28:19.288982+00:00 INFO: ###roc_auc_score_display:0.706236559139785
+    2022-06-29 11:28:19.289805+00:00 INFO: ###loss:0.2511553727090359
+    2022-06-29 11:28:19.291345+00:00 INFO: ###iteration:0
 
 
 As you can see, `TrainingTasks` logs quite extensively on the initialization process, so in case of error it's relativaly easy to understand the source of error. 
@@ -8575,27 +8575,27 @@ prediction
   <tbody>
     <tr>
       <th>1</th>
-      <td>0.394233</td>
+      <td>0.406591</td>
       <td>0.0</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.671026</td>
+      <td>0.641442</td>
       <td>1.0</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.483621</td>
+      <td>0.487278</td>
       <td>1.0</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.651865</td>
+      <td>0.600821</td>
       <td>1.0</td>
     </tr>
     <tr>
       <th>5</th>
-      <td>0.387574</td>
+      <td>0.406437</td>
       <td>0.0</td>
     </tr>
   </tbody>
@@ -8643,11 +8643,11 @@ task.model_handler.network(batch['features'])[:5]
 
 
 
-    tensor([[0.4233],
-            [0.4036],
-            [0.4089],
-            [0.4441],
-            [0.4253]], grad_fn=<SliceBackward>)
+    tensor([[0.4874],
+            [0.4980],
+            [0.4886],
+            [0.4964],
+            [0.4976]], grad_fn=<SliceBackward>)
 
 
 
@@ -8676,28 +8676,28 @@ task.model_handler.predict(batch).head()
   </thead>
   <tbody>
     <tr>
-      <th>423</th>
-      <td>0.423282</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>493</th>
-      <td>0.403562</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>431</th>
-      <td>0.408860</td>
+      <th>432</th>
+      <td>0.487402</td>
       <td>1.0</td>
     </tr>
     <tr>
-      <th>788</th>
-      <td>0.444078</td>
+      <th>854</th>
+      <td>0.498024</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>118</th>
+      <td>0.488602</td>
       <td>0.0</td>
     </tr>
     <tr>
-      <th>835</th>
-      <td>0.425296</td>
+      <th>671</th>
+      <td>0.496439</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>814</th>
+      <td>0.497650</td>
       <td>0.0</td>
     </tr>
   </tbody>
@@ -8834,8 +8834,8 @@ task.data_.batch['index'].groupby('Survived').size()
 
 
     Survived
-    0.0    57
-    1.0    37
+    0.0    41
+    1.0    48
     dtype: int64
 
 
@@ -10507,11 +10507,11 @@ job.run()
 mem.get_parquet(list(mem.cache)[0]).head()
 ```
 
-    2022-06-27 19:39:59.245526+00:00 INFO: Featurization Job job at version v1 has started
-    2022-06-27 19:39:59.247769+00:00 INFO: Fetching data
-    2022-06-27 19:39:59.338822+00:00 INFO: Data fetched, finalizing
-    2022-06-27 19:39:59.409466+00:00 INFO: Uploading data
-    2022-06-27 19:39:59.410950+00:00 INFO: Featurization job completed
+    2022-06-29 11:31:13.562269+00:00 INFO: Featurization Job job at version v1 has started
+    2022-06-29 11:31:13.564887+00:00 INFO: Fetching data
+    2022-06-29 11:31:13.624379+00:00 INFO: Data fetched, finalizing
+    2022-06-29 11:31:13.642881+00:00 INFO: Uploading data
+    2022-06-29 11:31:13.644062+00:00 INFO: Featurization job completed
 
 
 
@@ -10650,7 +10650,7 @@ desc
 
 
 
-    {'task': <tg.common.delivery.packaging.packaging_dto.PackagingTask at 0x7efc84636c70>,
+    {'task': <tg.common.delivery.packaging.packaging_dto.PackagingTask at 0x7f4eac68ea60>,
      'module_name': 'titanic_featurization__1',
      'path': PosixPath('/home/yura/Desktop/repos/tg/temp/release/package/titanic_featurization__1-1.tar.gz'),
      'properties': {'module_name': 'titanic_featurization',
@@ -10769,11 +10769,11 @@ Now, we can run this container locally:
 !docker run titanic-featurization:test
 ```
 
-    2022-06-27 19:40:27.972884+00:00 INFO: Featurization Job job at version v1 has started
-    2022-06-27 19:40:27.973239+00:00 INFO: Fetching data
-    2022-06-27 19:40:28.069563+00:00 INFO: Data fetched, finalizing
-    2022-06-27 19:40:28.130125+00:00 INFO: Uploading data
-    2022-06-27 19:40:28.130755+00:00 INFO: Featurization job completed
+    2022-06-29 11:31:36.813383+00:00 INFO: Featurization Job job at version v1 has started
+    2022-06-29 11:31:36.814066+00:00 INFO: Fetching data
+    2022-06-29 11:31:36.903384+00:00 INFO: Data fetched, finalizing
+    2022-06-29 11:31:37.007742+00:00 INFO: Uploading data
+    2022-06-29 11:31:37.009237+00:00 INFO: Featurization job completed
 
 
 This `make_container` function is not "standard" or "universal": it just allows building the containers that are suitable for Sagemaker tasks and featurization jobs. So if you need some more sophisticated containering, please check the source code of this function to understand how to create an analog for it. Most of the complicated job is done by packaging, so `make_container` really just fills templates with values and executes some shell commands.
@@ -10841,11 +10841,11 @@ Using the `.attached` accesor, we can run job in the same Python process that yo
 routine.attached.execute()
 ```
 
-    2022-06-27 19:40:31.016162+00:00 INFO: Featurization Job job at version v1 has started
-    2022-06-27 19:40:31.017706+00:00 INFO: Fetching data
-    2022-06-27 19:40:31.075090+00:00 INFO: Data fetched, finalizing
-    2022-06-27 19:40:31.098569+00:00 INFO: Uploading data
-    2022-06-27 19:40:31.099733+00:00 INFO: Featurization job completed
+    2022-06-29 11:31:39.676343+00:00 INFO: Featurization Job job at version v1 has started
+    2022-06-29 11:31:39.677742+00:00 INFO: Fetching data
+    2022-06-29 11:31:39.736577+00:00 INFO: Data fetched, finalizing
+    2022-06-29 11:31:39.758025+00:00 INFO: Uploading data
+    2022-06-29 11:31:39.759078+00:00 INFO: Featurization job completed
 
 
 The `.local` accessor builds package and container, then executes the container locally. This step allows debugging the following things:
@@ -10875,14 +10875,14 @@ output, errors = routine.local.get_logs()
 print(output)
 ```
 
-    2022-06-27 19:40:54.883388+00:00 INFO: Welcome to Training Grounds. This is Job execution via Docker/SSH
-    2022-06-27 19:40:54.930855+00:00 INFO: Executing job job version v1
-    2022-06-27 19:40:54.931020+00:00 INFO: Featurization Job job at version v1 has started
-    2022-06-27 19:40:54.931552+00:00 INFO: Fetching data
-    2022-06-27 19:40:55.228919+00:00 INFO: Data fetched, finalizing
-    2022-06-27 19:40:55.310273+00:00 INFO: Uploading data
-    2022-06-27 19:40:55.312840+00:00 INFO: Featurization job completed
-    2022-06-27 19:40:55.313731+00:00 INFO: Job completed
+    2022-06-29 11:31:51.269987+00:00 INFO: Welcome to Training Grounds. This is Job execution via Docker/SSH
+    2022-06-29 11:31:51.280496+00:00 INFO: Executing job job version v1
+    2022-06-29 11:31:51.281005+00:00 INFO: Featurization Job job at version v1 has started
+    2022-06-29 11:31:51.282482+00:00 INFO: Fetching data
+    2022-06-29 11:31:51.358743+00:00 INFO: Data fetched, finalizing
+    2022-06-29 11:31:51.383703+00:00 INFO: Uploading data
+    2022-06-29 11:31:51.384298+00:00 INFO: Featurization job completed
+    2022-06-29 11:31:51.384440+00:00 INFO: Job completed
     
 
 
@@ -10934,7 +10934,7 @@ We will store it locally. We will not actually run this task on the `Sagemaker`,
 ```python
 from tg.common.ml import single_frame_training as sft
 from tg.common.ml import dft
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import roc_auc_score
 
 task = sft.SingleFrameTrainingTask(
     data_loader = sft.DataFrameLoader('Survived'),
@@ -10943,9 +10943,9 @@ task = sft.SingleFrameTrainingTask(
             max_iter = 1000),
         transformer = dft.DataFrameTransformerFactory.default_factory(),
         keep_column_names=False),
-    evaluator=sft.Evaluation.multiclass_classification,
+    evaluator=sft.Evaluation.binary_classification,
     splitter=sft.FoldSplitter(),
-    metrics_pool = sft.MetricPool().add_sklearn(accuracy_score)        
+    metrics_pool = sft.MetricPool().add_sklearn(roc_auc_score)        
     )
 ```
 
@@ -10991,17 +10991,17 @@ As with `SSHDockerRoutine`, there are `attached`, `local` and `remote` accessors
 attached_task_id = routine.attached.execute(task,'titanic')
 ```
 
-    2022-06-27 19:41:09.350865+00:00 INFO: Starting stage 1/1
-    2022-06-27 19:41:09.558283+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220627_214109_9995b5204d7d490781979ad50ceb2464/runs/0/result_df
-    2022-06-27 19:41:09.559445+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220627_214109_9995b5204d7d490781979ad50ceb2464/runs/0/metrics
-    2022-06-27 19:41:09.562344+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220627_214109_9995b5204d7d490781979ad50ceb2464/runs/0/info
-    2022-06-27 19:41:09.572337+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220627_214109_9995b5204d7d490781979ad50ceb2464/runs/0/model
-    2022-06-27 19:41:09.576507+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220627_214109_9995b5204d7d490781979ad50ceb2464/runs/0/training_task
-    2022-06-27 19:41:09.580643+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220627_214109_9995b5204d7d490781979ad50ceb2464/runs/0/train_split
-    2022-06-27 19:41:09.589805+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220627_214109_9995b5204d7d490781979ad50ceb2464/runs/0/test_splits
-    2022-06-27 19:41:09.592056+00:00 INFO: Completed stage 1/1
-    2022-06-27 19:41:09.600195+00:00 INFO: ###METRIC###accuracy_score_test:0.7910447761194029###
-    2022-06-27 19:41:09.606074+00:00 INFO: ###METRIC###accuracy_score_train:0.8057784911717496###
+    2022-06-29 11:31:54.959026+00:00 INFO: Starting stage 1/1
+    2022-06-29 11:31:55.024144+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220629_133154_e9070dfa1b63456abe3cce462444eec4/runs/0/result_df
+    2022-06-29 11:31:55.024998+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220629_133154_e9070dfa1b63456abe3cce462444eec4/runs/0/metrics
+    2022-06-29 11:31:55.025754+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220629_133154_e9070dfa1b63456abe3cce462444eec4/runs/0/info
+    2022-06-29 11:31:55.026717+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220629_133154_e9070dfa1b63456abe3cce462444eec4/runs/0/model
+    2022-06-29 11:31:55.027545+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220629_133154_e9070dfa1b63456abe3cce462444eec4/runs/0/training_task
+    2022-06-29 11:31:55.028901+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220629_133154_e9070dfa1b63456abe3cce462444eec4/runs/0/train_split
+    2022-06-29 11:31:55.029638+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220629_133154_e9070dfa1b63456abe3cce462444eec4/runs/0/test_splits
+    2022-06-29 11:31:55.030052+00:00 INFO: Completed stage 1/1
+    2022-06-29 11:31:55.031555+00:00 INFO: ###METRIC###roc_auc_score_test:0.8538095238095237###
+    2022-06-29 11:31:55.031966+00:00 INFO: ###METRIC###roc_auc_score_train:0.8600247283139194###
 
 
 Unlike `SSHDockerRoutine`, `SagemakerTrainingRoutine` has the output, and `local` and `attached` accessors try to emulate `Sagemaker` behaviour in how the output is handled. They store the output in `Loc.temp` folder, and `execute` method returns a task id to access the result. Let's browse the result.
@@ -11025,52 +11025,21 @@ Query.folder(attached_folder, '**/*').foreach(lambda z: print(z.relative_to(atta
     runs/0/training_task.pkl
 
 
-We can view the resulting dataframe, and compute a confusion matrix, for instance:
+We can view the resulting dataframe, and compute, for instance, ROC AUC optimat threshold:
 
 
 ```python
+from tg.common.ml.miscellaneous import roc_optimal_threshold
+
 df = pd.read_parquet(attached_folder/'runs/0/result_df.parquet')
-(df
- .loc[df.stage=='test']
- .groupby(['predicted','true'])
- .size()
- .to_frame('cnt')
- .pivot_table(index='predicted',columns='true',values='cnt').fillna(0)
-)
+roc_optimal_threshold(df.true, df.predicted)
+
 ```
 
 
 
 
-<div>
-
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th>true</th>
-      <th>0.0</th>
-      <th>1.0</th>
-    </tr>
-    <tr>
-      <th>predicted</th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0.0</th>
-      <td>140</td>
-      <td>28</td>
-    </tr>
-    <tr>
-      <th>1.0</th>
-      <td>28</td>
-      <td>72</td>
-    </tr>
-  </tbody>
-</table>
-</div>
+    0.3483943081626346
 
 
 
@@ -11084,7 +11053,7 @@ FileIO.read_pickle(attached_folder/'runs/0/training_task.pkl')
 
 
 
-    <tg.common.ml.single_frame_training.training_task.SingleFrameTrainingTask at 0x7fe68a5fb2e0>
+    <tg.common.ml.single_frame_training.training_task.SingleFrameTrainingTask at 0x7f5e204cf610>
 
 
 
@@ -11110,7 +11079,7 @@ local_task_id
 
 
 
-    '_20220627_214109_80c8c40453a544cc99e69cd531aaeb71'
+    '_20220629_133155_f54f9a6473c1400ea7a0d7976dd5e989'
 
 
 
@@ -11153,47 +11122,13 @@ From this `reader`, we can get the paths to the files and open them directly:
 
 ```python
 df = pd.read_parquet(reader.get_path('runs/0/result_df.parquet'))
-(df
- .loc[df.stage=='test']
- .groupby(['predicted','true'])
- .size()
- .to_frame('cnt')
- .pivot_table(index='predicted',columns='true',values='cnt').fillna(0)
-)
+roc_optimal_threshold(df.true, df.predicted)
 ```
 
 
 
 
-<div>
-
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th>true</th>
-      <th>0.0</th>
-      <th>1.0</th>
-    </tr>
-    <tr>
-      <th>predicted</th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0.0</th>
-      <td>140</td>
-      <td>28</td>
-    </tr>
-    <tr>
-      <th>1.0</th>
-      <td>28</td>
-      <td>72</td>
-    </tr>
-  </tbody>
-</table>
-</div>
+    0.3483943081626341
 
 
 
@@ -11209,11 +11144,11 @@ except:
 ```
 
     Traceback (most recent call last):
-      File "/tmp/ipykernel_4552/225246354.py", line 3, in <module>
+      File "/tmp/ipykernel_12644/225246354.py", line 3, in <module>
         FileIO.read_pickle(reader.get_path('runs/0/training_task.pkl'))
       File "/home/yura/anaconda3/envs/tg/lib/python3.8/site-packages/yo_fluq_ds/_misc/io.py", line 17, in read_pickle
         return pickle.load(file)
-    ModuleNotFoundError: No module named 'titanic___20220627_214109_80c8c40453a544cc99e69cd531aaeb71'
+    ModuleNotFoundError: No module named 'titanic___20220629_133155_f54f9a6473c1400ea7a0d7976dd5e989'
     
 
 
@@ -11864,7 +11799,7 @@ plt.legend()
 
 
 
-    <matplotlib.legend.Legend at 0x7f07ca52e730>
+    <matplotlib.legend.Legend at 0x7fecb5414070>
 
 
 
@@ -11989,40 +11924,40 @@ rdf.head()
     <tr>
       <th>0</th>
       <td>Fare</td>
-      <td>43.462195</td>
-      <td>26.987083</td>
+      <td>45.913762</td>
+      <td>27.236308</td>
       <td>0</td>
       <td>0</td>
     </tr>
     <tr>
       <th>1</th>
       <td>Fare</td>
-      <td>41.431770</td>
-      <td>25.906982</td>
+      <td>49.606715</td>
+      <td>25.692481</td>
       <td>1</td>
       <td>1</td>
     </tr>
     <tr>
       <th>2</th>
       <td>Fare</td>
-      <td>40.536302</td>
-      <td>27.590799</td>
+      <td>43.987889</td>
+      <td>23.104627</td>
       <td>2</td>
       <td>2</td>
     </tr>
     <tr>
       <th>3</th>
       <td>Fare</td>
-      <td>44.421407</td>
-      <td>25.357936</td>
+      <td>40.229970</td>
+      <td>27.243840</td>
       <td>3</td>
       <td>3</td>
     </tr>
     <tr>
       <th>4</th>
       <td>Fare</td>
-      <td>42.063531</td>
-      <td>24.546184</td>
+      <td>43.614521</td>
+      <td>22.601547</td>
       <td>4</td>
       <td>4</td>
     </tr>
@@ -12084,14 +12019,14 @@ rdf[['female','male']].feed(Aggregators.normal_confint())
   <tbody>
     <tr>
       <th>0</th>
-      <td>39.053246</td>
-      <td>50.985264</td>
-      <td>45.019255</td>
-      <td>5.966009</td>
-      <td>22.117442</td>
-      <td>29.279721</td>
-      <td>25.698581</td>
-      <td>3.581139</td>
+      <td>38.750749</td>
+      <td>51.017042</td>
+      <td>44.883896</td>
+      <td>6.133146</td>
+      <td>22.430751</td>
+      <td>29.609303</td>
+      <td>26.020027</td>
+      <td>3.589276</td>
     </tr>
   </tbody>
 </table>

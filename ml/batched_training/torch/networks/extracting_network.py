@@ -1,6 +1,8 @@
 from typing import *
+
 import pandas as pd
 import torch
+
 from .network_commons import TorchNetworkFactory, AnnotatedTensor
 
 
@@ -24,16 +26,13 @@ class UniversalFactory(TorchNetworkFactory):
     def get_name_part(self):
         return self.name
 
-
     def prepend_extraction(self,
-                         input_frames: Union[None, str, List[str]],
-                         raise_if_inputs_are_missing=False) -> TorchNetworkFactory:
+                           input_frames: Union[None, str, List[str]],
+                           raise_if_inputs_are_missing=False) -> TorchNetworkFactory:
         return FeedForwardNetwork.Factory(
             ExtractingNetwork.Factory(input_frames, raise_if_inputs_are_missing),
             self
         )
-
-
 
 
 class ExtractingNetwork(torch.nn.Module):
@@ -77,9 +76,9 @@ class ExtractingNetwork(torch.nn.Module):
             else:
                 raise ValueError(f'Batch element must be torch.Tensor, pandas.Dataframe or AnnotatedTensor, but was {type(input[frame])}')
 
-        if len(tensors)==0:
+        if len(tensors) == 0:
             raise ValueError('No tensors were produced')
-        if len(tensors)==1:
+        if len(tensors) == 1:
             return tensors[0]
         else:
             return torch.cat(tensors, 1)

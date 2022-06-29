@@ -59,7 +59,7 @@ class BatchJobTestCase(TestCase):
                 'def': MyFeaturizerSimple()
             },
             mem,
-            Loc.temp_path/'tests/featurization_job/simple',
+            Loc.temp_path / 'tests/featurization_job/simple',
             None,
             None
         )
@@ -81,7 +81,7 @@ class BatchJobTestCase(TestCase):
                 'def': MyFeaturizerSimple()
             },
             mem,
-            Loc.temp_path/'tests/featurization_job/simple',
+            Loc.temp_path / 'tests/featurization_job/simple',
             None,
             None
         )
@@ -108,10 +108,9 @@ class BatchJobTestCase(TestCase):
         files = list(mem.cache)
         self.assertEqual(3, len(files))
         inds = [tuple(mem.get_parquet(i).a) for i in range(3)]
-        self.assertIn((0,1) , inds)
-        self.assertIn((2, 3) , inds)
-        self.assertIn((4,) , inds)
-
+        self.assertIn((0, 1), inds)
+        self.assertIn((2, 3), inds)
+        self.assertIn((4,), inds)
 
     def test_two(self):
         mem = MemoryFileSyncer()
@@ -124,7 +123,7 @@ class BatchJobTestCase(TestCase):
                 'batched': MyFeaturizerBatch()
             },
             mem,
-            Loc.temp_path/'tests/featurization_job/two',
+            Loc.temp_path / 'tests/featurization_job/two',
             None,
             None
         )
@@ -134,7 +133,6 @@ class BatchJobTestCase(TestCase):
             {'batched': 3, 'simple': 1},
             stats
         )
-
 
     def test_failing(self):
         mem = MemoryFileSyncer()
@@ -146,7 +144,7 @@ class BatchJobTestCase(TestCase):
                 'fail': MyFeaturizerFailing()
             },
             mem,
-            Loc.temp_path/'tests/featurization_job/failing',
+            Loc.temp_path / 'tests/featurization_job/failing',
             None,
             None
         )
@@ -162,7 +160,7 @@ class BatchJobTestCase(TestCase):
                 'postprocess': MyFeaturizerPostprocess()
             },
             mem,
-            Loc.temp_path/'tests/featurization_job/postprocess',
+            Loc.temp_path / 'tests/featurization_job/postprocess',
             None,
             None
         )

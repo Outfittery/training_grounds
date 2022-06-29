@@ -1,9 +1,13 @@
 from typing import *
-from .logging_wrap import LoggingWrap
+
 import json
 import logging
 
+from .logging_wrap import LoggingWrap
+
+
 PRIMITIVES = (int, bool, str, float)
+
 
 class KibanaTypeProcessor:
     def __init__(self):
@@ -22,7 +26,6 @@ class KibanaTypeProcessor:
             else:
                 self.field_types[key] = 'other'
 
-
     def _replace_non_primitives(self, d: Dict):
         result = {}
         for key, value in d.items():
@@ -37,17 +40,17 @@ class KibanaTypeProcessor:
         return result
 
     def _default_value(self, t):
-        if t=='int':
+        if t == 'int':
             return -1
-        elif t=='float':
+        elif t == 'float':
             return 0.0
-        elif t=='bool':
+        elif t == 'bool':
             return False
-        elif t=='str':
+        elif t == 'str':
             return ''
-        elif t=='json':
+        elif t == 'json':
             return 'null'
-        elif t=='other':
+        elif t == 'other':
             return ''
         else:
             raise ValueError(f'Wrong type to call _default_value with: {t}')
@@ -59,7 +62,7 @@ class KibanaTypeProcessor:
                 if key in self.field_types:
                     result[key] = self._default_value(self.field_types[key])
             else:
-                result[key ] = value
+                result[key] = value
         return result
 
     def process(self, d: Dict):
@@ -70,14 +73,10 @@ class KibanaTypeProcessor:
 
 
 class KibanaLoggingWrap(LoggingWrap):
-    def __init__(self, scope='tg', level = logging.INFO):
+    def __init__(self, scope='tg', level=logging.INFO):
         self.type_processor = KibanaTypeProcessor()
         super(KibanaLoggingWrap, self).__init__(scope, level, self._serialize)
 
     def _serialize(self, d):
         d = self.type_processor.process(d)
         return json.dumps(d)
-
-
-
-

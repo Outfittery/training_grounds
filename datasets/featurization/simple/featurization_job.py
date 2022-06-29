@@ -4,11 +4,11 @@ import os
 import shutil
 import uuid
 
+from pathlib import Path
+
 from .featurizer import StreamFeaturizer
 from ...._common import Loc, FileSyncer, Logger
 from ...access import DataSource, CacheableDataSource
-from pathlib import Path
-
 
 
 class FeaturizationJob:
@@ -16,7 +16,7 @@ class FeaturizationJob:
                  name: str,
                  version: str,
                  source: DataSource,
-                 featurizers: Dict[str,StreamFeaturizer],
+                 featurizers: Dict[str, StreamFeaturizer],
                  syncer: Optional[FileSyncer],
                  location: Optional[Union[str, Path]] = None,
                  status_report_frequency: Optional[int] = None,
@@ -40,10 +40,8 @@ class FeaturizationJob:
         self.status_report_frequency = status_report_frequency
         self.count_of_data_objects = count_of_data_objects
 
-
     def get_name_and_version(self):
         return self.name, self.version
-
 
     def _collect(self, df, name):
         df_uid = str(uuid.uuid4())
@@ -55,17 +53,16 @@ class FeaturizationJob:
         if self.syncer is not None:
             self.syncer.upload_folder('')
 
-    def run(self, cache = None):
+    def run(self, cache=None):
         Logger.info(f"Featurization Job {self.name} at version {self.version} has started")
         if os.path.exists(self.location):
             shutil.rmtree(self.location)
         os.makedirs(self.location)
 
-
         if cache is None:
             flow = self.source.get_data()
         else:
-            if isinstance(self.source,CacheableDataSource):
+            if isinstance(self.source, CacheableDataSource):
                 flow = self.source.safe_cache(cache).get_data()
             else:
                 raise ValueError("Cache is requested, but the source is not CacheableDataSource")
@@ -86,7 +83,7 @@ class FeaturizationJob:
                 df = featurizer.observe_data_point(item)
                 if df is not None:
                     self._collect(df, name)
-            if self.status_report_frequency is not None and (index+1) % self.status_report_frequency == 0:
+            if self.status_report_frequency is not None and (index + 1) % self.status_report_frequency == 0:
                 Logger.info(f"{index+1} data objects are processed")
 
         Logger.info(f"Data fetched, finalizing")

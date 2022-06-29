@@ -1,7 +1,10 @@
 from typing import *
-from .architecture import DataFrameColumnsTransformer
+
 import pandas as pd
 import numpy as np
+
+from .architecture import DataFrameColumnsTransformer
+
 
 class ColumnData:
     def __init__(self,
@@ -45,12 +48,12 @@ class CategoricalTransformer2(DataFrameColumnsTransformer):
     def __init__(self,
                  columns: List,
                  max_values: int,
-                 ignore_missing_columns_on_transform = True
+                 ignore_missing_columns_on_transform=True
                  ):
         self.columns = columns
         self.max_values = max_values
-        self.column_data_ = None #type: Optional[List[ColumnData]]
-        self.output_column_names_ = None #type: Optional[List[str]]
+        self.column_data_ = None  # type: Optional[List[ColumnData]]
+        self.output_column_names_ = None  # type: Optional[List[str]]
         self.ignore_missing_columns_on_transform = ignore_missing_columns_on_transform
 
     def _fit_column(self, df, column):
@@ -66,16 +69,16 @@ class CategoricalTransformer2(DataFrameColumnsTransformer):
         has_others = False
 
         if df[column].isnull().any():
-            max_values-=1
+            max_values -= 1
             has_nulls = True
 
         vals = df.groupby(column).size().sort_values(ascending=False).index
-        if len(vals)>max_values:
-            max_values-=1
+        if len(vals) > max_values:
+            max_values -= 1
             has_others = True
 
         vals = vals[:max_values]
-        mapping = {v:i for i,v in enumerate(vals)}
+        mapping = {v: i for i, v in enumerate(vals)}
         output_columns = [str(v) for v in vals]
 
         if has_others:
@@ -110,22 +113,18 @@ class CategoricalTransformer2(DataFrameColumnsTransformer):
         for c in self.column_data_:
             self.output_column_names_.extend(c.output_columns)
 
-
-    def transform(self, df: pd.DataFrame) -> Iterable[Union[pd.DataFrame,pd.Series]]:
+    def transform(self, df: pd.DataFrame) -> Iterable[Union[pd.DataFrame, pd.Series]]:
         matrix = np.zeros((df.shape[0], len(self.output_column_names_)))
         rows = list(range(df.shape[0]))
         shift = 0
         if self.column_data_ is None:
             raise ValueError('CategoricalTransformer2 was not fitted')
         for c in self.column_data_:
-            if hasattr(self,'ignore_missing_columns_on_transform'):
+            if hasattr(self, 'ignore_missing_columns_on_transform'):
                 columns = c.transform(df, self.ignore_missing_columns_on_transform)
-            else: #TODO: legacy, remove
+            else:  # TODO: legacy, remove
                 columns = c.transform(df, True)
             columns += shift
-            matrix[rows,columns] = 1
-            shift+=len(c.output_columns)
+            matrix[rows, columns] = 1
+            shift += len(c.output_columns)
         return [pd.DataFrame(matrix, columns=self.output_column_names_, index=df.index)]
-
-
-

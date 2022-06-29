@@ -1,10 +1,13 @@
 from typing import *
+
 from enum import Enum
+from copy import deepcopy
+
 from ... import batched_training as bt
 from .. import context as btc
 from .. import torch as btt
 from .arch import ExtractorNetworkBinding
-from copy import deepcopy
+
 
 class ContextualNetworkType(Enum):
     Plain = 0
@@ -16,10 +19,10 @@ class ContextualBinding(ExtractorNetworkBinding):
                  name: str,
                  context_length: int,
                  network_type: ContextualNetworkType,
-                 hidden_size: Union[int,List[int]],
+                 hidden_size: Union[int, List[int]],
                  context_builder: btc.ContextBuilder,
                  extractor: bt.Extractor,
-                 debug = False
+                 debug=False
                  ):
         super(ContextualBinding, self).__init__(name)
         self.context_length = context_length
@@ -54,10 +57,3 @@ class ContextualBinding(ExtractorNetworkBinding):
             fin,
             self.debug
         )
-
-
-
-
-
-
-

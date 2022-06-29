@@ -1,6 +1,6 @@
 from typing import *
-from .combinators import CombinedSelector, FieldGetter, Ensemble, FunctionFeed, Pipeline, SelectionContext
 
+from .combinators import CombinedSelector, FieldGetter, Ensemble, FunctionFeed, Pipeline, SelectionContext
 
 
 # TODO: add short description of module
@@ -13,7 +13,8 @@ class Selector(CombinedSelector):
     Builder for featurization pipeline in the special case when the featurization is reduced to field extraction.
     Follows FluentAPI design.
     """
-    def __init__(self, none_propagation = True):
+
+    def __init__(self, none_propagation=True):
         """
 
         Args:
@@ -92,7 +93,6 @@ class Selector(CombinedSelector):
             selectors[key] = Pipeline(*pipeline)
         return Ensemble(**selectors)
 
-
     def _select_to_ensemble(self, prefix, args, kwargs):
         downstream = self._select_to_ensemble_without_prefix(args, kwargs)
         if prefix is None:
@@ -105,11 +105,9 @@ class Selector(CombinedSelector):
     def _internal_call(self, obj, context: SelectionContext):
         return self._ensemble(obj, context)
 
-
     @staticmethod
     def identity(x):
         return x
-
 
     def get_structure(self):
         return self._ensemble.get_structure()

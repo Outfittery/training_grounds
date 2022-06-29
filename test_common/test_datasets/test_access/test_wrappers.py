@@ -19,9 +19,9 @@ class MockUpdateSource(DataSource):
     state = 0
 
     def __init__(self, query):
-        if (MockUpdateSource.state == 0 and query != 'id start end'
-                or MockUpdateSource.state == 1 and query != '2,1,0'
-                or MockUpdateSource.state == 2 and query != '3,4,5'):
+        if (MockUpdateSource.state == 0 and query != 'id start end' or
+                MockUpdateSource.state == 1 and query != '2,1,0' or
+                MockUpdateSource.state == 2 and query != '3,4,5'):
             raise ValueError(f"{MockUpdateSource.state}, {query}")
         MockUpdateSource.state += 1
 

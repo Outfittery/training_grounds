@@ -67,7 +67,6 @@ class IntFieldShardedJob(SqlShardedDataSource):
                 )
 
 
-
 class UpdateDataSource(DataSource):
     def __init__(self,
                  id_retrieve_sql_template: str,
@@ -85,7 +84,7 @@ class UpdateDataSource(DataSource):
         self.end_date = end_date
 
     def _get_data_iter(self, start_date: datetime.datetime, end_date: datetime.datetime):
-        start_date_str = start_date.strftime('%Y-%m-%d') if isinstance(start_date,datetime.datetime) else str(start_date)
+        start_date_str = start_date.strftime('%Y-%m-%d') if isinstance(start_date, datetime.datetime) else str(start_date)
         end_date_str = end_date.strftime('%Y-%m-%d') if isinstance(end_date, datetime.datetime) else str(end_date)
         Logger.info(f"Retrieving updated ids from {start_date_str} to {end_date_str}")
         sql = self.id_retrieve_sql_template.format(start_date=start_date_str, end_date=end_date_str)

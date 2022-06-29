@@ -1,8 +1,12 @@
-from ..ml import single_frame_training as sft, dft
-from sklearn.metrics import roc_auc_score
-import pandas as pd
-from functools import partial
 from typing import *
+
+import pandas as pd
+
+from sklearn.metrics import roc_auc_score
+from functools import partial
+
+from ..ml import single_frame_training as sft, dft
+
 
 class FeatureSignificance:
     class Artificier(sft.Artificier):
@@ -18,7 +22,7 @@ class FeatureSignificance:
             features: List[str],
             label: str,
             folds_count,
-            model_kwargs = None
+            model_kwargs=None
     ):
         if model_kwargs is None:
             model_kwargs = dict(penalty='l2')
@@ -40,4 +44,3 @@ class FeatureSignificance:
         result = task.run(df)
         sdf = pd.DataFrame([run['significance'] for run in result['runs'].values()])
         return sdf
-

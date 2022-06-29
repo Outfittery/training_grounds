@@ -1,10 +1,13 @@
 from typing import *
+
 from datetime import datetime
-from .._common import PartitionedDatasetRecordHandler, TimePartitionedDatasetBase
 from yo_fluq_ds import Query
 from dateutil import parser
 from pathlib import Path
+
+from .._common import PartitionedDatasetRecordHandler, TimePartitionedDatasetBase
 from ...._common import FileSyncer
+
 
 class DayPartitionedDataset(TimePartitionedDatasetBase['PartitionedDataset.DescriptionItem']):
     def __init__(self,
@@ -35,6 +38,3 @@ class DayPartitionedDataset(TimePartitionedDatasetBase['PartitionedDataset.Descr
         records = records.distinct(lambda z: z.name)
         records = records.to_list()
         return records
-
-
-

@@ -8,7 +8,6 @@ from yo_fluq_ds import Query, fluq
 from ..._common import Loc
 
 
-
 class DependenciesList:
     def __init__(self, name: str, dependencies: List[str]):
         self.name = name
@@ -16,8 +15,8 @@ class DependenciesList:
 
 
 def get_default_dependencies() -> List[DependenciesList]:
-    dependencies = Query.file.text(Path(__file__).parent/'default_requirements.txt').to_list()
-    buffer = [ [] ]
+    dependencies = Query.file.text(Path(__file__).parent / 'default_requirements.txt').to_list()
+    buffer = [[]]
     for s in dependencies:
         if s == '':
             buffer.append([])
@@ -29,12 +28,13 @@ def get_default_dependencies() -> List[DependenciesList]:
 
 class PackagingTask:
     """Class describing a Python package name"""
+
     def __init__(self,
                  name: str,
                  version: str,
-                 payload: Dict[str,Any] = None,
+                 payload: Dict[str, Any] = None,
                  additional_dependencies: Optional[List[DependenciesList]] = None,
-                 silent = False
+                 silent=False
                  ):
         """
 
@@ -54,13 +54,13 @@ class PackagingTask:
             for lst in additional_dependencies:
                 self.dependencies.append(lst)
         self.silent = silent
-        
 
 
 class PackageInfo:
     """
     Description of the created package
     """
+
     def __init__(self, task: PackagingTask, module_name: str, path: Path, properties: Any = None):
         """
 
@@ -72,7 +72,6 @@ class PackageInfo:
         self.module_name = module_name
         self.path = path
         self.properties = properties
-
 
 
 class ContaineringTask:
@@ -90,5 +89,3 @@ class ContaineringTask:
         self.image_name = image_name
         self.image_tag = image_tag
         self.dockerfile_template = dockerfile_template
-
-
