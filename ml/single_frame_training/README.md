@@ -383,8 +383,8 @@ result = task.run(tdf)
       0%|          | 0/1 [00:00<?, ?it/s]
 
 
-    2022-06-29 11:26:31.526335+00:00 INFO: Starting stage 1/1
-    2022-06-29 11:26:32.465762+00:00 INFO: Completed stage 1/1
+    2022-08-09 09:26:17.820333+00:00 INFO: Starting stage 1/1
+    2022-08-09 09:26:18.007362+00:00 INFO: Completed stage 1/1
 
 
 Essential components are:
@@ -635,7 +635,7 @@ result['runs'][0]['model']
 
     Pipeline(steps=[('ColumnNamesKeeper', ColumnNamesKeeper()),
                     ('Transformer',
-                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f966f5d28b0>),
+                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f9d34046370>),
                     ('ColumnNamesKeeperAfterTransformation', ColumnNamesKeeper()),
                     ('Model', LogisticRegression())])
 
@@ -899,28 +899,28 @@ pd.DataFrame([run['metrics'] for run in result['runs'].values()])
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.867440</td>
-      <td>0.998059</td>
+      <td>0.865179</td>
+      <td>0.998308</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.840949</td>
-      <td>0.998938</td>
+      <td>0.840779</td>
+      <td>0.998793</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.843953</td>
-      <td>0.997413</td>
+      <td>0.846325</td>
+      <td>0.997314</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.816106</td>
-      <td>0.999443</td>
+      <td>0.826601</td>
+      <td>0.999662</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.886486</td>
-      <td>0.997604</td>
+      <td>0.877310</td>
+      <td>0.997893</td>
     </tr>
   </tbody>
 </table>
@@ -1034,13 +1034,13 @@ result['runs'][0]['model']
 
     Pipeline(steps=[('ColumnNamesKeeper', ColumnNamesKeeper()),
                     ('Transformer',
-                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f966d4ccbe0>),
+                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f9d350c1460>),
                     ('ColumnNamesKeeperAfterTransformation', ColumnNamesKeeper()),
                     ('Model',
                      Pipeline(steps=[('CategoricalVariablesSetter',
-                                      <tg.common.ml.single_frame_training.model_provider.CatBoostWrap object at 0x7f9691fc8910>),
+                                      <tg.common.ml.single_frame_training.model_provider.CatBoostWrap object at 0x7f9d2b5b2670>),
                                      ('Model',
-                                      <catboost.core.CatBoostClassifier object at 0x7f966c16c040>)]))])
+                                      <catboost.core.CatBoostClassifier object at 0x7f9d350c12b0>)]))])
 
 
 
@@ -1048,9 +1048,10 @@ result['runs'][0]['model']
 
 ## Artificiers
 
-_Artificier_ is an interface to inject an arbitrary code to the training process. So far, we had two use cases for artificiers:
+_Artificier_ is an interface to inject an arbitrary code to the training process. So far, we have the following use cases for artificiers:
 * Remove model from the training result. The model may be huge and we may not be even interested in the model per se, just by it's metrics.
 * Get the feature significance. Many algorithms allow us to extract feature significance from the model, which can be used in business analysis without the model itself.
+* Augment the resulting df with additional columns to compute metrics better
 
 Let's use write an artificier to discover the most important features in our dataset. 
 
@@ -1059,8 +1060,8 @@ Let's use write an artificier to discover the most important features in our dat
 import tg.common.ml.single_frame_training as sft
 from sklearn.metrics import roc_auc_score
 
-class SignificanceArtificier:
-    def run(self, model_info):
+class SignificanceArtificier(sft.Artificier):
+    def run_before_storage(self, model_info):
         column_names_keeper = model_info.result.model[2] # type: sft.ColumnNamesKeeper
         column_names = column_names_keeper.column_names_
         coeficients = model_info.result.model[3].coef_
@@ -1086,6 +1087,15 @@ result = task.run(df)
 
       0%|          | 0/50 [00:00<?, ?it/s]
 
+
+**Note**: `Artificier` has two methods:
+
+* `run_before_metrics` should be used, if the artificier computes something that is required by metrics
+* `run_before_storage` should be used in other cases.
+
+Both methods are implemented in `Artificier` base class as stubs, so you only need to define the one you are going to use.
+
+Let's browse the result of our `SignificanceArtificer`.
 
 
 ```python
@@ -1271,7 +1281,7 @@ pass
 
 
     
-![png](README_images/tg.common.ml.single_frame_training_output_46_0.png?raw=true)
+![png](README_images/tg.common.ml.single_frame_training_output_47_0.png?raw=true)
     
 
 
@@ -1309,7 +1319,7 @@ result['runs'][0]['model']
 
     Pipeline(steps=[('ColumnNamesKeeper', ColumnNamesKeeper()),
                     ('Transformer',
-                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f9648f03730>),
+                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f9d1d251700>),
                     ('ColumnNamesKeeperAfterTransformation', ColumnNamesKeeper()),
                     ('Model', LogisticRegression(C=1))])
 
@@ -1347,7 +1357,7 @@ result['runs'][0]['model']
 
     Pipeline(steps=[('ColumnNamesKeeper', ColumnNamesKeeper()),
                     ('Transformer',
-                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f96580c9fa0>),
+                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f9d1dec8130>),
                     ('ColumnNamesKeeperAfterTransformation', ColumnNamesKeeper()),
                     ('Model', LogisticRegression())])
 
@@ -1460,7 +1470,7 @@ pass
 
 
     
-![png](README_images/tg.common.ml.single_frame_training_output_55_0.png?raw=true)
+![png](README_images/tg.common.ml.single_frame_training_output_56_0.png?raw=true)
     
 
 

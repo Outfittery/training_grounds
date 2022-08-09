@@ -63,5 +63,6 @@ class _MirrorNetworkFactory(btt.TorchNetworkFactory):
             btt.ParallelNetwork.Factory(**first_layer_networks),
             *self.settings.tail_network_factories
         )
+        factory.preview_batch(input)
         network = factory.create_network(task, input)
         return network

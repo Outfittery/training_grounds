@@ -56,7 +56,7 @@ class Aggregators:
 
     @staticmethod
     def normal_confint(columns=None, pValue=0.95, multilevel_column=False):
-        return CustomAggregator(columns, partial(Aggregators._percentile_confint, pValue=pValue, multilevel=multilevel_column))
+        return CustomAggregator(columns, partial(Aggregators._normal_confint, pValue=pValue, multilevel=multilevel_column))
 
     @staticmethod
     def combine(*aggs):

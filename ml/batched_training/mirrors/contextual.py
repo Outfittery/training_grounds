@@ -28,7 +28,7 @@ class ContextualBinding(ExtractorNetworkBinding):
         self.context_length = context_length
         self.network_type = network_type
         self.hidden_size = hidden_size
-        self.reverse_order_in_lstm = True
+        self.reverse_order_in_lstm = False
         self.context_builder = deepcopy(context_builder)
         self.extractor = deepcopy(extractor)
         self.debug = debug

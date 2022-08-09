@@ -10,7 +10,7 @@ from ..ml import single_frame_training as sft, dft
 
 class FeatureSignificance:
     class Artificier(sft.Artificier):
-        def run(self, model_info):
+        def run_before_metrics(self, model_info: sft.ArtificierArguments):
             column_names_keeper = model_info.result.model[2]  # type: sft.ColumnNamesKeeper
             column_names = column_names_keeper.column_names_
             coeficients = model_info.result.model[3].coef_

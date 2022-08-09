@@ -88,11 +88,15 @@ class SingleFrameTrainingTask(AbstractTrainingTask):
         result.train_split = dfs.train
         result.test_splits = dfs.tests
 
-        all_artificiers = ([] if self.metrics_pool is None else [self.metrics_pool]) + ([] if self.artificers is None else self.artificers)
-
         args = ArtificierArguments(result, dfs)
-        for artificer in all_artificiers:
-            artificer.run(args)
+        if self.artificers is not None:
+            for artificier in self.artificers:
+                artificier.run_before_metrics(args)
+        if self.metrics_pool is not None:
+            self.metrics_pool.run(args)
+        if self.artificers is not None:
+            for artificier in self.artificers:
+                artificier.run_before_storage(args)
 
         return result
 

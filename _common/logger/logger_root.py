@@ -13,6 +13,9 @@ _logger_lock = threading.Lock()
 
 
 class LoggerRootBase:
+
+    _instances = []
+
     def __init__(self):
         self._wrap = None  # type: Optional[LoggerInterface]
         self.base_keys = {}
@@ -29,13 +32,21 @@ class LoggerRootBase:
         thread_name = threading.current_thread().name
         self.session_keys_store[thread_name] = value
 
-    def reset(self, wrap: LoggerInterface, keys: Dict = None):
+    def _internal_reset(self, wrap: LoggerInterface, keys: Dict = None):
         if self._wrap is not None:
             self._wrap.close()
         self._wrap = wrap
         self.base_keys = deepcopy(keys) if keys is not None else {}
         self.session_keys_store = {}
         self._update_keys(remove=True)
+
+    def reset(self, wrap: LoggerInterface, keys: Dict = None):
+        if self not in LoggerRootBase._instances:
+            LoggerRootBase._instances.append(self)
+        for ins in LoggerRootBase._instances:
+            if ins != self:
+                ins._internal_reset(None)
+        self._internal_reset(wrap, keys)
 
     def initialize_default(self):
         raise NotImplementedError()
@@ -63,7 +74,8 @@ class LoggerRootBase:
         if add is not None:
             for key, value in add.items():
                 self.get_session_keys()[key] = value
-        self._wrap.set_extra_fields(self._merge_keys(self.base_keys, self.get_session_keys()))
+        if self._wrap is not None:
+            self._wrap.set_extra_fields(self._merge_keys(self.base_keys, self.get_session_keys()))
 
     def push_keys(self, **kwargs):
         self._update_keys(False, kwargs)
@@ -72,6 +84,8 @@ class LoggerRootBase:
         self._update_keys(True)
 
     def _output(self, method, object, keys):
+        if self._wrap is None:
+            return
         with _logger_lock:
             if len(keys) != 0:
                 self._wrap.set_extra_fields(self._merge_keys(self.base_keys, self.get_session_keys(), keys))

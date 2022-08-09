@@ -13,10 +13,12 @@ def _update_sizes_with_argument(argument_name, argument, sizes, modificator):
         return sizes
     elif isinstance(argument, torch.Tensor):
         return modificator(sizes, argument.shape[1])
+    elif isinstance(argument, pd.DataFrame):
+        return modificator(sizes, argument.shape[1])
     elif isinstance(argument, int):
         return modificator(sizes, argument)
     else:
-        raise ValueError(f"Argument {argument_name} is supposed to be int, Tensor or none, but was {argument}")
+        raise ValueError(f"Argument {argument_name} is supposed to be int, Tensor or none, but was `{argument}`")
 
 
 class FullyConnectedNetwork(torch.nn.Module):
@@ -38,14 +40,20 @@ class FullyConnectedNetwork(torch.nn.Module):
             X = torch.sigmoid(X)
         return X
 
-    @staticmethod
-    def Factory(sizes: List[int], output: Union[None, torch.Tensor, int] = None):
-        return UniversalFactory(
-            FullyConnectedNetwork,
-            'input',
-            'N' + '-'.join([str(c) for c in sizes]),
-            sizes=sizes, output=output
-        )
+    class Factory(TorchNetworkFactory, PrependableFactory):
+        def __init__(self, sizes: List[int], output: Union[None, torch.Tensor, int, str, pd.DataFrame] = None):
+            self.sizes = sizes
+            self.output = output
+
+        def create_network(self, task, input):
+            return FullyConnectedNetwork(self.sizes, input, self.output)
+
+        def preview_batch(self, input):
+            if isinstance(self.output, str):
+                if self.output not in input:
+                    raise ValueError(f'output was set to string `{self.output}`, but this key is not available in the batch')
+                self.output = input[self.output]
+
 
 
 class ParallelNetwork(torch.nn.Module):
@@ -68,3 +76,7 @@ class ParallelNetwork(torch.nn.Module):
             for key, factory in self.factories.items():
                 networks[key] = factory.create_network(task, input)
             return ParallelNetwork(**networks)
+
+        def preview_batch(self, input):
+            for _, factory in self.factories.items():
+                factory.preview_batch(input)

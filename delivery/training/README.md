@@ -90,17 +90,17 @@ As with `SSHDockerRoutine`, there are `attached`, `local` and `remote` accessors
 attached_task_id = routine.attached.execute(task,'titanic')
 ```
 
-    2022-06-29 11:31:54.959026+00:00 INFO: Starting stage 1/1
-    2022-06-29 11:31:55.024144+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220629_133154_e9070dfa1b63456abe3cce462444eec4/runs/0/result_df
-    2022-06-29 11:31:55.024998+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220629_133154_e9070dfa1b63456abe3cce462444eec4/runs/0/metrics
-    2022-06-29 11:31:55.025754+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220629_133154_e9070dfa1b63456abe3cce462444eec4/runs/0/info
-    2022-06-29 11:31:55.026717+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220629_133154_e9070dfa1b63456abe3cce462444eec4/runs/0/model
-    2022-06-29 11:31:55.027545+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220629_133154_e9070dfa1b63456abe3cce462444eec4/runs/0/training_task
-    2022-06-29 11:31:55.028901+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220629_133154_e9070dfa1b63456abe3cce462444eec4/runs/0/train_split
-    2022-06-29 11:31:55.029638+00:00 INFO: Saved artifact /home/yura/Desktop/repos/tg/temp/training_results/_20220629_133154_e9070dfa1b63456abe3cce462444eec4/runs/0/test_splits
-    2022-06-29 11:31:55.030052+00:00 INFO: Completed stage 1/1
-    2022-06-29 11:31:55.031555+00:00 INFO: ###METRIC###roc_auc_score_test:0.8538095238095237###
-    2022-06-29 11:31:55.031966+00:00 INFO: ###METRIC###roc_auc_score_train:0.8600247283139194###
+    2022-08-09 09:31:45.922679+00:00 INFO: Starting stage 1/1
+    2022-08-09 09:31:46.098582+00:00 INFO: Saved artifact /home/yura/Desktop/repos/lesvik-ml/temp/training_results/_20220809_113145_650f41a138cb42b7897e252467ba98a2/runs/0/result_df
+    2022-08-09 09:31:46.101082+00:00 INFO: Saved artifact /home/yura/Desktop/repos/lesvik-ml/temp/training_results/_20220809_113145_650f41a138cb42b7897e252467ba98a2/runs/0/metrics
+    2022-08-09 09:31:46.103845+00:00 INFO: Saved artifact /home/yura/Desktop/repos/lesvik-ml/temp/training_results/_20220809_113145_650f41a138cb42b7897e252467ba98a2/runs/0/info
+    2022-08-09 09:31:46.109628+00:00 INFO: Saved artifact /home/yura/Desktop/repos/lesvik-ml/temp/training_results/_20220809_113145_650f41a138cb42b7897e252467ba98a2/runs/0/model
+    2022-08-09 09:31:46.112319+00:00 INFO: Saved artifact /home/yura/Desktop/repos/lesvik-ml/temp/training_results/_20220809_113145_650f41a138cb42b7897e252467ba98a2/runs/0/training_task
+    2022-08-09 09:31:46.115990+00:00 INFO: Saved artifact /home/yura/Desktop/repos/lesvik-ml/temp/training_results/_20220809_113145_650f41a138cb42b7897e252467ba98a2/runs/0/train_split
+    2022-08-09 09:31:46.117306+00:00 INFO: Saved artifact /home/yura/Desktop/repos/lesvik-ml/temp/training_results/_20220809_113145_650f41a138cb42b7897e252467ba98a2/runs/0/test_splits
+    2022-08-09 09:31:46.119063+00:00 INFO: Completed stage 1/1
+    2022-08-09 09:31:46.123981+00:00 INFO: ###METRIC###roc_auc_score_test:0.8538095238095237###
+    2022-08-09 09:31:46.124788+00:00 INFO: ###METRIC###roc_auc_score_train:0.8600247283139194###
 
 
 Unlike `SSHDockerRoutine`, `SagemakerTrainingRoutine` has the output, and `local` and `attached` accessors try to emulate `Sagemaker` behaviour in how the output is handled. They store the output in `Loc.temp` folder, and `execute` method returns a task id to access the result. Let's browse the result.
@@ -152,7 +152,7 @@ FileIO.read_pickle(attached_folder/'runs/0/training_task.pkl')
 
 
 
-    <tg.common.ml.single_frame_training.training_task.SingleFrameTrainingTask at 0x7f5e204cf610>
+    <tg.common.ml.single_frame_training.training_task.SingleFrameTrainingTask at 0x7fae1831cbb0>
 
 
 
@@ -178,7 +178,7 @@ local_task_id
 
 
 
-    '_20220629_133155_f54f9a6473c1400ea7a0d7976dd5e989'
+    '_20220809_113146_91f12a755f194b9f9f4e3bad6ef7913e'
 
 
 
@@ -243,11 +243,11 @@ except:
 ```
 
     Traceback (most recent call last):
-      File "/tmp/ipykernel_12644/225246354.py", line 3, in <module>
+      File "/tmp/ipykernel_11999/225246354.py", line 3, in <module>
         FileIO.read_pickle(reader.get_path('runs/0/training_task.pkl'))
-      File "/home/yura/anaconda3/envs/tg/lib/python3.8/site-packages/yo_fluq_ds/_misc/io.py", line 17, in read_pickle
+      File "/home/yura/anaconda3/envs/lesvik/lib/python3.8/site-packages/yo_fluq_ds/_misc/io.py", line 17, in read_pickle
         return pickle.load(file)
-    ModuleNotFoundError: No module named 'titanic___20220629_133155_f54f9a6473c1400ea7a0d7976dd5e989'
+    ModuleNotFoundError: No module named 'titanic___20220809_113146_91f12a755f194b9f9f4e3bad6ef7913e'
     
 
 

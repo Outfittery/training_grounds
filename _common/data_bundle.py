@@ -8,7 +8,7 @@ import pprint
 from pathlib import Path
 from yo_fluq_ds import FileIO, Obj, Query
 from warnings import warn
-
+import copy
 
 class DataBundle:
     def __init__(self, **frames: pd.DataFrame):
@@ -20,7 +20,9 @@ class DataBundle:
         self.additional_information = Obj()
 
     def copy(self):
-        return DataBundle(**self.data_frames)
+        db =  DataBundle(**self.data_frames)
+        db.additional_information = copy.deepcopy(self.additional_information)
+        return db
 
     def __getitem__(self, key):
         return self.data_frames[key]

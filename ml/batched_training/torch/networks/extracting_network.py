@@ -10,11 +10,20 @@ def df_to_torch(df: pd.DataFrame) -> torch.Tensor:
     return torch.tensor(df.astype(float).values).float()
 
 
-class UniversalFactory(TorchNetworkFactory):
-    def __init__(self, type, input_arg_mapping, name, **kwargs):
+class PrependableFactory:
+    def prepend_extraction(self,
+                           input_frames: Union[None, str, List[str]],
+                           raise_if_inputs_are_missing=False) -> TorchNetworkFactory:
+        return FeedForwardNetwork.Factory(
+            ExtractingNetwork.Factory(input_frames, raise_if_inputs_are_missing),
+            self
+        )
+
+
+class UniversalFactory(TorchNetworkFactory, PrependableFactory):
+    def __init__(self, type, input_arg_mapping, **kwargs):
         self.type = type
         self.input_arg_mapping = input_arg_mapping
-        self.name = name
         self.kwargs = kwargs
 
     def create_network(self, task, input):
@@ -23,16 +32,8 @@ class UniversalFactory(TorchNetworkFactory):
             kwargs[self.input_arg_mapping] = input
         return self.type(**kwargs)
 
-    def get_name_part(self):
-        return self.name
 
-    def prepend_extraction(self,
-                           input_frames: Union[None, str, List[str]],
-                           raise_if_inputs_are_missing=False) -> TorchNetworkFactory:
-        return FeedForwardNetwork.Factory(
-            ExtractingNetwork.Factory(input_frames, raise_if_inputs_are_missing),
-            self
-        )
+
 
 
 class ExtractingNetwork(torch.nn.Module):
@@ -88,7 +89,6 @@ class ExtractingNetwork(torch.nn.Module):
         return UniversalFactory(
             ExtractingNetwork,
             None,
-            None,
             input_frames=input_frames,
             raise_if_inputs_are_missing=raise_if_inputs_are_missing
         )
@@ -117,3 +117,7 @@ class FeedForwardNetwork(torch.nn.Module):
                     input = network(input)
 
             return FeedForwardNetwork(*networks)
+
+        def preview_batch(self, input):
+            for factory in self.factories:
+                factory.preview_batch(input)

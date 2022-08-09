@@ -7,7 +7,9 @@ from yo_fluq_ds import Query, Queryable, FileIO
 from enum import Enum
 from pathlib import Path
 
+
 from ..._common.locations import Loc
+from ..._common import DataBundle
 
 
 # TODO: add short description of module
@@ -73,6 +75,23 @@ class AbstractCacheDataSource(DataSource):
         """
         raise NotImplementedError()
 
+class _FileApplicator:
+    def __init__(self, read_lambda, write_lambda):
+        self.read_lambda = read_lambda
+        self.write_lambda = write_lambda
+
+    def get(self, file_path: Union[str, Path], factory: Callable, cache_mode: Union['CacheMode',str] = 'default'):
+        val = CacheMode.parse(cache_mode)
+        if val == CacheMode.Use:
+            return self.read_lambda(file_path)
+        if val == CacheMode.No:
+            return factory()
+        if val == CacheMode.Remake or not os.path.isfile(file_path):
+            obj = factory()
+            self.write_lambda(obj, file_path)
+            return obj
+        return self.read_lambda(file_path)
+
 
 class CacheMode(Enum):
     """
@@ -98,6 +117,18 @@ class CacheMode(Enum):
             FileIO.write_pickle(val, file_path)
             return val
         return FileIO.read_pickle(file_path)
+
+    @staticmethod
+    def from_pickle_file():
+        return _FileApplicator(FileIO.read_pickle, FileIO.write_pickle)
+
+    @staticmethod
+    def from_parquet_file():
+        return _FileApplicator(pd.read_parquet, lambda df, fname: df.to_parquet(fname))
+
+    @staticmethod
+    def from_bundle_folder():
+        return _FileApplicator(DataBundle.load, lambda db, fname: db.save(fname))
 
     @staticmethod
     def parse(value: Union[None, str, 'CacheMode']) -> 'CacheMode':

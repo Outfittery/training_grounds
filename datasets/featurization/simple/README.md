@@ -160,11 +160,11 @@ job = FeaturizationJob(
 job.run()
 ```
 
-    2022-06-29 11:25:55.397205+00:00 INFO: Featurization Job job at version v1 has started
-    2022-06-29 11:25:55.400349+00:00 INFO: Fetching data
-    2022-06-29 11:25:55.511306+00:00 INFO: Data fetched, finalizing
-    2022-06-29 11:25:55.598581+00:00 INFO: Uploading data
-    2022-06-29 11:25:55.601867+00:00 INFO: Featurization job completed
+    2022-08-09 09:25:59.954577+00:00 INFO: Featurization Job job at version v1 has started
+    2022-08-09 09:25:59.956774+00:00 INFO: Fetching data
+    2022-08-09 09:26:00.076865+00:00 INFO: Data fetched, finalizing
+    2022-08-09 09:26:00.197256+00:00 INFO: Uploading data
+    2022-08-09 09:26:00.200872+00:00 INFO: Featurization job completed
 
 
 Some notes: 
@@ -184,7 +184,7 @@ list(mem.cache)
 
 
 
-    ['passengers/d24a7be5-5871-497a-9558-28b4df7d7744.parquet']
+    ['passengers/f4b88092-ab42-43f8-baa1-f312e7777e65.parquet']
 
 
 
@@ -322,20 +322,20 @@ job.run()
 list(mem.cache)
 ```
 
-    2022-06-29 11:25:55.697649+00:00 INFO: Featurization Job job at version v1 has started
-    2022-06-29 11:25:55.700836+00:00 INFO: Fetching data
-    2022-06-29 11:25:55.774199+00:00 INFO: Data fetched, finalizing
-    2022-06-29 11:25:55.778471+00:00 INFO: Uploading data
-    2022-06-29 11:25:55.779497+00:00 INFO: Featurization job completed
+    2022-08-09 09:26:00.309620+00:00 INFO: Featurization Job job at version v1 has started
+    2022-08-09 09:26:00.313845+00:00 INFO: Fetching data
+    2022-08-09 09:26:00.438774+00:00 INFO: Data fetched, finalizing
+    2022-08-09 09:26:00.445772+00:00 INFO: Uploading data
+    2022-08-09 09:26:00.447250+00:00 INFO: Featurization job completed
 
 
 
 
 
-    ['passengers/a13a9eca-2b73-4061-8a1f-e949b2a22a9e.parquet',
-     'passengers/d3b69a43-71aa-40ca-8bee-8f04c0749aae.parquet',
-     'passengers/0766c94b-d180-47ce-a33f-4e1f427e621e.parquet',
-     'passengers/5a27b574-592a-4d3f-b7f7-8ed996cafd2d.parquet']
+    ['passengers/58e480ec-a8f6-41b9-a0f7-50620b0904ea.parquet',
+     'passengers/069141c4-7ef1-420f-90ef-1a409fa0f01d.parquet',
+     'passengers/fca730fd-e50e-468b-aaca-dd53cf548296.parquet',
+     'passengers/15f4f91b-4f1d-4a22-b072-dab7c12dc25f.parquet']
 
 
 
@@ -395,11 +395,11 @@ job.run()
 mem.get_parquet(0).sort_values('Age').head()
 ```
 
-    2022-06-29 11:25:55.802560+00:00 INFO: Featurization Job job at version v1 has started
-    2022-06-29 11:25:55.804675+00:00 INFO: Fetching data
-    2022-06-29 11:25:55.859091+00:00 INFO: Data fetched, finalizing
-    2022-06-29 11:25:55.871411+00:00 INFO: Uploading data
-    2022-06-29 11:25:55.872501+00:00 INFO: Featurization job completed
+    2022-08-09 09:26:00.474908+00:00 INFO: Featurization Job job at version v1 has started
+    2022-08-09 09:26:00.478526+00:00 INFO: Fetching data
+    2022-08-09 09:26:00.570513+00:00 INFO: Data fetched, finalizing
+    2022-08-09 09:26:00.579881+00:00 INFO: Uploading data
+    2022-08-09 09:26:00.580905+00:00 INFO: Featurization job completed
 
 
 
@@ -561,18 +561,18 @@ job.run()
 list(dataset_buffer.cache)
 ```
 
-    2022-06-29 11:25:55.902147+00:00 INFO: Featurization Job job at version v1 has started
-    2022-06-29 11:25:55.905046+00:00 INFO: Fetching data
-    2022-06-29 11:25:55.959682+00:00 INFO: Data fetched, finalizing
-    2022-06-29 11:25:55.974348+00:00 INFO: Uploading data
-    2022-06-29 11:25:55.975421+00:00 INFO: Featurization job completed
+    2022-08-09 09:26:00.609982+00:00 INFO: Featurization Job job at version v1 has started
+    2022-08-09 09:26:00.611226+00:00 INFO: Fetching data
+    2022-08-09 09:26:00.701630+00:00 INFO: Data fetched, finalizing
+    2022-08-09 09:26:00.714961+00:00 INFO: Uploading data
+    2022-08-09 09:26:00.716187+00:00 INFO: Featurization job completed
 
 
 
 
 
-    ['cabins/0d6136cb-7833-498e-ae3c-5775b4d8db5c.parquet',
-     'passengers/5b02583b-258a-4a09-a77b-aa066c281180.parquet']
+    ['cabins/5ae20540-a3ff-44e2-b5c2-c2da7548560f.parquet',
+     'passengers/d2244032-3003-437d-8de1-ccac93cd2c42.parquet']
 
 
 

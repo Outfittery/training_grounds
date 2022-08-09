@@ -100,5 +100,8 @@ class ArtificierArguments:
 
 
 class Artificier:
-    def run(self, args: ArtificierArguments):
-        raise NotImplementedError()
+    def run_before_storage(self, args: ArtificierArguments):
+        pass
+
+    def run_before_metrics(self, args: ArtificierArguments):
+        pass

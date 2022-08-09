@@ -577,7 +577,7 @@ plt.legend()
 
 
 
-    <matplotlib.legend.Legend at 0x7fecb5414070>
+    <matplotlib.legend.Legend at 0x7f9fbecac4c0>
 
 
 
@@ -702,40 +702,40 @@ rdf.head()
     <tr>
       <th>0</th>
       <td>Fare</td>
-      <td>45.913762</td>
-      <td>27.236308</td>
+      <td>41.845543</td>
+      <td>26.322968</td>
       <td>0</td>
       <td>0</td>
     </tr>
     <tr>
       <th>1</th>
       <td>Fare</td>
-      <td>49.606715</td>
-      <td>25.692481</td>
+      <td>42.229522</td>
+      <td>24.363418</td>
       <td>1</td>
       <td>1</td>
     </tr>
     <tr>
       <th>2</th>
       <td>Fare</td>
-      <td>43.987889</td>
-      <td>23.104627</td>
+      <td>48.869022</td>
+      <td>24.979670</td>
       <td>2</td>
       <td>2</td>
     </tr>
     <tr>
       <th>3</th>
       <td>Fare</td>
-      <td>40.229970</td>
-      <td>27.243840</td>
+      <td>44.753038</td>
+      <td>26.031914</td>
       <td>3</td>
       <td>3</td>
     </tr>
     <tr>
       <th>4</th>
       <td>Fare</td>
-      <td>43.614521</td>
-      <td>22.601547</td>
+      <td>40.803088</td>
+      <td>23.540866</td>
       <td>4</td>
       <td>4</td>
     </tr>
@@ -797,14 +797,14 @@ rdf[['female','male']].feed(Aggregators.normal_confint())
   <tbody>
     <tr>
       <th>0</th>
-      <td>38.750749</td>
-      <td>51.017042</td>
-      <td>44.883896</td>
-      <td>6.133146</td>
-      <td>22.430751</td>
-      <td>29.609303</td>
-      <td>26.020027</td>
-      <td>3.589276</td>
+      <td>37.893253</td>
+      <td>50.832493</td>
+      <td>44.362873</td>
+      <td>6.46962</td>
+      <td>22.000742</td>
+      <td>28.884838</td>
+      <td>25.44279</td>
+      <td>3.442048</td>
     </tr>
   </tbody>
 </table>

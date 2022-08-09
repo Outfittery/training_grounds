@@ -26,7 +26,7 @@ class SklearnMetric(Metric):
         return [self._method(result_df.true, result_df.predicted, **self._kwargs)]
 
 
-class MetricPool(Artificier):
+class MetricPool:
     """
     A class representing a collection of metrics.
     Implements FluentAPI, add metrics one by one

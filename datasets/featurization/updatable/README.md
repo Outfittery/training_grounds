@@ -782,54 +782,54 @@ for i in [0,2,4,6]:
     job.run(current_time = time(i),custom_revision_id=str(i))
 ```
 
-    2022-06-29 11:26:03.261567+00:00 INFO: Starting lesvik job test_featurization_job, version v1
-    2022-06-29 11:26:03.277132+00:00 INFO: Additional settings limit NONE, reporting NONE
-    2022-06-29 11:26:03.282088+00:00 INFO: 0 previous revisions are found
-    2022-06-29 11:26:03.288185+00:00 INFO: Running with id 0 at 2020-01-01 00:00:00, revision is MAJOR
-    2022-06-29 11:26:03.289030+00:00 INFO: Featurization Job test_featurization_job at version v1 has started
-    2022-06-29 11:26:03.340973+00:00 INFO: Fetching data
-    2022-06-29 11:26:03.633662+00:00 INFO: Data fetched, finalizing
-    2022-06-29 11:26:03.702876+00:00 INFO: Uploading data
-    2022-06-29 11:26:03.718642+00:00 INFO: Featurization job completed
-    2022-06-29 11:26:03.727209+00:00 INFO: 891 were processed
-    2022-06-29 11:26:03.733663+00:00 INFO: Uploading new description
-    2022-06-29 11:26:03.746654+00:00 INFO: Job finished
-    2022-06-29 11:26:03.756778+00:00 INFO: Starting lesvik job test_featurization_job, version v1
-    2022-06-29 11:26:03.763333+00:00 INFO: Additional settings limit NONE, reporting NONE
-    2022-06-29 11:26:03.817718+00:00 INFO: 1 previous revisions are found
-    2022-06-29 11:26:03.823352+00:00 INFO: Running with id 2 at 2020-01-03 00:00:00, revision is MINOR
-    2022-06-29 11:26:03.827042+00:00 INFO: Featurization Job test_featurization_job at version v1 has started
-    2022-06-29 11:26:03.842276+00:00 INFO: Fetching data
-    2022-06-29 11:26:04.061011+00:00 INFO: Data fetched, finalizing
-    2022-06-29 11:26:04.125535+00:00 INFO: Uploading data
-    2022-06-29 11:26:04.130914+00:00 INFO: Featurization job completed
-    2022-06-29 11:26:04.145041+00:00 INFO: 168 were processed
-    2022-06-29 11:26:04.156672+00:00 INFO: Uploading new description
-    2022-06-29 11:26:04.186135+00:00 INFO: Job finished
-    2022-06-29 11:26:04.195257+00:00 INFO: Starting lesvik job test_featurization_job, version v1
-    2022-06-29 11:26:04.199670+00:00 INFO: Additional settings limit NONE, reporting NONE
-    2022-06-29 11:26:04.238758+00:00 INFO: 2 previous revisions are found
-    2022-06-29 11:26:04.245789+00:00 INFO: Running with id 4 at 2020-01-05 00:00:00, revision is MINOR
-    2022-06-29 11:26:04.248288+00:00 INFO: Featurization Job test_featurization_job at version v1 has started
-    2022-06-29 11:26:04.299640+00:00 INFO: Fetching data
-    2022-06-29 11:26:04.362860+00:00 INFO: Data fetched, finalizing
-    2022-06-29 11:26:04.446087+00:00 INFO: Uploading data
-    2022-06-29 11:26:04.456450+00:00 INFO: Featurization job completed
-    2022-06-29 11:26:04.461207+00:00 INFO: 77 were processed
-    2022-06-29 11:26:04.464120+00:00 INFO: Uploading new description
-    2022-06-29 11:26:04.490373+00:00 INFO: Job finished
-    2022-06-29 11:26:04.496681+00:00 INFO: Starting lesvik job test_featurization_job, version v1
-    2022-06-29 11:26:04.500821+00:00 INFO: Additional settings limit NONE, reporting NONE
-    2022-06-29 11:26:04.522798+00:00 INFO: 3 previous revisions are found
-    2022-06-29 11:26:04.529496+00:00 INFO: Running with id 6 at 2020-01-07 00:00:00, revision is MINOR
-    2022-06-29 11:26:04.531885+00:00 INFO: Featurization Job test_featurization_job at version v1 has started
-    2022-06-29 11:26:04.570020+00:00 INFO: Fetching data
-    2022-06-29 11:26:04.890657+00:00 INFO: Data fetched, finalizing
-    2022-06-29 11:26:04.926858+00:00 INFO: Uploading data
-    2022-06-29 11:26:04.930933+00:00 INFO: Featurization job completed
-    2022-06-29 11:26:04.934933+00:00 INFO: 644 were processed
-    2022-06-29 11:26:04.944799+00:00 INFO: Uploading new description
-    2022-06-29 11:26:04.979617+00:00 INFO: Job finished
+    2022-08-09 09:26:04.174719+00:00 INFO: Starting lesvik job test_featurization_job, version v1
+    2022-08-09 09:26:04.182723+00:00 INFO: Additional settings limit NONE, reporting NONE
+    2022-08-09 09:26:04.196147+00:00 INFO: 0 previous revisions are found
+    2022-08-09 09:26:04.202310+00:00 INFO: Running with id 0 at 2020-01-01 00:00:00, revision is MAJOR
+    2022-08-09 09:26:04.208444+00:00 INFO: Featurization Job test_featurization_job at version v1 has started
+    2022-08-09 09:26:04.229583+00:00 INFO: Fetching data
+    2022-08-09 09:26:04.473850+00:00 INFO: Data fetched, finalizing
+    2022-08-09 09:26:04.487252+00:00 INFO: Uploading data
+    2022-08-09 09:26:04.489588+00:00 INFO: Featurization job completed
+    2022-08-09 09:26:04.490116+00:00 INFO: 891 were processed
+    2022-08-09 09:26:04.490551+00:00 INFO: Uploading new description
+    2022-08-09 09:26:04.499910+00:00 INFO: Job finished
+    2022-08-09 09:26:04.505373+00:00 INFO: Starting lesvik job test_featurization_job, version v1
+    2022-08-09 09:26:04.505999+00:00 INFO: Additional settings limit NONE, reporting NONE
+    2022-08-09 09:26:04.513122+00:00 INFO: 1 previous revisions are found
+    2022-08-09 09:26:04.513776+00:00 INFO: Running with id 2 at 2020-01-03 00:00:00, revision is MINOR
+    2022-08-09 09:26:04.515651+00:00 INFO: Featurization Job test_featurization_job at version v1 has started
+    2022-08-09 09:26:04.521370+00:00 INFO: Fetching data
+    2022-08-09 09:26:04.553681+00:00 INFO: Data fetched, finalizing
+    2022-08-09 09:26:04.573163+00:00 INFO: Uploading data
+    2022-08-09 09:26:04.574421+00:00 INFO: Featurization job completed
+    2022-08-09 09:26:04.575462+00:00 INFO: 168 were processed
+    2022-08-09 09:26:04.576483+00:00 INFO: Uploading new description
+    2022-08-09 09:26:04.582713+00:00 INFO: Job finished
+    2022-08-09 09:26:04.583952+00:00 INFO: Starting lesvik job test_featurization_job, version v1
+    2022-08-09 09:26:04.584988+00:00 INFO: Additional settings limit NONE, reporting NONE
+    2022-08-09 09:26:04.590281+00:00 INFO: 2 previous revisions are found
+    2022-08-09 09:26:04.590853+00:00 INFO: Running with id 4 at 2020-01-05 00:00:00, revision is MINOR
+    2022-08-09 09:26:04.591370+00:00 INFO: Featurization Job test_featurization_job at version v1 has started
+    2022-08-09 09:26:04.606450+00:00 INFO: Fetching data
+    2022-08-09 09:26:04.615132+00:00 INFO: Data fetched, finalizing
+    2022-08-09 09:26:04.622663+00:00 INFO: Uploading data
+    2022-08-09 09:26:04.624036+00:00 INFO: Featurization job completed
+    2022-08-09 09:26:04.624865+00:00 INFO: 77 were processed
+    2022-08-09 09:26:04.625696+00:00 INFO: Uploading new description
+    2022-08-09 09:26:04.638533+00:00 INFO: Job finished
+    2022-08-09 09:26:04.639558+00:00 INFO: Starting lesvik job test_featurization_job, version v1
+    2022-08-09 09:26:04.640285+00:00 INFO: Additional settings limit NONE, reporting NONE
+    2022-08-09 09:26:04.647313+00:00 INFO: 3 previous revisions are found
+    2022-08-09 09:26:04.648285+00:00 INFO: Running with id 6 at 2020-01-07 00:00:00, revision is MINOR
+    2022-08-09 09:26:04.648845+00:00 INFO: Featurization Job test_featurization_job at version v1 has started
+    2022-08-09 09:26:04.655204+00:00 INFO: Fetching data
+    2022-08-09 09:26:04.788514+00:00 INFO: Data fetched, finalizing
+    2022-08-09 09:26:04.809151+00:00 INFO: Uploading data
+    2022-08-09 09:26:04.812405+00:00 INFO: Featurization job completed
+    2022-08-09 09:26:04.815530+00:00 INFO: 644 were processed
+    2022-08-09 09:26:04.816779+00:00 INFO: Uploading new description
+    2022-08-09 09:26:04.821363+00:00 INFO: Job finished
 
 
 I have given a meaningful names to revisions with `custom_uid` argument. This is not necessary in general, as the order of revision is reflected in `description.parquet`.
@@ -893,7 +893,7 @@ desc_df
       <td>2020-01-01</td>
       <td>True</td>
       <td>v1</td>
-      <td>2cb63775-bd23-424e-86f6-53571c8a5e78.parquet</td>
+      <td>91703d68-be39-44cf-a2a0-fccdcecfb8b8.parquet</td>
       <td>891.0</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -905,7 +905,7 @@ desc_df
       <td>2020-01-03</td>
       <td>False</td>
       <td>v1</td>
-      <td>91a3728e-e71a-4bc4-9d75-9ca0f98071f1.parquet</td>
+      <td>ec7d5249-320f-4c21-b3d9-7ac6be3aa374.parquet</td>
       <td>NaN</td>
       <td>168.0</td>
       <td>NaN</td>
@@ -917,7 +917,7 @@ desc_df
       <td>2020-01-05</td>
       <td>False</td>
       <td>v1</td>
-      <td>9aed7cbc-69fb-430f-94c0-f474989d6cdc.parquet</td>
+      <td>0516484d-8e7c-4e28-bf63-b02b9d1c516a.parquet</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>77.0</td>
@@ -929,7 +929,7 @@ desc_df
       <td>2020-01-07</td>
       <td>False</td>
       <td>v1</td>
-      <td>7edc4146-9e1e-4933-b247-dabac3ed4d79.parquet</td>
+      <td>2b0aac6b-7233-4206-9d9e-071b1f6a7f00.parquet</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -1084,7 +1084,7 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-01 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>0cde96b0-b0d2-4a4b-aae8-cd3e60e13da3.parquet</td>
+      <td>7766f2eb-64c4-4a4a-aec2-95b68b2f49e8.parquet</td>
       <td>891.0</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -1096,7 +1096,7 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-03 01:00:00</td>
       <td>False</td>
       <td></td>
-      <td>c6c93292-128a-440e-88bc-435a19263ed8.parquet</td>
+      <td>ca0ba323-7ba3-418d-bfd4-a15029134c51.parquet</td>
       <td>NaN</td>
       <td>168.0</td>
       <td>NaN</td>
@@ -1108,7 +1108,7 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-05 01:00:00</td>
       <td>False</td>
       <td></td>
-      <td>989a1c5b-fc49-415a-83c2-e791c7c34d64.parquet</td>
+      <td>87066d05-9eb1-4950-ac9e-52961d502348.parquet</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>77.0</td>
@@ -1120,7 +1120,7 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-07 01:00:00</td>
       <td>False</td>
       <td></td>
-      <td>4225285e-a51d-4bc2-aefe-db4b25a4a94f.parquet</td>
+      <td>591b8d1b-3b2c-4959-b91b-7efddcc251e2.parquet</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -1194,7 +1194,7 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-01 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>62bb6578-6d93-4dde-bd69-f6ce1f3da982.parquet</td>
+      <td>09d02468-e125-4dcc-828f-70a824e9bf78.parquet</td>
       <td>891.0</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -1206,9 +1206,9 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-03 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>70b46abc-ac87-4989-9ec7-30cfcc9fbeda.parquet</td>
-      <td>723.0</td>
+      <td>e7974d51-ca54-4f14-be0f-ca0bff2e0904.parquet</td>
       <td>NaN</td>
+      <td>168.0</td>
       <td>NaN</td>
       <td>NaN</td>
     </tr>
@@ -1218,9 +1218,9 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-03 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>7f1d5826-0540-4184-b7d8-7671f43f89db.parquet</td>
+      <td>06368185-0378-4988-9599-5360d6c9c3c3.parquet</td>
+      <td>723.0</td>
       <td>NaN</td>
-      <td>168.0</td>
       <td>NaN</td>
       <td>NaN</td>
     </tr>
@@ -1230,7 +1230,7 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-05 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>a30ae553-b1de-442f-88d8-768a22f8095e.parquet</td>
+      <td>ed23fcdd-ea86-4130-99b3-ae409e8610c5.parquet</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>77.0</td>
@@ -1242,19 +1242,31 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-05 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>5f4bba93-f5e4-4809-94ab-a52c505e744a.parquet</td>
+      <td>bd2e946d-9c73-40c9-b9eb-0932a396407c.parquet</td>
+      <td>NaN</td>
+      <td>168.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>4</td>
+      <td>2020-01-05 01:00:00</td>
+      <td>True</td>
+      <td></td>
+      <td>8c61ab71-a22f-4e65-8ed8-29a67d6fb231.parquet</td>
       <td>646.0</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
     </tr>
     <tr>
-      <th>2</th>
-      <td>4</td>
-      <td>2020-01-05 01:00:00</td>
+      <th>3</th>
+      <td>6</td>
+      <td>2020-01-07 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>253ea2fb-6a8b-43ae-9278-a1ddef144c13.parquet</td>
+      <td>f4184484-53da-44ad-8d9e-f5a882bb50fd.parquet</td>
       <td>NaN</td>
       <td>168.0</td>
       <td>NaN</td>
@@ -1266,31 +1278,7 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-07 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>51ce3cc1-35fd-4d4a-b9d2-47a83446527f.parquet</td>
-      <td>NaN</td>
-      <td>168.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>6</td>
-      <td>2020-01-07 01:00:00</td>
-      <td>True</td>
-      <td></td>
-      <td>082391ad-82fe-45d0-aac5-c4a2f145b867.parquet</td>
-      <td>2.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>6</td>
-      <td>2020-01-07 01:00:00</td>
-      <td>True</td>
-      <td></td>
-      <td>d0f1ffb8-1106-4071-a156-bbc12696554b.parquet</td>
+      <td>6b32a759-aa07-44f2-acee-7880bc0a8a1e.parquet</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>77.0</td>
@@ -1302,11 +1290,23 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-07 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>10d1ac90-b76e-4ace-a951-aa279b148f82.parquet</td>
+      <td>bd126da0-2525-4489-840d-13e0b520ad16.parquet</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>644.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>6</td>
+      <td>2020-01-07 01:00:00</td>
+      <td>True</td>
+      <td></td>
+      <td>433eedaf-e026-451a-abd8-38b8b7d884ae.parquet</td>
+      <td>2.0</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
     </tr>
   </tbody>
 </table>

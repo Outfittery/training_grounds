@@ -8,3 +8,4 @@ from .model_handler import BatchedModelHandler
 from .training_task import TrainingSettings, BatchedTrainingTask
 from .precomputing_extractor import PrecomputingExtractor
 from .plain_extractor import PlainExtractor
+from .train_display_test_split_method import train_display_test_split

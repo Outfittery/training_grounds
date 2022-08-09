@@ -116,3 +116,27 @@ class S3Handler:
                     path = object['Key']
             return path
         return None
+
+
+    @staticmethod
+    def get_folder_content(bucket_name: str, path: str):
+        aws_access_key_id = os.environ.get('AWS_ACCESS_KEY_ID', None)
+        aws_secret_access = os.environ.get('AWS_SECRET_ACCESS_KEY', None)
+        if aws_access_key_id is not None and aws_secret_access is not None:
+            kwargs = dict(aws_access_key_id=aws_access_key_id, aws_secret_access_key=aws_secret_access)
+        else:
+            kwargs = {}
+        s3 = boto3.client('s3', **kwargs)
+
+        response = s3.list_objects_v2(
+            Bucket=bucket_name,
+            Prefix=path,
+        )
+
+        result = []
+        if response['ResponseMetadata']['HTTPStatusCode'] == 200 and len(response['Contents']) > 0:
+            max_modified = response['Contents'][0]['LastModified']
+            path = response['Contents'][0]['Key']
+            result.append(path)
+
+        return result

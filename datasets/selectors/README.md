@@ -280,7 +280,7 @@ combined_selector = Ensemble(
 combined_selector(obj)
 ```
 
-    2022-06-29 11:25:47.709543+00:00 WARNING: Missing field in FieldGetter
+    2022-08-09 09:25:55.475420+00:00 WARNING: Missing field in FieldGetter
 
 
 
@@ -354,7 +354,7 @@ titanic_selector = Pipeline(
 titanic_selector(obj)
 ```
 
-    2022-06-29 11:25:47.804921+00:00 WARNING: Missing field in FieldGetter
+    2022-08-09 09:25:55.499658+00:00 WARNING: Missing field in FieldGetter
 
 
 
@@ -374,7 +374,7 @@ titanic_selector(obj)
      'trip_SibSp': 0,
      'trip_Patch': 0,
      'trip_Relatives': 0,
-     'processed': datetime.datetime(2022, 6, 29, 13, 25, 47, 807034)}
+     'processed': datetime.datetime(2022, 8, 9, 11, 25, 55, 500548)}
 
 
 
@@ -416,8 +416,8 @@ print(json.dumps(representation, indent=1)[:300]+"...")
          "name": {
           "0": "[?Name]",
           "1": {
-           "length": "<function get_length at 0x7f4e28699160>",
-           "title": "<function get_title at 0x7f4e287d7790>"
+           "length": "<function get_length at 0x7faf29762a60>",
+           "title": "<function get_title at 0x7faf29762790>"
           }
          },
          "Sex": {
@@ -489,8 +489,8 @@ representation[0]['passenger'][0]
 
     {0: {0: '[?passenger]'},
      1: {'name': {0: '[?Name]',
-       1: {'length': '<function get_length at 0x7f4e28699160>',
-        'title': '<function get_title at 0x7f4e287d7790>'}},
+       1: {'length': '<function get_length at 0x7faf29762a60>',
+        'title': '<function get_title at 0x7faf29762790>'}},
       'Sex': {0: '[?Sex]'},
       'Age': {0: '[?Age]'}}}
 
@@ -638,9 +638,9 @@ The combination of `DataSource` and `Featurizer` allows you to quickly build the
 source.get_data().take(3).select(titanic_selector).to_dataframe()
 ```
 
-    2022-06-29 11:25:48.257767+00:00 WARNING: Missing field in FieldGetter
-    2022-06-29 11:25:48.259413+00:00 WARNING: Missing field in FieldGetter
-    2022-06-29 11:25:48.260495+00:00 WARNING: Missing field in FieldGetter
+    2022-08-09 09:25:55.641922+00:00 WARNING: Missing field in FieldGetter
+    2022-08-09 09:25:55.643855+00:00 WARNING: Missing field in FieldGetter
+    2022-08-09 09:25:55.646271+00:00 WARNING: Missing field in FieldGetter
 
 
 
@@ -686,7 +686,7 @@ source.get_data().take(3).select(titanic_selector).to_dataframe()
       <td>1</td>
       <td>0</td>
       <td>1</td>
-      <td>2022-06-29 13:25:48.259125</td>
+      <td>2022-08-09 11:25:55.643462</td>
     </tr>
     <tr>
       <th>1</th>
@@ -704,7 +704,7 @@ source.get_data().take(3).select(titanic_selector).to_dataframe()
       <td>1</td>
       <td>0</td>
       <td>1</td>
-      <td>2022-06-29 13:25:48.260271</td>
+      <td>2022-08-09 11:25:55.645910</td>
     </tr>
     <tr>
       <th>2</th>
@@ -722,7 +722,7 @@ source.get_data().take(3).select(titanic_selector).to_dataframe()
       <td>0</td>
       <td>0</td>
       <td>0</td>
-      <td>2022-06-29 13:25:48.261200</td>
+      <td>2022-08-09 11:25:55.647480</td>
     </tr>
   </tbody>
 </table>

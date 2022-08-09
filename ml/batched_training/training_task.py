@@ -1,10 +1,11 @@
 from typing import *
 
 import copy
+import os
 import time
+
 import numpy as np
 import pandas as pd
-import time
 
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -260,6 +261,10 @@ class BatchedTrainingTask(AbstractTrainingTask):
         result.train_split = temp_data.split.train
 
         args = ArtificierArguments(result, temp_data.original_ibundle)
+
+        for artificier in self.artificiers:
+            artificier.run_before_metrics(args)
+
         if self.metric_pool is not None:
             self.metric_pool.run(args)
         else:
@@ -276,7 +281,7 @@ class BatchedTrainingTask(AbstractTrainingTask):
         result.history = copy.deepcopy(self.history)
 
         for artificier in self.artificiers:
-            artificier.run(args)
+            artificier.run_before_storage(args)
 
         for key, value in result.__dict__.items():
             temp_data.env.store_artifact(['output'], key, value)

@@ -75,6 +75,7 @@ class LSTMNetwork(torch.nn.Module):
         output = output.reshape(output.shape[1], output.shape[2])
         return output
 
-    @staticmethod
-    def Factory(size: int):
-        return UniversalFactory(LSTMNetwork, 'input', 'L' + str(size), size=size)
+    class Factory(UniversalFactory):
+        def __init__(self, size: int):
+            super(LSTMNetwork.Factory, self).__init__(LSTMNetwork, 'input', size = size)
+

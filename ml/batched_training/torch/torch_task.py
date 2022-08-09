@@ -58,15 +58,12 @@ class PredefinedExtractorFactory(TorchExtractorFactory):
 
 class _TorchNetworkHandler(bt.BatchedModelHandler):
     def instantiate(self, task: 'TorchTrainingTask', input: Dict[str, pd.DataFrame]) -> None:
+        task.network_factory.preview_batch(input)
         self.network = task.network_factory.create_network(task, input)
         self.optimizer = task.torch_settings.optimizer_ctor.instantiate(self.network.parameters())
         self.loss = task.torch_settings.loss_ctor()
 
-    def predict(self, input: Dict[str, pd.DataFrame]):
-        labels = input[Conventions.LabelFrame]
-        if labels.shape[1] != 1:
-            raise ValueError(
-                "TorchTrainingtask can be updated to handle multi-column labels, but it wasn't yet")  # TODO: add and test logic for multicolumn
+    def _predict_1_dim(self, input, labels):
         output = self.network(input)
         output = output.flatten().tolist()
         result = input['index'].copy()
@@ -74,8 +71,23 @@ class _TorchNetworkHandler(bt.BatchedModelHandler):
         result['predicted'] = output
         return result
 
-    def train(self, input: Dict[str, pd.DataFrame]) -> float:
-        # TODO: add and test logic for multicolumn
+    def _predict_multi_dim(self, input, labels):
+        result = input['index'].copy()
+        output = self.network(input)
+        for i, c in enumerate(labels.columns):
+            result['true_'+c] = labels[c]
+            result['predicted_'+c] = output[:,i].tolist()
+        return result
+
+    def predict(self, input: Dict[str, pd.DataFrame]):
+        labels = input[Conventions.LabelFrame]
+        if labels.shape[1]==1:
+            return self._predict_1_dim(input, labels)
+        else:
+            return self._predict_multi_dim(input,labels)
+
+
+    def _train_1_dim(self, input, labels):
         self.optimizer.zero_grad()
         result = self.network(input).flatten()
         target = torch.tensor(input[Conventions.LabelFrame].values).float().flatten()
@@ -83,6 +95,22 @@ class _TorchNetworkHandler(bt.BatchedModelHandler):
         loss.backward()
         self.optimizer.step()
         return loss.item()
+
+    def _train_multi_dim(self, input, labels):
+        self.optimizer.zero_grad()
+        result = self.network(input)
+        target = torch.tensor(input[Conventions.LabelFrame].values).float()
+        loss = self.loss(result, target)
+        loss.backward()
+        self.optimizer.step()
+        return loss.item()
+
+    def train(self, input: Dict[str, pd.DataFrame]) -> float:
+        labels = input[Conventions.LabelFrame]
+        if labels.shape[1] == 1:
+            return self._train_1_dim(input, labels)
+        else:
+            return self._train_multi_dim(input, labels)
 
 
 class _BasisExtractorInfo:

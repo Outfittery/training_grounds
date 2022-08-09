@@ -103,11 +103,11 @@ job.run()
 mem.get_parquet(list(mem.cache)[0]).head()
 ```
 
-    2022-06-29 11:31:13.562269+00:00 INFO: Featurization Job job at version v1 has started
-    2022-06-29 11:31:13.564887+00:00 INFO: Fetching data
-    2022-06-29 11:31:13.624379+00:00 INFO: Data fetched, finalizing
-    2022-06-29 11:31:13.642881+00:00 INFO: Uploading data
-    2022-06-29 11:31:13.644062+00:00 INFO: Featurization job completed
+    2022-08-09 09:31:02.532632+00:00 INFO: Featurization Job job at version v1 has started
+    2022-08-09 09:31:02.537750+00:00 INFO: Fetching data
+    2022-08-09 09:31:02.663642+00:00 INFO: Data fetched, finalizing
+    2022-08-09 09:31:02.709174+00:00 INFO: Uploading data
+    2022-08-09 09:31:02.711615+00:00 INFO: Featurization job completed
 
 
 
@@ -237,18 +237,21 @@ del desc['properties']['dependencies'] # just for readbility
 desc
 ```
 
-    warning: no files found matching '*.yml' under directory 'titanic_featurization__1'
     warning: no files found matching '*.rst' under directory 'titanic_featurization__1'
     warning: sdist: standard file not found: should have one of README, README.rst, README.txt, README.md
+    
+    warning: check: missing required meta-data: url
+    
+    warning: check: missing meta-data: either (author and author_email) or (maintainer and maintainer_email) must be supplied
     
 
 
 
 
 
-    {'task': <tg.common.delivery.packaging.packaging_dto.PackagingTask at 0x7f4eac68ea60>,
+    {'task': <tg.common.delivery.packaging.packaging_dto.PackagingTask at 0x7f688c42bf10>,
      'module_name': 'titanic_featurization__1',
-     'path': PosixPath('/home/yura/Desktop/repos/tg/temp/release/package/titanic_featurization__1-1.tar.gz'),
+     'path': PosixPath('/home/yura/Desktop/repos/lesvik-ml/temp/release/package/titanic_featurization__1-1.tar.gz'),
      'properties': {'module_name': 'titanic_featurization',
       'version': '1',
       'full_module_name': 'titanic_featurization__1',
@@ -275,9 +278,7 @@ entry_point = install_package_and_get_loader(info.path, silent = True)
 entry_point.__dict__
 ```
 
-    Found existing installation: titanic-featurization 1
-    Uninstalling titanic-featurization-1:
-      Successfully uninstalled titanic-featurization-1
+    WARNING: Skipping titanic-featurization as it is not installed.
 
 
 
@@ -288,7 +289,7 @@ entry_point.__dict__
      'tg_module_name': 'titanic_featurization__1.tg',
      'python_module_name': 'titanic_featurization__1',
      'original_tg_module_name': 'tg',
-     'resources_location': '/home/yura/anaconda3/envs/tg/lib/python3.8/site-packages/titanic_featurization__1/resources'}
+     'resources_location': '/home/yura/anaconda3/envs/lesvik/lib/python3.8/site-packages/titanic_featurization__1/resources'}
 
 
 
@@ -365,11 +366,11 @@ Now, we can run this container locally:
 !docker run titanic-featurization:test
 ```
 
-    2022-06-29 11:31:36.813383+00:00 INFO: Featurization Job job at version v1 has started
-    2022-06-29 11:31:36.814066+00:00 INFO: Fetching data
-    2022-06-29 11:31:36.903384+00:00 INFO: Data fetched, finalizing
-    2022-06-29 11:31:37.007742+00:00 INFO: Uploading data
-    2022-06-29 11:31:37.009237+00:00 INFO: Featurization job completed
+    2022-08-09 09:31:24.096367+00:00 INFO: Featurization Job job at version v1 has started
+    2022-08-09 09:31:24.097195+00:00 INFO: Fetching data
+    2022-08-09 09:31:24.236697+00:00 INFO: Data fetched, finalizing
+    2022-08-09 09:31:24.304665+00:00 INFO: Uploading data
+    2022-08-09 09:31:24.306001+00:00 INFO: Featurization job completed
 
 
 This `make_container` function is not "standard" or "universal": it just allows building the containers that are suitable for Sagemaker tasks and featurization jobs. So if you need some more sophisticated containering, please check the source code of this function to understand how to create an analog for it. Most of the complicated job is done by packaging, so `make_container` really just fills templates with values and executes some shell commands.

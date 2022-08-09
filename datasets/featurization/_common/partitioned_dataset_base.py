@@ -127,7 +127,10 @@ class TimePartitionedDatasetBase(Generic[T]):
         if with_progress_bar:
             records_query = records_query.feed(fluq.with_progress_bar())
         filter = SimpleIndexFilter()
+        stop_iterating = False
         for dset in records_query:
+            if stop_iterating:
+                break
             for df in self.spawn_child_dataset(dset.name).read_iter(columns, selector, None):
                 df, seen_index = filter.filter(df, seen_index)
                 df = df.copy()
@@ -138,6 +141,7 @@ class TimePartitionedDatasetBase(Generic[T]):
                 else:
                     remaining = count - collected
                     if remaining <= 0:
+                        stop_iterating=True
                         break
                     if remaining < df.shape[0]:
                         df = df.iloc[:remaining].copy()

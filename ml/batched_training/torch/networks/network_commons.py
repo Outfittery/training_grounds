@@ -8,6 +8,9 @@ class TorchNetworkFactory:
     def create_network(self, task, input):
         raise NotImplementedError()
 
+    def preview_batch(self, input):
+        pass
+
 
 class AnnotatedTensor:
     def __init__(self,
