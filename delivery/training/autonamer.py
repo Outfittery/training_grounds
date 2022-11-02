@@ -3,11 +3,26 @@ from enum import Enum
 
 
 class Autonamer:
-    def __init__(self, build_method):
+    def __init__(self, build_method, prefix = None):
         self.build_method = build_method
+        self.prefix = prefix
+
+    def _build_arguments(self, kwargs):
+        grid = {}
+        plain = {}
+        for k,v in kwargs.items():
+            if isinstance(v, list):
+                grid[k]=v
+            else:
+                plain[k]=v
+        result = Query.combinatorics.grid(**grid).to_list()
+        for r in result:
+            for k, v in plain.items():
+                r[k] = v
+        return result
 
     def build_tasks(self, **kwargs):
-        calls = Query.combinatorics.grid(**kwargs)
+        calls = self._build_arguments(kwargs)
         result = []
         for call in calls:
             parts = []
@@ -21,7 +36,7 @@ class Autonamer:
                         v = str(value // 1000) + "K"
                     else:
                         v = str(value)
-                elif isinstance(value, list):
+                elif isinstance(value, list) or isinstance(value, tuple):
                     v = '-'.join(str(c) for c in value)
                 elif isinstance(value, float):
                     v = str(value).replace('.', '')
@@ -32,6 +47,10 @@ class Autonamer:
                 parts.append(prefix + v)
             name_suffix = '-'.join(parts)
             task = self.build_method(**call)
+            if 'name' not in task.info:
+                task.info['name'] = ''
+            if self.prefix is not None:
+                task.info['name'] = self.prefix+'-'+task.info['name']
             task.info['name'] += name_suffix
             result.append(task)
         return result

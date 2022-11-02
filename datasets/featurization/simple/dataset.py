@@ -27,16 +27,32 @@ class Dataset:
             shutil.rmtree(self.dataset_location, ignore_errors=True)
             self.syncer.download_folder('')
 
-    def _open_file(self, file, columns, selector):
-        df = pd.read_parquet(file, columns=columns)
+    def _open_file(self, file, columns, selector, column_mapping):
+        try:
+            df = pd.read_parquet(file, columns=columns)
+        except:
+            tdf = pd.read_parquet(file)
+            if tdf.shape[0]==0:
+                return None
+            raise
+        if df.shape[0]==0:
+            return None
+        if column_mapping is not None:
+            df = df.rename(columns=column_mapping)
         if selector is not None:
             df = selector(df)
         return df
 
-    def _read_iter(self, files, columns, selector, count):
+    def _read_iter(self, files, columns, selector, count, column_mapping):
+        if column_mapping is not None:
+            if columns is None:
+                columns = []
+            columns = list(set(columns+list(column_mapping)))
         collected = 0
         for file in files:
-            df = self._open_file(file, columns, selector)
+            df = self._open_file(file, columns, selector, column_mapping)
+            if df is None:
+                continue
             if count is None:
                 yield df
             else:
@@ -51,11 +67,12 @@ class Dataset:
     def read_iter(self,
                   columns: Optional[List] = None,
                   selector: Optional[Callable[[pd.DataFrame], pd.DataFrame]] = None,
-                  count: Optional[int] = None
+                  count: Optional[int] = None,
+                  column_mapping: Optional[Dict[str,str]]=None
                   ):
         files = Query.folder(self.dataset_location).order_by(lambda z: z.name).to_list()
         return Queryable(
-            self._read_iter(files, columns, selector, count),
+            self._read_iter(files, columns, selector, count, column_mapping),
             len(files)
         )
 
@@ -63,11 +80,12 @@ class Dataset:
              columns: Optional[List] = None,
              selector: Optional[Callable[[pd.DataFrame], pd.DataFrame]] = None,
              count: Optional[int] = None,
-             download: bool = False
+             download: bool = False,
+             column_mapping: Optional[Dict[str, str]] = None
              ):
         if download:
             self.download()
-        dfs = self.read_iter(columns, selector, count).to_list()
+        dfs = self.read_iter(columns, selector, count, column_mapping).to_list()
         df = pd.concat(dfs, sort=False)
         return df
 

@@ -4,6 +4,8 @@ import pandas as pd
 
 from collections import Counter, defaultdict
 
+from yo_fluq_ds import Query
+
 
 # helper method needed to pickel defauldict
 def dc():
@@ -56,6 +58,21 @@ class DataframeFeaturizer(StreamFeaturizer):
         self._validate()
         if len(self.buffer) > 0:
             return self._flush()
+
+
+    def _run_iter(self, data_stream):
+        self.start()
+        for item in data_stream:
+            df = self.observe_data_point(item)
+            if df is not None:
+                yield df
+        df = self.finish()
+        if df is not None:
+            yield df
+
+    def run_iter(self, data_stream):
+        return Query.en(self._run_iter(data_stream))
+
 
 
 class AggegatedStatsFeaturizer(StreamFeaturizer):

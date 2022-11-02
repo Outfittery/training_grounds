@@ -124,7 +124,8 @@ class BatchedTrainingTask(AbstractTrainingTask):
         Logger.info('Instantiating model')
         self.model_handler.instantiate(self, test_batch)
 
-    def _ensure_bundle(self, inp: Union[Path, str, DataBundle, IndexedDataBundle]) -> IndexedDataBundle:
+    @staticmethod
+    def _ensure_bundle(inp: Union[Path, str, DataBundle, IndexedDataBundle], index_frame_name) -> IndexedDataBundle:
         if isinstance(inp, IndexedDataBundle):
             return inp
 
@@ -140,7 +141,7 @@ class BatchedTrainingTask(AbstractTrainingTask):
             raise ValueError(
                 f'`inp` was expected to be DataBundle or the path to folder that contains Data Bundle parquet files, but was {type(inp)}')
 
-        ibundle = IndexedDataBundle(bundle[self.settings.index_frame_name_in_bundle], bundle)
+        ibundle = IndexedDataBundle(bundle[index_frame_name], bundle)
         return ibundle
 
     def _prepare_all(self, bundle: Union[str, Path, DataBundle], env: Optional[TrainingEnvironment]) -> _TrainingTempData:
@@ -149,7 +150,7 @@ class BatchedTrainingTask(AbstractTrainingTask):
         Logger.info(f'Training starts. Info: {self.info}')
 
         Logger.info(f'Ensuring/loading bundle. Bundle before:\n{bundle}')
-        ibundle = self._ensure_bundle(bundle)
+        ibundle = BatchedTrainingTask._ensure_bundle(bundle, self.settings.index_frame_name_in_bundle)
         Logger.info(f'Bundle loaded\n{ibundle.bundle.describe(5)}')
         Logger.info(f'Index frame is set to {self.settings.index_frame_name_in_bundle}, shape is {ibundle.index_frame.shape}')
 
@@ -181,18 +182,19 @@ class BatchedTrainingTask(AbstractTrainingTask):
             first_iteration = len(self.history)
         return _TrainingTempData(ibundle, env, split, first_iteration)
 
-    def generate_sample_batch(self, bundle: DataBundle, batch_index: int = 0, from_split=None, force_default_strategy=False):
+    def generate_sample_batch_and_temp_data(self, bundle: DataBundle, batch_index: int = 0, from_split=None, force_default_strategy=False):
         temp_data = self._prepare_all(bundle, None)
         if from_split is None:
             ibundle = temp_data.original_ibundle.change_index(temp_data.split.train)
         else:
             ibundle = temp_data.original_ibundle.change_index(temp_data.split.tests[from_split])
-        return self.batcher.get_batch(ibundle, batch_index, force_default_strategy)
+        batch = self.batcher.get_batch(ibundle, batch_index, force_default_strategy)
+        return batch, temp_data
 
-    def get_metric_names(self):
-        expected_stages = self.splitter.get_subset_names()
-        if self.metric_pool is not None:
-            metrics = [metric_name + '_' + stage for metric_name in self.metric_pool.get_metrics_names() for stage in
+    @staticmethod
+    def _get_metric_names(expected_stages: List[str], metric_pool: MetricPool):
+        if metric_pool is not None:
+            metrics = [metric_name + '_' + stage for metric_name in metric_pool.get_metrics_names() for stage in
                        expected_stages]
         else:
             metrics = []
@@ -200,6 +202,14 @@ class BatchedTrainingTask(AbstractTrainingTask):
         metrics.append('loss')
         metrics.append('iteration')
         return metrics
+
+
+    def get_metric_names(self):
+        return BatchedTrainingTask._get_metric_names(
+            self.splitter.get_subset_names(),
+            self.metric_pool
+        )
+
 
     # endregion
 

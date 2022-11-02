@@ -51,20 +51,13 @@ class ExtractingNetwork(torch.nn.Module):
         self.input_frames = input_frames
         self.raise_if_inputs_are_missing = raise_if_inputs_are_missing
 
-    def forward(self, input: Dict[str, pd.DataFrame]):
-        if isinstance(input, torch.Tensor):
-            if self.input_frames is not None:
-                raise ValueError('The input was tensor, but `input_frames` were provided, suggesting it would be a dictionary')
-
-        if self.input_frames is None:
-            en = input.keys()
-        else:
-            en = self.input_frames
-
+    @staticmethod
+    def collect_tensors(input, input_frames, raise_if_inputs_are_missing):
+        en = input_frames
         tensors = []
         for frame in en:
             if frame not in input:
-                if self.raise_if_inputs_are_missing:
+                if raise_if_inputs_are_missing:
                     raise ValueError(f'Missing frame {frame} in batch')
                 else:
                     continue
@@ -75,10 +68,24 @@ class ExtractingNetwork(torch.nn.Module):
             elif isinstance(input[frame], torch.Tensor):
                 tensors.append(input[frame])
             else:
-                raise ValueError(f'Batch element must be torch.Tensor, pandas.Dataframe or AnnotatedTensor, but was {type(input[frame])}')
+                raise ValueError(
+                    f'Batch element must be torch.Tensor, pandas.Dataframe or AnnotatedTensor, but was {type(input[frame])}')
+
+        return tensors
+
+    def forward(self, input: Dict[str, pd.DataFrame]):
+        if isinstance(input, torch.Tensor):
+            if self.input_frames is not None:
+                raise ValueError('The input was tensor, but `input_frames` were provided, suggesting it would be a dictionary')
+
+        if self.input_frames is None:
+            en = list(input.keys())
+        else:
+            en = self.input_frames
+        tensors = ExtractingNetwork.collect_tensors(input, en, self.raise_if_inputs_are_missing)
 
         if len(tensors) == 0:
-            raise ValueError('No tensors were produced')
+            raise ValueError(f'No tensors were produced. Input keys are {list(input.keys())}, expected keys are {list(en)}')
         if len(tensors) == 1:
             return tensors[0]
         else:
@@ -98,10 +105,16 @@ class FeedForwardNetwork(torch.nn.Module):
     def __init__(self, *networks):
         super(FeedForwardNetwork, self).__init__()
         self.networks = torch.nn.ModuleList(networks)
+        self.debug = False
 
     def forward(self, input):
+        results = []
+        if self.debug:
+            self.intermediate_values = results
+        results.append(input)
         for network in self.networks:
             input = network(input)
+            results.append(input)
         return input
 
     class Factory(TorchNetworkFactory):

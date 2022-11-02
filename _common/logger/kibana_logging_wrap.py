@@ -4,7 +4,7 @@ import json
 import logging
 
 from .logging_wrap import LoggingWrap
-
+import datetime
 
 PRIMITIVES = (int, bool, str, float)
 
@@ -35,6 +35,8 @@ class KibanaTypeProcessor:
                 result[key] = value
             elif isinstance(value, list) or isinstance(value, dict):
                 result[key] = json.dumps(value)
+            elif isinstance(value, datetime.datetime):
+                result[key] = value.astimezone(datetime.timezone.utc).isoformat()
             else:
                 result[key] = str(value)
         return result

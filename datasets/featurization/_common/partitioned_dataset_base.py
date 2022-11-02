@@ -55,7 +55,7 @@ class TimePartitionedDatasetBase(Generic[T]):
         else:
             self.syncer = None
 
-    def filter_relevant_records(self, records: List[T], from_time: datetime, to_time: datetime) -> List[T]:
+    def filter_relevant_records(self, records: List[T], from_time: datetime, to_time: datetime, partitions: Optional[List]) -> List[T]:
         raise NotImplementedError()
 
     def get_description(self) -> List[T]:
@@ -78,6 +78,7 @@ class TimePartitionedDatasetBase(Generic[T]):
                  to_timestamp: Optional[datetime] = None,
                  cache_mode: Union[str, CacheMode, None] = CacheMode.Default,
                  with_progress_bar: bool = False,
+                 partitions: Optional[List] = None
                  ):
         cache_mode = CacheMode.parse(cache_mode)
         if cache_mode == CacheMode.No:
@@ -91,7 +92,7 @@ class TimePartitionedDatasetBase(Generic[T]):
             self._update_index()
 
         records = self.get_description()
-        records = self.filter_relevant_records(records, from_timestamp, to_timestamp)
+        records = self.filter_relevant_records(records, from_timestamp, to_timestamp, partitions)
 
         if cache_mode == CacheMode.Use:
             return records
@@ -118,11 +119,14 @@ class TimePartitionedDatasetBase(Generic[T]):
                    selector: Optional[Callable] = None,
                    count: Optional[int] = None,
                    partition_name_column: Optional[str] = None,
-                   with_progress_bar: bool = False
+                   with_progress_bar: bool = False,
+                   column_mapping: Dict[str, str] = None,
+                   deduplicate_index = True,
+                   partitions: Optional[List] = None
                    ):
         seen_index = None
         collected = 0
-        records = self.filter_relevant_records(self.get_description(), from_timestamp, to_timestamp)
+        records = self.filter_relevant_records(self.get_description(), from_timestamp, to_timestamp, partitions)
         records_query = Query.en(records)
         if with_progress_bar:
             records_query = records_query.feed(fluq.with_progress_bar())
@@ -131,8 +135,9 @@ class TimePartitionedDatasetBase(Generic[T]):
         for dset in records_query:
             if stop_iterating:
                 break
-            for df in self.spawn_child_dataset(dset.name).read_iter(columns, selector, None):
-                df, seen_index = filter.filter(df, seen_index)
+            for df in self.spawn_child_dataset(dset.name).read_iter(columns, selector, None, column_mapping):
+                if deduplicate_index:
+                    df, seen_index = filter.filter(df, seen_index)
                 df = df.copy()
                 if partition_name_column is not None:
                     df[partition_name_column] = self.record_handler.get_name_from_record(dset)
@@ -155,10 +160,13 @@ class TimePartitionedDatasetBase(Generic[T]):
                   selector: Optional[Callable] = None,
                   count: Optional[int] = None,
                   partition_name_column: Optional[str] = None,
-                  with_progress_bar: bool = False
+                  with_progress_bar: bool = False,
+                  column_mapping: Dict[str, str] = None,
+                  deduplicate_index = True,
+                  partitions: Optional[List] = None
                   ) -> Queryable:
         return Queryable(
-            self._read_iter(from_timestamp, to_timestamp, columns, selector, count, partition_name_column, with_progress_bar)
+            self._read_iter(from_timestamp, to_timestamp, columns, selector, count, partition_name_column, with_progress_bar, column_mapping, deduplicate_index, partitions)
         )
 
     def read(self,
@@ -169,10 +177,16 @@ class TimePartitionedDatasetBase(Generic[T]):
              count: Optional[int] = None,
              partition_name_column: Optional[str] = None,
              cache_mode: Optional[Union[str, CacheMode]] = CacheMode.Default,
-             with_progress_bar: bool = False
+             with_progress_bar: bool = False,
+             column_mapping: Dict[str, str] = None,
+             deduplicate_index = True,
+             partitions: Optional[List] = None
              ):
-        self.download(from_timestamp, to_timestamp, cache_mode, with_progress_bar)
-        dfs = self.read_iter(from_timestamp, to_timestamp, columns, selector, count, partition_name_column, with_progress_bar).to_list()
+        self.download(from_timestamp, to_timestamp, cache_mode, with_progress_bar, partitions)
+        dfs = self.read_iter(from_timestamp, to_timestamp, columns, selector, count, partition_name_column, with_progress_bar, column_mapping, deduplicate_index, partitions).to_list()
+        dfs = [d for d in dfs if d.shape[0]>0]
+        if len(dfs) == 0:
+            return pd.DataFrame([])
         df = pd.concat(dfs, sort=False)
         return df
 

@@ -13,6 +13,7 @@ class DebugDefaultLoggingTestCase(TestCase):
         Logger.error('test3')
         data = buffer.read().select(lambda z: z.split(' ')).to_list()
         expected = [('DEBUG', 'test0'), ('INFO', 'test1'), ('WARNING', 'test2'), ('ERROR', 'test3')]
+        print(data)
         for d, e in zip(data, expected):
             self.assertEqual(e[0] + ":", d[2])
             self.assertEqual(e[1], d[3])

@@ -108,6 +108,9 @@ class PlainExtractor(Extractor):
                 raise ValueError('All joins except first must be Join')
             frame = ibundle.bundle[join.frame]
             if join.keep_columns is not None:
+                missing_columns = [c for c in join.keep_columns if c not in frame.columns]
+                if len(missing_columns)>0:
+                    raise ValueError(f'The following columns are missing: {missing_columns}')
                 frame = frame[join.keep_columns]
 
             if self.raise_if_rows_are_missing:

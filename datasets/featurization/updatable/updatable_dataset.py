@@ -34,8 +34,15 @@ class UpdatableDataset(TimePartitionedDatasetBase['UpdatableDataset.DescriptionI
 
     DescriptionHandler = PartitionedDatasetRecordHandler('description.parquet', DescriptionItem, 'name')
 
-    def filter_relevant_records(self, records: List[DescriptionItem], from_time: datetime, to_time: datetime) -> List[DescriptionItem]:
+    def filter_relevant_records(self, records: List[DescriptionItem], from_time: datetime, to_time: datetime, partitions: Optional[List]) -> List[DescriptionItem]:
+        if partitions is not None:
+            return [z for z in records if z.name in partitions]
         return UpdatableDataset._get_current_records(records, from_time, to_time)
+
+    def get_description_v2(self):
+        fname = self.syncer.download_file('description_v2.parquet')
+        return pd.read_parquet(fname)
+
 
     @staticmethod
     def _get_current_records(

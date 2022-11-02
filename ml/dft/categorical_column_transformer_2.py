@@ -29,18 +29,21 @@ class ColumnData:
             else:
                 raise ValueError(f"Column {self.input_column} is not in input")
 
-        result = pd.Series(
-            np.where(
-                series.isnull(),
-                self.null_index,
+        try:
+            result = pd.Series(
                 np.where(
-                    series.isin(self.mapping),
-                    series.replace(self.mapping),
-                    self.missing_index)
-            ),
-            dtype='int',
-            index=df.index
-        )
+                    series.isnull(),
+                    self.null_index,
+                    np.where(
+                        series.isin(self.mapping),
+                        series.replace(self.mapping),
+                        self.missing_index)
+                ),
+                dtype='int',
+                index=df.index
+            )
+        except Exception as exp:
+            raise ValueError(f'Error when processing column {self.input_column}') from exp
         return result
 
 

@@ -2,7 +2,7 @@ from typing import *
 
 from .. import torch as btt
 from ... import batched_training as bt
-
+from ...._common import Logger
 
 class ExtractorNetworkBinding:
     def __init__(self, name: str):
@@ -48,8 +48,9 @@ class _MirrorExtractorFactory(btt.TorchExtractorFactory):
         self.settings = settings
 
     def create_extractors(self, task, bundle) -> List[bt.Extractor]:
-        extractors = [c.create_extractor(task, bundle) for c in self.settings.bindings]
+        extractors = [c.create_extractor(task, bundle) for c in self.settings.bindings if c.enabled]
         extractors.append(self.settings.label_extractor)
+        Logger.info(f"Following extractors are generated: {[e.get_name() for e in extractors]}")
         return extractors
 
 
@@ -58,7 +59,7 @@ class _MirrorNetworkFactory(btt.TorchNetworkFactory):
         self.settings = settings
 
     def create_network(self, task, input):
-        first_layer_networks = {c.get_name(): c.create_network_factory(task, input) for c in self.settings.bindings}
+        first_layer_networks = {c.get_name(): c.create_network_factory(task, input) for c in self.settings.bindings if c.enabled}
         factory = btt.FeedForwardNetwork.Factory(
             btt.ParallelNetwork.Factory(**first_layer_networks),
             *self.settings.tail_network_factories

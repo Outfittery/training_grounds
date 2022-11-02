@@ -107,8 +107,8 @@ class LoggerRootBase:
 
 
 class LoggerRoot(LoggerRootBase):
-    def initialize_default(self):
-        self.reset(DebugLoggingWrap())
+    def initialize_default(self, add_keys = False):
+        self.reset(DebugLoggingWrap(add_keys=add_keys))
 
     def initialize_kibana(self):
         self.reset(KibanaLoggingWrap())

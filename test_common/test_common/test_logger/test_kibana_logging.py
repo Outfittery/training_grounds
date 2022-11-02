@@ -2,7 +2,7 @@ from unittest import TestCase
 from tg.common._common.logger.kibana_logging_wrap import KibanaTypeProcessor
 import datetime
 import json
-
+import re
 
 class Sc:
     def __init__(self, tc: TestCase):
@@ -33,11 +33,14 @@ class KibanaLoggingTestCase(TestCase):
          )
 
     def test_datetime(self):
-        dt = datetime.datetime(2020, 1, 1, 12, 00)
-        (Sc(self)
-         .log(dt=dt)
-         .check(dt='2020-01-01 12:00:00')
-        )
+        dt = datetime.datetime(2020, 1, 1, 12, 0, 1, 123456)
+        sc = Sc(self)
+        sc.log(dt=dt)
+        val = sc.history[-1]['dt']
+        print(val)
+        self.assertIsNotNone(re.match('^2020-01-01T\d\d:00:01.123456\+00:00$', val))
+
+
 
     def test_none(self):
         (Sc(self)
@@ -55,3 +58,7 @@ class KibanaLoggingTestCase(TestCase):
             .log(i=None, b=None, f=None, s=None, l=None, d=None, dt=None)
             .check(i=-1, b=False, f=0, s='', l='null', d='null', dt='')
         )
+
+
+
+

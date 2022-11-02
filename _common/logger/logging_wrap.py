@@ -32,7 +32,7 @@ class FieldsCompatibleFormatter(Formatter):
 
     def collect_data(self, record: LogRecord, fields: dict):
         data = {
-            '@timestamp': datetime.datetime.utcnow().replace(tzinfo=tz.UTC),
+            '@timestamp': datetime.datetime.now(),
             'message': record.getMessage(),
             'levelname': record.levelname,
             'logger': record.name,
