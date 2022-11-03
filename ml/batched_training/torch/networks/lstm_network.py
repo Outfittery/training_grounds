@@ -16,7 +16,7 @@ def lstm_data_transformation(index, contexts, df):
     cnames = [names[1], names[0]]
     full = pd.DataFrame([(c, s) for c in contexts for s in samples], columns=cnames).set_index(cnames)
     full = full.merge(df.reset_index().set_index(cnames), left_index=True, right_index=True, how='left').fillna(0)
-    t = torch.tensor(full.values).reshape(len(contexts), len(samples), len(features))
+    t = torch.tensor(full.values.astype(float)).reshape(len(contexts), len(samples), len(features))
     t = t.float()
     return AnnotatedTensor(t, [cnames[0], cnames[1], 'features'], [contexts, samples, features])
 
