@@ -170,7 +170,7 @@ from tg.common import Logger
 Logger.info('Message with default logger')
 ```
 
-    2022-08-09 09:25:48.886388+00:00 INFO: Message with default logger
+    2022-12-28 14:20:03.949207 INFO: Message with default logger
 
 
 
@@ -179,7 +179,7 @@ Logger.initialize_kibana()
 Logger.info('Message with Kibana logger')
 ```
 
-    {"@timestamp": "2022-08-09 09:25:48.896592+00:00", "message": "Message with Kibana logger", "levelname": "INFO", "logger": "tg", "path": "/tmp/ipykernel_10321/2907404717.py", "path_line": 2}
+    {"@timestamp": "2022-12-28T13:20:03.955688+00:00", "message": "Message with Kibana logger", "levelname": "INFO", "logger": "tg", "path": "/tmp/ipykernel_16175/2907404717.py", "path_line": 2}
 
 
 As said before, you may define a custom session keys:
@@ -192,8 +192,8 @@ Logger.clear_keys()
 Logger.info('Message without a key')
 ```
 
-    {"@timestamp": "2022-08-09 09:25:48.905318+00:00", "message": "Message with a key", "levelname": "INFO", "logger": "tg", "path": "/tmp/ipykernel_10321/71300885.py", "path_line": 2, "test_key": "test"}
-    {"@timestamp": "2022-08-09 09:25:48.906591+00:00", "message": "Message without a key", "levelname": "INFO", "logger": "tg", "path": "/tmp/ipykernel_10321/71300885.py", "path_line": 4}
+    {"@timestamp": "2022-12-28T13:20:03.961362+00:00", "message": "Message with a key", "levelname": "INFO", "logger": "tg", "path": "/tmp/ipykernel_16175/71300885.py", "path_line": 2, "test_key": "test"}
+    {"@timestamp": "2022-12-28T13:20:03.962184+00:00", "message": "Message without a key", "levelname": "INFO", "logger": "tg", "path": "/tmp/ipykernel_16175/71300885.py", "path_line": 4}
 
 
 If exception information is available, it will be put in the keys:
@@ -206,7 +206,7 @@ except:
     Logger.error('Error')
 ```
 
-    {"@timestamp": "2022-08-09 09:25:48.916677+00:00", "message": "Error", "levelname": "ERROR", "logger": "tg", "path": "/tmp/ipykernel_10321/1975102656.py", "path_line": 4, "exception_type": "<class 'ValueError'>", "exception_value": "Error", "exception_details": "Traceback (most recent call last):\n  File \"/tmp/ipykernel_10321/1975102656.py\", line 2, in <module>\n    raise ValueError('Error')\nValueError: Error\n"}
+    {"@timestamp": "2022-12-28T13:20:03.968112+00:00", "message": "Error", "levelname": "ERROR", "logger": "tg", "path": "/tmp/ipykernel_16175/1975102656.py", "path_line": 4, "exception_type": "<class 'ValueError'>", "exception_value": "Error", "exception_details": "Traceback (most recent call last):\n  File \"/tmp/ipykernel_16175/1975102656.py\", line 2, in <module>\n    raise ValueError('Error')\nValueError: Error\n"}
 
 
 To change the default way of logging, inherit `tg.common._common.logger.LoggerRoot` in `tg.your_project`, and then import from there. It will also affect all the logging within `TG` framework.
@@ -517,9 +517,9 @@ uid1, uid2, uid3
 
 
 
-    ('92cd4fb0-7d6f-4633-8bdb-b8976cb0cff8',
-     '92cd4fb0-7d6f-4633-8bdb-b8976cb0cff8',
-     '5ee75250-6fcf-4772-b52e-d5046cfba58e')
+    ('ced7a461-b52d-47c9-8c4a-146435d966c4',
+     'ced7a461-b52d-47c9-8c4a-146435d966c4',
+     '93139005-03c6-4657-a411-0794eeaa5a43')
 
 
 
@@ -859,7 +859,7 @@ combined_selector = Ensemble(
 combined_selector(obj)
 ```
 
-    2022-08-09 09:25:55.475420+00:00 WARNING: Missing field in FieldGetter
+    2022-12-28 14:20:12.619902 WARNING: Missing field in FieldGetter
 
 
 
@@ -933,7 +933,7 @@ titanic_selector = Pipeline(
 titanic_selector(obj)
 ```
 
-    2022-08-09 09:25:55.499658+00:00 WARNING: Missing field in FieldGetter
+    2022-12-28 14:20:12.636041 WARNING: Missing field in FieldGetter
 
 
 
@@ -953,7 +953,7 @@ titanic_selector(obj)
      'trip_SibSp': 0,
      'trip_Patch': 0,
      'trip_Relatives': 0,
-     'processed': datetime.datetime(2022, 8, 9, 11, 25, 55, 500548)}
+     'processed': datetime.datetime(2022, 12, 28, 14, 20, 12, 636841)}
 
 
 
@@ -995,8 +995,8 @@ print(json.dumps(representation, indent=1)[:300]+"...")
          "name": {
           "0": "[?Name]",
           "1": {
-           "length": "<function get_length at 0x7faf29762a60>",
-           "title": "<function get_title at 0x7faf29762790>"
+           "length": "<function get_length at 0x7f0d5f433d30>",
+           "title": "<function get_title at 0x7f0d5f433790>"
           }
          },
          "Sex": {
@@ -1068,8 +1068,8 @@ representation[0]['passenger'][0]
 
     {0: {0: '[?passenger]'},
      1: {'name': {0: '[?Name]',
-       1: {'length': '<function get_length at 0x7faf29762a60>',
-        'title': '<function get_title at 0x7faf29762790>'}},
+       1: {'length': '<function get_length at 0x7f0d5f433d30>',
+        'title': '<function get_title at 0x7f0d5f433790>'}},
       'Sex': {0: '[?Sex]'},
       'Age': {0: '[?Age]'}}}
 
@@ -1217,9 +1217,9 @@ The combination of `DataSource` and `Featurizer` allows you to quickly build the
 source.get_data().take(3).select(titanic_selector).to_dataframe()
 ```
 
-    2022-08-09 09:25:55.641922+00:00 WARNING: Missing field in FieldGetter
-    2022-08-09 09:25:55.643855+00:00 WARNING: Missing field in FieldGetter
-    2022-08-09 09:25:55.646271+00:00 WARNING: Missing field in FieldGetter
+    2022-12-28 14:20:12.715036 WARNING: Missing field in FieldGetter
+    2022-12-28 14:20:12.716139 WARNING: Missing field in FieldGetter
+    2022-12-28 14:20:12.717215 WARNING: Missing field in FieldGetter
 
 
 
@@ -1265,7 +1265,7 @@ source.get_data().take(3).select(titanic_selector).to_dataframe()
       <td>1</td>
       <td>0</td>
       <td>1</td>
-      <td>2022-08-09 11:25:55.643462</td>
+      <td>2022-12-28 14:20:12.715806</td>
     </tr>
     <tr>
       <th>1</th>
@@ -1283,7 +1283,7 @@ source.get_data().take(3).select(titanic_selector).to_dataframe()
       <td>1</td>
       <td>0</td>
       <td>1</td>
-      <td>2022-08-09 11:25:55.645910</td>
+      <td>2022-12-28 14:20:12.716881</td>
     </tr>
     <tr>
       <th>2</th>
@@ -1301,7 +1301,7 @@ source.get_data().take(3).select(titanic_selector).to_dataframe()
       <td>0</td>
       <td>0</td>
       <td>0</td>
-      <td>2022-08-09 11:25:55.647480</td>
+      <td>2022-12-28 14:20:12.717855</td>
     </tr>
   </tbody>
 </table>
@@ -1541,11 +1541,11 @@ job = FeaturizationJob(
 job.run()
 ```
 
-    2022-08-09 09:25:59.954577+00:00 INFO: Featurization Job job at version v1 has started
-    2022-08-09 09:25:59.956774+00:00 INFO: Fetching data
-    2022-08-09 09:26:00.076865+00:00 INFO: Data fetched, finalizing
-    2022-08-09 09:26:00.197256+00:00 INFO: Uploading data
-    2022-08-09 09:26:00.200872+00:00 INFO: Featurization job completed
+    2022-12-28 14:20:17.274079 INFO: Featurization Job job at version v1 has started
+    2022-12-28 14:20:17.276747 INFO: Fetching data
+    2022-12-28 14:20:17.489488 INFO: Data fetched, finalizing
+    2022-12-28 14:20:17.563401 INFO: Uploading data
+    2022-12-28 14:20:17.568566 INFO: Featurization job completed
 
 
 Some notes: 
@@ -1565,7 +1565,7 @@ list(mem.cache)
 
 
 
-    ['passengers/f4b88092-ab42-43f8-baa1-f312e7777e65.parquet']
+    ['passengers/2b993afd-6784-4fa0-9148-254eddc20cb1.parquet']
 
 
 
@@ -1703,20 +1703,20 @@ job.run()
 list(mem.cache)
 ```
 
-    2022-08-09 09:26:00.309620+00:00 INFO: Featurization Job job at version v1 has started
-    2022-08-09 09:26:00.313845+00:00 INFO: Fetching data
-    2022-08-09 09:26:00.438774+00:00 INFO: Data fetched, finalizing
-    2022-08-09 09:26:00.445772+00:00 INFO: Uploading data
-    2022-08-09 09:26:00.447250+00:00 INFO: Featurization job completed
+    2022-12-28 14:20:17.667424 INFO: Featurization Job job at version v1 has started
+    2022-12-28 14:20:17.670882 INFO: Fetching data
+    2022-12-28 14:20:17.750987 INFO: Data fetched, finalizing
+    2022-12-28 14:20:17.757166 INFO: Uploading data
+    2022-12-28 14:20:17.758679 INFO: Featurization job completed
 
 
 
 
 
-    ['passengers/58e480ec-a8f6-41b9-a0f7-50620b0904ea.parquet',
-     'passengers/069141c4-7ef1-420f-90ef-1a409fa0f01d.parquet',
-     'passengers/fca730fd-e50e-468b-aaca-dd53cf548296.parquet',
-     'passengers/15f4f91b-4f1d-4a22-b072-dab7c12dc25f.parquet']
+    ['passengers/71b6b93d-1b21-41e4-8a39-24ccbcde5848.parquet',
+     'passengers/babdf725-f27a-4c1e-9830-12577819e902.parquet',
+     'passengers/0c425f1f-5cb1-4020-b807-a93126da3116.parquet',
+     'passengers/fdc573ca-606e-4586-a46d-fe5221dc8246.parquet']
 
 
 
@@ -1776,11 +1776,11 @@ job.run()
 mem.get_parquet(0).sort_values('Age').head()
 ```
 
-    2022-08-09 09:26:00.474908+00:00 INFO: Featurization Job job at version v1 has started
-    2022-08-09 09:26:00.478526+00:00 INFO: Fetching data
-    2022-08-09 09:26:00.570513+00:00 INFO: Data fetched, finalizing
-    2022-08-09 09:26:00.579881+00:00 INFO: Uploading data
-    2022-08-09 09:26:00.580905+00:00 INFO: Featurization job completed
+    2022-12-28 14:20:17.781484 INFO: Featurization Job job at version v1 has started
+    2022-12-28 14:20:17.783203 INFO: Fetching data
+    2022-12-28 14:20:17.839942 INFO: Data fetched, finalizing
+    2022-12-28 14:20:17.847316 INFO: Uploading data
+    2022-12-28 14:20:17.848311 INFO: Featurization job completed
 
 
 
@@ -1942,18 +1942,18 @@ job.run()
 list(dataset_buffer.cache)
 ```
 
-    2022-08-09 09:26:00.609982+00:00 INFO: Featurization Job job at version v1 has started
-    2022-08-09 09:26:00.611226+00:00 INFO: Fetching data
-    2022-08-09 09:26:00.701630+00:00 INFO: Data fetched, finalizing
-    2022-08-09 09:26:00.714961+00:00 INFO: Uploading data
-    2022-08-09 09:26:00.716187+00:00 INFO: Featurization job completed
+    2022-12-28 14:20:17.869530 INFO: Featurization Job job at version v1 has started
+    2022-12-28 14:20:17.872444 INFO: Fetching data
+    2022-12-28 14:20:17.924502 INFO: Data fetched, finalizing
+    2022-12-28 14:20:17.935663 INFO: Uploading data
+    2022-12-28 14:20:17.936865 INFO: Featurization job completed
 
 
 
 
 
-    ['cabins/5ae20540-a3ff-44e2-b5c2-c2da7548560f.parquet',
-     'passengers/d2244032-3003-437d-8de1-ccac93cd2c42.parquet']
+    ['cabins/6c34a07d-4ac4-41ce-bac7-481a23701a0e.parquet',
+     'passengers/aacae0ab-0ba2-4d67-ab02-d569455f6100.parquet']
 
 
 
@@ -3180,54 +3180,54 @@ for i in [0,2,4,6]:
     job.run(current_time = time(i),custom_revision_id=str(i))
 ```
 
-    2022-08-09 09:26:04.174719+00:00 INFO: Starting lesvik job test_featurization_job, version v1
-    2022-08-09 09:26:04.182723+00:00 INFO: Additional settings limit NONE, reporting NONE
-    2022-08-09 09:26:04.196147+00:00 INFO: 0 previous revisions are found
-    2022-08-09 09:26:04.202310+00:00 INFO: Running with id 0 at 2020-01-01 00:00:00, revision is MAJOR
-    2022-08-09 09:26:04.208444+00:00 INFO: Featurization Job test_featurization_job at version v1 has started
-    2022-08-09 09:26:04.229583+00:00 INFO: Fetching data
-    2022-08-09 09:26:04.473850+00:00 INFO: Data fetched, finalizing
-    2022-08-09 09:26:04.487252+00:00 INFO: Uploading data
-    2022-08-09 09:26:04.489588+00:00 INFO: Featurization job completed
-    2022-08-09 09:26:04.490116+00:00 INFO: 891 were processed
-    2022-08-09 09:26:04.490551+00:00 INFO: Uploading new description
-    2022-08-09 09:26:04.499910+00:00 INFO: Job finished
-    2022-08-09 09:26:04.505373+00:00 INFO: Starting lesvik job test_featurization_job, version v1
-    2022-08-09 09:26:04.505999+00:00 INFO: Additional settings limit NONE, reporting NONE
-    2022-08-09 09:26:04.513122+00:00 INFO: 1 previous revisions are found
-    2022-08-09 09:26:04.513776+00:00 INFO: Running with id 2 at 2020-01-03 00:00:00, revision is MINOR
-    2022-08-09 09:26:04.515651+00:00 INFO: Featurization Job test_featurization_job at version v1 has started
-    2022-08-09 09:26:04.521370+00:00 INFO: Fetching data
-    2022-08-09 09:26:04.553681+00:00 INFO: Data fetched, finalizing
-    2022-08-09 09:26:04.573163+00:00 INFO: Uploading data
-    2022-08-09 09:26:04.574421+00:00 INFO: Featurization job completed
-    2022-08-09 09:26:04.575462+00:00 INFO: 168 were processed
-    2022-08-09 09:26:04.576483+00:00 INFO: Uploading new description
-    2022-08-09 09:26:04.582713+00:00 INFO: Job finished
-    2022-08-09 09:26:04.583952+00:00 INFO: Starting lesvik job test_featurization_job, version v1
-    2022-08-09 09:26:04.584988+00:00 INFO: Additional settings limit NONE, reporting NONE
-    2022-08-09 09:26:04.590281+00:00 INFO: 2 previous revisions are found
-    2022-08-09 09:26:04.590853+00:00 INFO: Running with id 4 at 2020-01-05 00:00:00, revision is MINOR
-    2022-08-09 09:26:04.591370+00:00 INFO: Featurization Job test_featurization_job at version v1 has started
-    2022-08-09 09:26:04.606450+00:00 INFO: Fetching data
-    2022-08-09 09:26:04.615132+00:00 INFO: Data fetched, finalizing
-    2022-08-09 09:26:04.622663+00:00 INFO: Uploading data
-    2022-08-09 09:26:04.624036+00:00 INFO: Featurization job completed
-    2022-08-09 09:26:04.624865+00:00 INFO: 77 were processed
-    2022-08-09 09:26:04.625696+00:00 INFO: Uploading new description
-    2022-08-09 09:26:04.638533+00:00 INFO: Job finished
-    2022-08-09 09:26:04.639558+00:00 INFO: Starting lesvik job test_featurization_job, version v1
-    2022-08-09 09:26:04.640285+00:00 INFO: Additional settings limit NONE, reporting NONE
-    2022-08-09 09:26:04.647313+00:00 INFO: 3 previous revisions are found
-    2022-08-09 09:26:04.648285+00:00 INFO: Running with id 6 at 2020-01-07 00:00:00, revision is MINOR
-    2022-08-09 09:26:04.648845+00:00 INFO: Featurization Job test_featurization_job at version v1 has started
-    2022-08-09 09:26:04.655204+00:00 INFO: Fetching data
-    2022-08-09 09:26:04.788514+00:00 INFO: Data fetched, finalizing
-    2022-08-09 09:26:04.809151+00:00 INFO: Uploading data
-    2022-08-09 09:26:04.812405+00:00 INFO: Featurization job completed
-    2022-08-09 09:26:04.815530+00:00 INFO: 644 were processed
-    2022-08-09 09:26:04.816779+00:00 INFO: Uploading new description
-    2022-08-09 09:26:04.821363+00:00 INFO: Job finished
+    2022-12-28 14:20:20.265386 INFO: Starting lesvik job test_featurization_job, version v1
+    2022-12-28 14:20:20.266654 INFO: Additional settings limit NONE, reporting NONE
+    2022-12-28 14:20:20.267648 INFO: 0 previous revisions are found
+    2022-12-28 14:20:20.268154 INFO: Running with id 0 at 2020-01-01 00:00:00, revision is MAJOR
+    2022-12-28 14:20:20.268623 INFO: Featurization Job test_featurization_job at version v1 has started
+    2022-12-28 14:20:20.274809 INFO: Fetching data
+    2022-12-28 14:20:20.331211 INFO: Data fetched, finalizing
+    2022-12-28 14:20:20.342725 INFO: Uploading data
+    2022-12-28 14:20:20.343953 INFO: Featurization job completed
+    2022-12-28 14:20:20.344573 INFO: 891 were processed
+    2022-12-28 14:20:20.344993 INFO: Uploading new description
+    2022-12-28 14:20:20.348811 INFO: Job finished
+    2022-12-28 14:20:20.349338 INFO: Starting lesvik job test_featurization_job, version v1
+    2022-12-28 14:20:20.349793 INFO: Additional settings limit NONE, reporting NONE
+    2022-12-28 14:20:20.353792 INFO: 1 previous revisions are found
+    2022-12-28 14:20:20.354260 INFO: Running with id 2 at 2020-01-03 00:00:00, revision is MINOR
+    2022-12-28 14:20:20.354596 INFO: Featurization Job test_featurization_job at version v1 has started
+    2022-12-28 14:20:20.359414 INFO: Fetching data
+    2022-12-28 14:20:20.369041 INFO: Data fetched, finalizing
+    2022-12-28 14:20:20.374701 INFO: Uploading data
+    2022-12-28 14:20:20.375694 INFO: Featurization job completed
+    2022-12-28 14:20:20.376128 INFO: 168 were processed
+    2022-12-28 14:20:20.376520 INFO: Uploading new description
+    2022-12-28 14:20:20.379880 INFO: Job finished
+    2022-12-28 14:20:20.380402 INFO: Starting lesvik job test_featurization_job, version v1
+    2022-12-28 14:20:20.380797 INFO: Additional settings limit NONE, reporting NONE
+    2022-12-28 14:20:20.384814 INFO: 2 previous revisions are found
+    2022-12-28 14:20:20.385369 INFO: Running with id 4 at 2020-01-05 00:00:00, revision is MINOR
+    2022-12-28 14:20:20.385709 INFO: Featurization Job test_featurization_job at version v1 has started
+    2022-12-28 14:20:20.390244 INFO: Fetching data
+    2022-12-28 14:20:20.395039 INFO: Data fetched, finalizing
+    2022-12-28 14:20:20.401771 INFO: Uploading data
+    2022-12-28 14:20:20.402909 INFO: Featurization job completed
+    2022-12-28 14:20:20.404464 INFO: 77 were processed
+    2022-12-28 14:20:20.406484 INFO: Uploading new description
+    2022-12-28 14:20:20.410661 INFO: Job finished
+    2022-12-28 14:20:20.411241 INFO: Starting lesvik job test_featurization_job, version v1
+    2022-12-28 14:20:20.411682 INFO: Additional settings limit NONE, reporting NONE
+    2022-12-28 14:20:20.421033 INFO: 3 previous revisions are found
+    2022-12-28 14:20:20.422118 INFO: Running with id 6 at 2020-01-07 00:00:00, revision is MINOR
+    2022-12-28 14:20:20.422622 INFO: Featurization Job test_featurization_job at version v1 has started
+    2022-12-28 14:20:20.427384 INFO: Fetching data
+    2022-12-28 14:20:20.474042 INFO: Data fetched, finalizing
+    2022-12-28 14:20:20.482652 INFO: Uploading data
+    2022-12-28 14:20:20.483651 INFO: Featurization job completed
+    2022-12-28 14:20:20.484254 INFO: 644 were processed
+    2022-12-28 14:20:20.484739 INFO: Uploading new description
+    2022-12-28 14:20:20.488453 INFO: Job finished
 
 
 I have given a meaningful names to revisions with `custom_uid` argument. This is not necessary in general, as the order of revision is reflected in `description.parquet`.
@@ -3291,7 +3291,7 @@ desc_df
       <td>2020-01-01</td>
       <td>True</td>
       <td>v1</td>
-      <td>91703d68-be39-44cf-a2a0-fccdcecfb8b8.parquet</td>
+      <td>9cee2b45-6757-4d05-a965-23bbe7156beb.parquet</td>
       <td>891.0</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -3303,7 +3303,7 @@ desc_df
       <td>2020-01-03</td>
       <td>False</td>
       <td>v1</td>
-      <td>ec7d5249-320f-4c21-b3d9-7ac6be3aa374.parquet</td>
+      <td>8877c73f-43db-49d6-8436-0088ffdc6a8b.parquet</td>
       <td>NaN</td>
       <td>168.0</td>
       <td>NaN</td>
@@ -3315,7 +3315,7 @@ desc_df
       <td>2020-01-05</td>
       <td>False</td>
       <td>v1</td>
-      <td>0516484d-8e7c-4e28-bf63-b02b9d1c516a.parquet</td>
+      <td>2d6d2392-9761-4822-b67e-53e00b81d60c.parquet</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>77.0</td>
@@ -3327,7 +3327,7 @@ desc_df
       <td>2020-01-07</td>
       <td>False</td>
       <td>v1</td>
-      <td>2b0aac6b-7233-4206-9d9e-071b1f6a7f00.parquet</td>
+      <td>032f775d-7f9f-4b40-9bb7-2cd72519d590.parquet</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -3482,7 +3482,7 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-01 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>7766f2eb-64c4-4a4a-aec2-95b68b2f49e8.parquet</td>
+      <td>e94bf29e-9cc4-42ef-8f06-0315a822d532.parquet</td>
       <td>891.0</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -3494,7 +3494,7 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-03 01:00:00</td>
       <td>False</td>
       <td></td>
-      <td>ca0ba323-7ba3-418d-bfd4-a15029134c51.parquet</td>
+      <td>2bd928b5-f354-4958-9410-746774ea2d0e.parquet</td>
       <td>NaN</td>
       <td>168.0</td>
       <td>NaN</td>
@@ -3506,7 +3506,7 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-05 01:00:00</td>
       <td>False</td>
       <td></td>
-      <td>87066d05-9eb1-4950-ac9e-52961d502348.parquet</td>
+      <td>20ebdf31-5b8b-4f4d-a585-7f7eb73c5807.parquet</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>77.0</td>
@@ -3518,7 +3518,7 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-07 01:00:00</td>
       <td>False</td>
       <td></td>
-      <td>591b8d1b-3b2c-4959-b91b-7efddcc251e2.parquet</td>
+      <td>29a15853-1fe2-49e6-bcbc-7a28bf4573ed.parquet</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -3592,7 +3592,7 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-01 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>09d02468-e125-4dcc-828f-70a824e9bf78.parquet</td>
+      <td>e7badd8a-e8ee-4a7d-9521-f5345fbc2c34.parquet</td>
       <td>891.0</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -3604,9 +3604,9 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-03 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>e7974d51-ca54-4f14-be0f-ca0bff2e0904.parquet</td>
+      <td>fb9582ff-1e13-4389-b718-696bc88c756b.parquet</td>
+      <td>723.0</td>
       <td>NaN</td>
-      <td>168.0</td>
       <td>NaN</td>
       <td>NaN</td>
     </tr>
@@ -3616,9 +3616,9 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-03 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>06368185-0378-4988-9599-5360d6c9c3c3.parquet</td>
-      <td>723.0</td>
+      <td>5587e92b-9d71-4f5e-9502-30737a6f2cdb.parquet</td>
       <td>NaN</td>
+      <td>168.0</td>
       <td>NaN</td>
       <td>NaN</td>
     </tr>
@@ -3628,7 +3628,7 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-05 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>ed23fcdd-ea86-4130-99b3-ae409e8610c5.parquet</td>
+      <td>325cbab0-1d3e-44ae-86b5-8973677d50b2.parquet</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>77.0</td>
@@ -3640,7 +3640,7 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-05 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>bd2e946d-9c73-40c9-b9eb-0932a396407c.parquet</td>
+      <td>bdeb970a-22d3-4036-a0ea-0ae319ef080b.parquet</td>
       <td>NaN</td>
       <td>168.0</td>
       <td>NaN</td>
@@ -3652,7 +3652,7 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-05 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>8c61ab71-a22f-4e65-8ed8-29a67d6fb231.parquet</td>
+      <td>09fb89bd-70cb-4e06-9b89-d7c2ef982857.parquet</td>
       <td>646.0</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -3664,31 +3664,7 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-07 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>f4184484-53da-44ad-8d9e-f5a882bb50fd.parquet</td>
-      <td>NaN</td>
-      <td>168.0</td>
-      <td>NaN</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>6</td>
-      <td>2020-01-07 01:00:00</td>
-      <td>True</td>
-      <td></td>
-      <td>6b32a759-aa07-44f2-acee-7880bc0a8a1e.parquet</td>
-      <td>NaN</td>
-      <td>NaN</td>
-      <td>77.0</td>
-      <td>NaN</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>6</td>
-      <td>2020-01-07 01:00:00</td>
-      <td>True</td>
-      <td></td>
-      <td>bd126da0-2525-4489-840d-13e0b520ad16.parquet</td>
+      <td>c29aa577-79c7-4d1c-9442-89ecf3cac2f6.parquet</td>
       <td>NaN</td>
       <td>NaN</td>
       <td>NaN</td>
@@ -3700,9 +3676,33 @@ get_embarkation_by_revision(scores_buffer)
       <td>2020-01-07 01:00:00</td>
       <td>True</td>
       <td></td>
-      <td>433eedaf-e026-451a-abd8-38b8b7d884ae.parquet</td>
+      <td>db3d8fa6-1cb9-4de8-a2a5-815b9ae804fd.parquet</td>
       <td>2.0</td>
       <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>6</td>
+      <td>2020-01-07 01:00:00</td>
+      <td>True</td>
+      <td></td>
+      <td>4c6683a0-ff24-4b17-aff3-5051d66529f4.parquet</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>77.0</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>6</td>
+      <td>2020-01-07 01:00:00</td>
+      <td>True</td>
+      <td></td>
+      <td>5fc276af-15c0-4344-a4c7-a166329483d8.parquet</td>
+      <td>NaN</td>
+      <td>168.0</td>
       <td>NaN</td>
       <td>NaN</td>
     </tr>
@@ -3744,9 +3744,10 @@ Machine learning is supported by the following modules:
 
 ## Overview
 
-The Data Cleaning phase occurs after Featurization. At this stage, we have the data as the tidy dataframe, but there are still:
+The Data Cleaning phase is applicable to the stage when we already have our dataset as a tidy dataframe. This dataframe may not, however, be immediately suitable for machine leaning as it may contain:
 
 * missing continuous values
+* non-normalized continuous values
 * categorical values in need of transformation
 
 In `sklearn` there are plenty of useful classes to address these problems. The only problem with them is that they do not keep the data in `pd.DataFrame` format, converting them to `numpy` arrays, thus losing the column names and making the debugging much harder.
@@ -4042,12 +4043,15 @@ tfac.fit_transform(df).head()
 
 
 
-`tfac` is a data transformer in the sense of `sklearn`, it has the `fit`, `transform` and `fit_transform` method.
+`tfac` is a data transformer in the sense of `sklearn`, it has the `fit`, `transform` and `fit_transform` methods.
 
 The default solution:
   * automatically determines if the feature is continuous or categorical
   * performs normalisation and imputation to continous variables, as well as adds the missing indicator
-  * applies one-hot encoding to categorical variables, checking for None values, and also limits the amount of columns per feature, placing least-popular values in `OTHER` column.
+  * for categorical variables:
+    * applies one-hot encoding
+    * Converts None variable to a string NONE
+    * limits the amount of values per feature, placing least-popular values in `OTHER` column (this is crucial, e.g., for decision trees)
 
 
 ## Class structure
@@ -4456,7 +4460,7 @@ Some notes on missing indicator. When the sklearn Missing indicator is used, the
 ```python
 import traceback
 
-test_df = pd.DataFrame([dict(Survived=0, Age=30, SibSp=0, Fare=None)]).astype(float)
+test_df = pd.DataFrame([dict(Survived=0, Age=30, SibSp=0, Fare=None, Parch=0, PClass=0)]).astype(float)
 from sklearn.impute import MissingIndicator
 
 tr = dft.DataFrameTransformer([
@@ -4472,18 +4476,17 @@ except ValueError as exp:
     traceback.print_exc() #We catch the exception so the Notebook could proceed uninterrupted
 ```
 
-    2022-08-09 09:26:12.708615+00:00 WARNING: Missing column in ContinuousTransformer
-    2022-08-09 09:26:12.716127+00:00 WARNING: Missing column in ContinuousTransformer
+    2022-12-28 14:20:25.225323 WARNING: Missing column in ContinuousTransformer
 
 
     Traceback (most recent call last):
-      File "/tmp/ipykernel_10529/2155061853.py", line 14, in <module>
+      File "/tmp/ipykernel_16374/777428497.py", line 14, in <module>
         tr.transform(test_df)
-      File "/home/yura/Desktop/repos/lesvik-ml/tg/common/ml/dft/architecture.py", line 48, in transform
+      File "/home/yura/Desktop/repos/appalack-ml/tg/common/ml/dft/architecture.py", line 48, in transform
         for res in transformer.transform(df):
-      File "/home/yura/Desktop/repos/lesvik-ml/tg/common/ml/dft/column_transformers.py", line 90, in transform
+      File "/home/yura/Desktop/repos/appalack-ml/tg/common/ml/dft/column_transformers.py", line 90, in transform
         missing = self.missing_indicator.transform(subdf)
-      File "/home/yura/anaconda3/envs/lesvik/lib/python3.8/site-packages/sklearn/impute/_base.py", line 885, in transform
+      File "/home/yura/anaconda3/envs/ap/lib/python3.8/site-packages/sklearn/impute/_base.py", line 885, in transform
         raise ValueError(
     ValueError: The features [4] have missing values in transform but have no missing values in fit.
 
@@ -4502,11 +4505,9 @@ tr.fit(df)
 tr.transform(test_df)
 ```
 
-    2022-08-09 09:26:12.796480+00:00 WARNING: Missing column in ContinuousTransformer
-    2022-08-09 09:26:12.812927+00:00 WARNING: Missing column in ContinuousTransformer
-    2022-08-09 09:26:12.873563+00:00 WARNING: Unexpected None in MissingIndicatorWithReporting
-    2022-08-09 09:26:12.881915+00:00 WARNING: Unexpected None in MissingIndicatorWithReporting
-    2022-08-09 09:26:12.883404+00:00 WARNING: Unexpected None in MissingIndicatorWithReporting
+    2022-12-28 14:20:25.256829 WARNING: Missing column in ContinuousTransformer
+    2022-12-28 14:20:25.265063 WARNING: Unexpected None in MissingIndicatorWithReporting
+    2022-12-28 14:20:25.265807 WARNING: Unexpected None in MissingIndicatorWithReporting
 
 
 
@@ -4532,7 +4533,7 @@ tr.transform(test_df)
       <td>0.0</td>
       <td>0.020727</td>
       <td>-0.474545</td>
-      <td>0.0</td>
+      <td>-0.473674</td>
       <td>0.0</td>
       <td>False</td>
     </tr>
@@ -4553,11 +4554,9 @@ Logger.initialize_kibana()
 tr.transform(test_df)
 ```
 
-    {"@timestamp": "2022-08-09 09:26:12.966395+00:00", "message": "Missing column in ContinuousTransformer", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/lesvik-ml/tg/common/ml/dft/column_transformers.py", "path_line": 75, "column": "Pclass"}
-    {"@timestamp": "2022-08-09 09:26:12.977181+00:00", "message": "Missing column in ContinuousTransformer", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/lesvik-ml/tg/common/ml/dft/column_transformers.py", "path_line": 75, "column": "Parch"}
-    {"@timestamp": "2022-08-09 09:26:13.083818+00:00", "message": "Unexpected None in MissingIndicatorWithReporting", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/lesvik-ml/tg/common/ml/dft/miscellaneous.py", "path_line": 36, "column": "Pclass"}
-    {"@timestamp": "2022-08-09 09:26:13.084559+00:00", "message": "Unexpected None in MissingIndicatorWithReporting", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/lesvik-ml/tg/common/ml/dft/miscellaneous.py", "path_line": 36, "column": "Parch"}
-    {"@timestamp": "2022-08-09 09:26:13.088141+00:00", "message": "Unexpected None in MissingIndicatorWithReporting", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/lesvik-ml/tg/common/ml/dft/miscellaneous.py", "path_line": 36, "column": "Fare"}
+    {"@timestamp": "2022-12-28T13:20:25.278713+00:00", "message": "Missing column in ContinuousTransformer", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/appalack-ml/tg/common/ml/dft/column_transformers.py", "path_line": 75, "column": "Pclass"}
+    {"@timestamp": "2022-12-28T13:20:25.290459+00:00", "message": "Unexpected None in MissingIndicatorWithReporting", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/appalack-ml/tg/common/ml/dft/miscellaneous.py", "path_line": 36, "column": "Pclass"}
+    {"@timestamp": "2022-12-28T13:20:25.292595+00:00", "message": "Unexpected None in MissingIndicatorWithReporting", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/appalack-ml/tg/common/ml/dft/miscellaneous.py", "path_line": 36, "column": "Fare"}
 
 
 
@@ -4583,7 +4582,7 @@ tr.transform(test_df)
       <td>0.0</td>
       <td>0.020727</td>
       <td>-0.474545</td>
-      <td>0.0</td>
+      <td>-0.473674</td>
       <td>0.0</td>
       <td>False</td>
     </tr>
@@ -4833,7 +4832,7 @@ tr.fit(df.loc[~df.Embarked.isnull()])
 tr.transform(df.loc[df.Embarked.isnull()])
 ```
 
-    {"@timestamp": "2022-08-09 09:26:13.469973+00:00", "message": "Unexpected value in MostPopularStrategy", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/lesvik-ml/tg/common/ml/dft/column_transformers.py", "path_line": 122, "column": "Embarked", "value": "NONE"}
+    {"@timestamp": "2022-12-28T13:20:25.390231+00:00", "message": "Unexpected value in MostPopularStrategy", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/appalack-ml/tg/common/ml/dft/column_transformers.py", "path_line": 122, "column": "Embarked", "value": "NONE"}
 
 
 
@@ -5652,10 +5651,10 @@ In this model, the training is an object, which is composition of other objects.
 
 ## If you don't want all this
 
-... That's also fine. TG is designed to make the life easier, not worse. We offer the SOLID implementation for two wide-spread training scenarios, and we believe that this is a generally better way. But if you are uncomfortable with the SOLID approach to training, or your training process is so specific that it does not fit into both scenarios we have implemented, you always have the following option:
+... That's also fine. TG is designed to make the life easier, not worse. We offer the SOLID implementation for two wide-spread training scenarios, and we believe that this is a generally better way. But if you are uncomfortable with the SOLID approach to machine learning, or your process is so specific that it does not fit into both scenarios we have implemented, you always have the following option:
 
 * Inherit from `AbstractTrainingTask`
-* Implement `run` method and write the code in any way you see appropriate
+* Implement `run_with_environment` method and write the code in any way you see appropriate
 * Consider implementing `get_metric_names`, as the metric names must be available prior to the training's start in Sagemaker. You can always return empty array. 
 
 After this, you code will be deliverable with TG delivery. You may also alter the delivery process, as it was explained in the corresponding part of the demo.
@@ -6019,8 +6018,8 @@ result = task.run(tdf)
       0%|          | 0/1 [00:00<?, ?it/s]
 
 
-    2022-08-09 09:26:17.820333+00:00 INFO: Starting stage 1/1
-    2022-08-09 09:26:18.007362+00:00 INFO: Completed stage 1/1
+    2022-12-28 14:20:29.533243 INFO: Starting stage 1/1
+    2022-12-28 14:20:29.726526 INFO: Completed stage 1/1
 
 
 Essential components are:
@@ -6271,7 +6270,7 @@ result['runs'][0]['model']
 
     Pipeline(steps=[('ColumnNamesKeeper', ColumnNamesKeeper()),
                     ('Transformer',
-                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f9d34046370>),
+                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7ff71a3ee9d0>),
                     ('ColumnNamesKeeperAfterTransformation', ColumnNamesKeeper()),
                     ('Model', LogisticRegression())])
 
@@ -6535,28 +6534,28 @@ pd.DataFrame([run['metrics'] for run in result['runs'].values()])
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.865179</td>
-      <td>0.998308</td>
+      <td>0.870149</td>
+      <td>0.998156</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.840779</td>
-      <td>0.998793</td>
+      <td>0.833078</td>
+      <td>0.998982</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.846325</td>
-      <td>0.997314</td>
+      <td>0.833681</td>
+      <td>0.997666</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.826601</td>
-      <td>0.999662</td>
+      <td>0.817806</td>
+      <td>0.999574</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.877310</td>
-      <td>0.997893</td>
+      <td>0.884988</td>
+      <td>0.997668</td>
     </tr>
   </tbody>
 </table>
@@ -6670,13 +6669,13 @@ result['runs'][0]['model']
 
     Pipeline(steps=[('ColumnNamesKeeper', ColumnNamesKeeper()),
                     ('Transformer',
-                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f9d350c1460>),
+                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7ff718b93190>),
                     ('ColumnNamesKeeperAfterTransformation', ColumnNamesKeeper()),
                     ('Model',
                      Pipeline(steps=[('CategoricalVariablesSetter',
-                                      <tg.common.ml.single_frame_training.model_provider.CatBoostWrap object at 0x7f9d2b5b2670>),
+                                      <tg.common.ml.single_frame_training.model_provider.CatBoostWrap object at 0x7ff71a3bc3d0>),
                                      ('Model',
-                                      <catboost.core.CatBoostClassifier object at 0x7f9d350c12b0>)]))])
+                                      <catboost.core.CatBoostClassifier object at 0x7ff71a3bc2e0>)]))])
 
 
 
@@ -6955,7 +6954,7 @@ result['runs'][0]['model']
 
     Pipeline(steps=[('ColumnNamesKeeper', ColumnNamesKeeper()),
                     ('Transformer',
-                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f9d1d251700>),
+                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7ff70404b730>),
                     ('ColumnNamesKeeperAfterTransformation', ColumnNamesKeeper()),
                     ('Model', LogisticRegression(C=1))])
 
@@ -6993,7 +6992,7 @@ result['runs'][0]['model']
 
     Pipeline(steps=[('ColumnNamesKeeper', ColumnNamesKeeper()),
                     ('Transformer',
-                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f9d1dec8130>),
+                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7ff73d6dda60>),
                     ('ColumnNamesKeeperAfterTransformation', ColumnNamesKeeper()),
                     ('Model', LogisticRegression())])
 
@@ -7572,10 +7571,10 @@ test_df.loc[batch].groupby('x').size()
 
 
     x
-    1    1010
-    2    2021
-    3    2970
-    4    3999
+    1     982
+    2    1994
+    3    2967
+    4    4057
     dtype: int64
 
 
@@ -7756,7 +7755,7 @@ ibundle_sample.index_frame
 
 
 
-The most simple case is when data extracted from index itself, which is the case for the label in our case.
+The most simple case is when data extracted from index itself, which is the case for the label:
 
 
 ```python
@@ -8252,7 +8251,6 @@ Now we are ready to define the Batcher:
 
 ```python
 batcher = bt.Batcher(
-    batch_size = 100,
     extractors = [feature_extractor, label_extractor],
     batching_strategy = bt.PriorityRandomBatcherStrategy('priority')
 )
@@ -8262,16 +8260,19 @@ Let's take a look at the batch produced
 
 
 ```python
-batch = batcher.fit_extract(ibundle_fixed)
-list(batch)
+batch_size = 50
+batch = batcher.fit_extract(batch_size, ibundle_fixed)
+batch
 ```
 
 
 
 
-    ['index', 'features', 'labels']
+    <tg.common.ml.batched_training.data_bundle.IndexedDataBundle at 0x7f8c24b0fb50>
 
 
+
+So, batch is of type `DataBundle`, and contains index, features, and labels. 
 
 The batch is balanced
 
@@ -8284,8 +8285,8 @@ batch['labels'].groupby('Survived').size()
 
 
     Survived
-    0.0    54
-    1.0    39
+    0.0    30
+    1.0    17
     dtype: int64
 
 
@@ -8295,11 +8296,10 @@ batch['labels'].groupby('Survived').size()
 
 ```python
 test_batcher = bt.Batcher(
-    batch_size = 1000,
     extractors = [feature_extractor, label_extractor],
     batching_strategy = bt.PriorityRandomBatcherStrategy('priority')
 )
-test_batch = test_batcher.fit_extract(ibundle_fixed)
+test_batch = test_batcher.fit_extract(batch_size, ibundle_fixed)
 test_batch['labels'].groupby('Survived').size()
 ```
 
@@ -8307,8 +8307,8 @@ test_batch['labels'].groupby('Survived').size()
 
 
     Survived
-    0.0    341
-    1.0    269
+    0.0    22
+    1.0    27
     dtype: int64
 
 
@@ -8346,7 +8346,7 @@ mini_batch['index'].shape
 * Implements training on one batch. Again, this is more complicated in case of neural networks than just calling a `fit` method. 
 * Implements the prediction. For different tasks, we interpret the network's output differently. In Single Frame Training, we had Evaluation to address this. Still, here the options are more plentiful, so it's moved into `ModelHandler` as well.
 
-In `tg.common.ml.batched_training.torch` there is a generic definition for such `ModelHandler` that we will cover in the corresponding demo. Here, we will define `ModelHandler` from scratch, to demonstrate its logic.
+In `tg.common.ml.batched_training.factories` there is a generic definition for such `ModelHandler` that we will cover in the corresponding demo. Here, we will define `ModelHandler` from scratch, to demonstrate its logic.
 
 
 
@@ -8427,40 +8427,41 @@ task = bt.BatchedTrainingTask(
     metric_pool = bt.MetricPool().add_sklearn(roc_auc_score),
     settings = bt.TrainingSettings(epoch_count=1)
 )
+task.settings.batch_size=100
 
 result = task.run(ibundle_fixed)
 ```
 
-    2022-08-09 09:27:17.611954+00:00 INFO: Training starts. Info: {}
-    2022-08-09 09:27:17.613787+00:00 INFO: Ensuring/loading bundle. Bundle before:
-    <tg.common.ml.batched_training.data_bundle.IndexedDataBundle object at 0x7f42486597f0>
-    2022-08-09 09:27:17.615849+00:00 INFO: Bundle loaded
+    2022-12-28 14:21:10.014697 INFO: Training starts. Info: {}
+    2022-12-28 14:21:10.016047 INFO: Ensuring/loading bundle. Bundle before:
+    <tg.common.ml.batched_training.data_bundle.IndexedDataBundle object at 0x7f8c4038d640>
+    2022-12-28 14:21:10.016617 INFO: Bundle loaded
     {'index': {'shape': (891, 5), 'index_name': 'PassengerId', 'columns': ['Name', 'Ticket', 'Cabin', 'Survived', 'priority'], 'index': [1, 2, 3, 4, 5, '...']}, 'passengers': {'shape': (891, 4), 'index_name': 'Name', 'columns': ['Sex', 'Age', 'SibSp', 'Parch'], 'index': ['Braund, Mr. Owen Harris', 'Cumings, Mrs. John Bradley (Florence Briggs Thayer)', 'Heikkinen, Miss. Laina', 'Futrelle, Mrs. Jacques Heath (Lily May Peel)', 'Allen, Mr. William Henry', '...']}, 'tickets': {'shape': (681, 3), 'index_name': 'Ticket', 'columns': ['Pclass', 'Fare', 'Embarked'], 'index': ['A/5 21171', 'PC 17599', 'STON/O2. 3101282', '113803', '373450', '...']}}
-    2022-08-09 09:27:17.617984+00:00 INFO: Index frame is set to index, shape is (891, 5)
-    2022-08-09 09:27:17.618541+00:00 INFO: Skipping late initialization
-    2022-08-09 09:27:17.619928+00:00 INFO: Preprocessing bundle by batcher
-    2022-08-09 09:27:17.628825+00:00 INFO: Splits: train 712, test 179, display 143
-    2022-08-09 09:27:17.629428+00:00 INFO: New training. Instantiating the system
-    2022-08-09 09:27:17.631794+00:00 INFO: Fitting the transformers
-    2022-08-09 09:27:17.709878+00:00 INFO: Instantiating model
-    2022-08-09 09:27:17.722208+00:00 INFO: Initialization completed
-    2022-08-09 09:27:17.723317+00:00 INFO: Epoch 0 of 1
-    2022-08-09 09:27:17.724329+00:00 INFO: Training: 0/8
-    2022-08-09 09:27:17.786426+00:00 INFO: Training: 1/8
-    2022-08-09 09:27:17.817651+00:00 INFO: Training: 2/8
-    2022-08-09 09:27:17.848584+00:00 INFO: Training: 3/8
-    2022-08-09 09:27:17.879179+00:00 INFO: Training: 4/8
-    2022-08-09 09:27:17.946487+00:00 INFO: Training: 5/8
-    2022-08-09 09:27:18.029367+00:00 INFO: Training: 6/8
-    2022-08-09 09:27:18.073784+00:00 INFO: Training: 7/8
-    2022-08-09 09:27:18.111929+00:00 INFO: test: 0/2
-    2022-08-09 09:27:18.145219+00:00 INFO: test: 1/2
-    2022-08-09 09:27:18.182553+00:00 INFO: display: 0/2
-    2022-08-09 09:27:18.223480+00:00 INFO: display: 1/2
-    2022-08-09 09:27:18.258226+00:00 INFO: ###roc_auc_score_test:0.7712779973649538
-    2022-08-09 09:27:18.259060+00:00 INFO: ###roc_auc_score_display:0.709247311827957
-    2022-08-09 09:27:18.259976+00:00 INFO: ###loss:0.24872505478560925
-    2022-08-09 09:27:18.260502+00:00 INFO: ###iteration:0
+    2022-12-28 14:21:10.017190 INFO: Index frame is set to index, shape is (891, 5)
+    2022-12-28 14:21:10.017786 INFO: Skipping late initialization
+    2022-12-28 14:21:10.018319 INFO: Preprocessing bundle by batcher
+    2022-12-28 14:21:10.023948 INFO: Splits: train 712, test 179, display 143
+    2022-12-28 14:21:10.024546 INFO: New training. Instantiating the system
+    2022-12-28 14:21:10.025671 INFO: Fitting the transformers
+    2022-12-28 14:21:10.073160 INFO: Instantiating model
+    2022-12-28 14:21:10.074611 INFO: Initialization completed
+    2022-12-28 14:21:10.075486 INFO: Epoch 0 of 1
+    2022-12-28 14:21:10.075927 INFO: Training: 0/8
+    2022-12-28 14:21:10.103902 INFO: Training: 1/8
+    2022-12-28 14:21:10.128179 INFO: Training: 2/8
+    2022-12-28 14:21:10.156215 INFO: Training: 3/8
+    2022-12-28 14:21:10.180618 INFO: Training: 4/8
+    2022-12-28 14:21:10.205398 INFO: Training: 5/8
+    2022-12-28 14:21:10.230677 INFO: Training: 6/8
+    2022-12-28 14:21:10.257123 INFO: Training: 7/8
+    2022-12-28 14:21:10.282654 INFO: test: 0/2
+    2022-12-28 14:21:10.308441 INFO: test: 1/2
+    2022-12-28 14:21:10.334269 INFO: display: 0/2
+    2022-12-28 14:21:10.358629 INFO: display: 1/2
+    2022-12-28 14:21:10.387787 INFO: ###roc_auc_score_test:0.4130434782608696
+    2022-12-28 14:21:10.388229 INFO: ###roc_auc_score_display:0.43268817204301074
+    2022-12-28 14:21:10.388711 INFO: ###loss:0.2608289998024702
+    2022-12-28 14:21:10.389460 INFO: ###iteration:0
 
 
 As you can see, `TrainingTasks` logs quite extensively on the initialization process, so in case of error it's relativaly easy to understand the source of error. 
@@ -8539,7 +8540,7 @@ task = bt.BatchedTrainingTask(
     batcher = batcher,
     model_handler=TorchHandler(),
     metric_pool = bt.MetricPool().add_sklearn(roc_auc_score),
-    settings = bt.TrainingSettings(epoch_count=10),
+    settings = bt.TrainingSettings(epoch_count=10, batch_size=100),
     late_initialization=late_initialization
 )
 
@@ -8585,27 +8586,27 @@ prediction
   <tbody>
     <tr>
       <th>1</th>
-      <td>0.406955</td>
+      <td>0.385275</td>
       <td>0.0</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.650265</td>
+      <td>0.664146</td>
       <td>1.0</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.471039</td>
+      <td>0.462648</td>
       <td>1.0</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.603117</td>
+      <td>0.632161</td>
       <td>1.0</td>
     </tr>
     <tr>
       <th>5</th>
-      <td>0.399309</td>
+      <td>0.384694</td>
       <td>0.0</td>
     </tr>
   </tbody>
@@ -8640,7 +8641,7 @@ task = bt.BatchedTrainingTask(
     metric_pool = bt.MetricPool().add_sklearn(roc_auc_score),
     settings = bt.TrainingSettings(epoch_count=10)
 )
-batch = task.generate_sample_batch(ibundle_fixed)
+batch, temp_data = task.generate_sample_batch_and_temp_data(ibundle_fixed)
 ```
 
 This batch then can be used on different levels to debug network and handler:
@@ -8653,11 +8654,11 @@ task.model_handler.network(batch['features'])[:5]
 
 
 
-    tensor([[0.6271],
-            [0.6267],
-            [0.6402],
-            [0.6249],
-            [0.6380]], grad_fn=<SliceBackward>)
+    tensor([[0.4334],
+            [0.4201],
+            [0.4227],
+            [0.4231],
+            [0.4233]], grad_fn=<SliceBackward>)
 
 
 
@@ -8686,28 +8687,28 @@ task.model_handler.predict(batch).head()
   </thead>
   <tbody>
     <tr>
-      <th>62</th>
-      <td>0.627095</td>
-      <td>1.0</td>
-    </tr>
-    <tr>
-      <th>521</th>
-      <td>0.626716</td>
-      <td>1.0</td>
-    </tr>
-    <tr>
-      <th>244</th>
-      <td>0.640244</td>
+      <th>874</th>
+      <td>0.433400</td>
       <td>0.0</td>
     </tr>
     <tr>
-      <th>249</th>
-      <td>0.624913</td>
-      <td>1.0</td>
+      <th>833</th>
+      <td>0.420091</td>
+      <td>0.0</td>
     </tr>
     <tr>
-      <th>217</th>
-      <td>0.638028</td>
+      <th>105</th>
+      <td>0.422657</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>612</th>
+      <td>0.423145</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>284</th>
+      <td>0.423349</td>
       <td>1.0</td>
     </tr>
   </tbody>
@@ -8716,9 +8717,34 @@ task.model_handler.predict(batch).head()
 
 
 
+Temp data also contains lots of the information, useful for debugging, such as splits
+
+
+```python
+temp_data.__dict__
+```
+
+
+
+
+    {'original_ibundle': <tg.common.ml.batched_training.data_bundle.IndexedDataBundle at 0x7f8c4038d640>,
+     'env': <tg.common.ml.training_core.arch.TrainingEnvironment at 0x7f8bac086a90>,
+     'split': <tg.common.ml.training_core.splitter.DataFrameSplit at 0x7f8ba8f45a30>,
+     'first_iteration': 0,
+     'iteration': 0,
+     'losses': [],
+     'epoch_begins_at': None,
+     'train_bundle': None,
+     'result': None,
+     'batch': None,
+     'mini_batch_indices': None,
+     'mini_batch': None}
+
+
+
 ### Debug mode
 
-`BatchingTrainingTask` has a `debug` argument, which forces the task to keep the intermediate data as a field of the class. **Never** do it in production, as the intermediate data also contain the bundle, so pickling the task (which is an artefact of the training) will be impossible with any real data. 
+`BatchingTrainingTask` has a `debug` argument, which forces the task to keep the intermediate data as a field of the class (`temp_data` from the previous section). **Never** do it in production, as the intermediate data also contain the bundle, so pickling the task (which is an artefact of the training) will be impossible with any real data. 
 
 However, with toy datasets such as we have, it's very useful to look at the intermediate dataframes when debugging errors. For instance, let's check if the `test` and `display` splits are related to the train split the way we expect:
 
@@ -8823,7 +8849,6 @@ Or, we may ensure that the splits are consistant with our expectations:
     task.data_.result.test_splits['test'].isin(task.data_.result.train_split).mean(),
     task.data_.result.test_splits['display'].isin(task.data_.result.train_split).mean()
 )
-
 ```
 
 
@@ -8844,8 +8869,8 @@ task.data_.batch['index'].groupby('Survived').size()
 
 
     Survived
-    0.0    45
-    1.0    47
+    0.0    439
+    1.0    273
     dtype: int64
 
 
@@ -8890,128 +8915,535 @@ In practice, we never used this functionality, nor did we debug it with hyperopt
 
 
 
-# 3.3.1. Batched training with torch (tg.common.ml.batched_training.torch)
+# 3.3.1. Batched training with torch and factories (tg.common.ml.batched_training.factories)
 
-## Overview
+Thousands of training processes have shown `BatchedTrainingTask` is a reliable and effective way of training neural networks. 
 
-`tg.common.ml.batched_training` is very generic and flexible, allowing to orchestrate the training process by using settings and component classes. It greatly reduces the amount of code that needs to be written to train one model, and does not limit the technology stack for the models themselves. 
+However, we experienced some problems with training networks of different architectures on data with complex structures (such as contextual data, see `tg.common.ml.batched_training.context`). These problems are conceptual: the approach of `BatchedTrainingTask` is that the training is a SOLID object entirely configurable by components; however, in the reality the configuration can only be achieved by extensive coding in `ModelHandler` and `lazy_initialization`. 
 
-Unfortunately, there is still _a lot_ of code that needs to be written to instantiate the training task, namely, the `ModelHandler`: the way we have written it in the demo, any small change in network architecture requires the code update. We strongly prefer parameter-based model's definition over code based, as:
+`tg.common.ml.batched_training.factories` addresses the problem, subclassing and adjusting `BatchedTrainingTask` and `ModelHandler` for this scenario, as well as adding some additional classes for network creation.
 
-  * It's easier to compare and reproduce the results of the experiments
-  * It's testable and reusable
+## Binary classification task
 
-Therefore, we wanted to enable a parameter-based definition at least for some models, choosing `PyTorch`:
-  * `optimizer` and `loss` in this case do not require coding, as the type names may be used
-  * networks creation does not necesserily require coding and can be replaced by _factories_.
-
-Also, we have noticed that some elements of the functionality is not really required in practice:
-  * instead of defining splitters, it's more practical to put the values directly in the `index_frame`, thus ensuring all the networks versions are going to be compared over the same sets
-  * `BatchingStrategy` can simply be defined by the presence of `priority` column in the `index_frame` (either defined in bundle preparation or in `late_initialization`)
-  
-  
-In essense, what remains really important for the training of `torch` networks, is a pair of two factories:
-  * the first one produce the extractors, given the bundle; it also performs necessary bundle tuning. It does requires coding, if the extractors are dependent on the bundle, which is usually not the case, or if tuning is needed.
-  * the second one produce the networks, given the batch. It requires coding, if the network is build from predefined blocks.
-  
-This functionality is implemented in a slim wrapper around `BatchedTrainingTask`, namely, `TorchTrainingTask`. This demonstration will show how to use it. First, let us load the bundle and define the `train`, `display` and `test` splits.
+We will work on binary classification task from standard sklearn datasets. First, we need to translate it into bundle:
 
 
 ```python
+from yo_fluq_ds import *
+from sklearn import datasets
+import pandas as pd
 from tg.common.ml import batched_training as bt
-from sklearn.model_selection import train_test_split
-import numpy as np
 
-bundle = bt.DataBundle.load('temp/bundle')
+def get_binary_classification_bundle():
+    ds = datasets.load_breast_cancer()
+    features = pd.DataFrame(ds['data'], columns=ds['feature_names'])
+    df = pd.DataFrame(ds['target'], columns=['label'])
+    df['split'] = bt.train_display_test_split(df, 0.2, 0.2, 'label')
+    bundle = bt.DataBundle(index=df, features=features)
+    return bundle
 
-train, test = train_test_split(bundle.index.index, stratify=bundle.index['Survived'], test_size=0.2)
-train, display = train_test_split(train, stratify = bundle.index.loc[train]['Survived'], test_size=0.2)
-bundle.index['split'] = np.where(
-    bundle.index.index.isin(train),
-    'train',
-    np.where(
-        bundle.index.index.isin(display),
-        'display',
-        'test'
-    ))
-bundle.index.groupby(['split','Survived']).size()
+get_binary_classification_bundle().features.head()
 ```
 
 
 
 
-    split    Survived
-    display  0.0          88
-             1.0          55
-    test     0.0         110
-             1.0          69
-    train    0.0         351
-             1.0         218
-    dtype: int64
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>mean radius</th>
+      <th>mean texture</th>
+      <th>mean perimeter</th>
+      <th>mean area</th>
+      <th>mean smoothness</th>
+      <th>mean compactness</th>
+      <th>mean concavity</th>
+      <th>mean concave points</th>
+      <th>mean symmetry</th>
+      <th>mean fractal dimension</th>
+      <th>...</th>
+      <th>worst radius</th>
+      <th>worst texture</th>
+      <th>worst perimeter</th>
+      <th>worst area</th>
+      <th>worst smoothness</th>
+      <th>worst compactness</th>
+      <th>worst concavity</th>
+      <th>worst concave points</th>
+      <th>worst symmetry</th>
+      <th>worst fractal dimension</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>17.99</td>
+      <td>10.38</td>
+      <td>122.80</td>
+      <td>1001.0</td>
+      <td>0.11840</td>
+      <td>0.27760</td>
+      <td>0.3001</td>
+      <td>0.14710</td>
+      <td>0.2419</td>
+      <td>0.07871</td>
+      <td>...</td>
+      <td>25.38</td>
+      <td>17.33</td>
+      <td>184.60</td>
+      <td>2019.0</td>
+      <td>0.1622</td>
+      <td>0.6656</td>
+      <td>0.7119</td>
+      <td>0.2654</td>
+      <td>0.4601</td>
+      <td>0.11890</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>20.57</td>
+      <td>17.77</td>
+      <td>132.90</td>
+      <td>1326.0</td>
+      <td>0.08474</td>
+      <td>0.07864</td>
+      <td>0.0869</td>
+      <td>0.07017</td>
+      <td>0.1812</td>
+      <td>0.05667</td>
+      <td>...</td>
+      <td>24.99</td>
+      <td>23.41</td>
+      <td>158.80</td>
+      <td>1956.0</td>
+      <td>0.1238</td>
+      <td>0.1866</td>
+      <td>0.2416</td>
+      <td>0.1860</td>
+      <td>0.2750</td>
+      <td>0.08902</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>19.69</td>
+      <td>21.25</td>
+      <td>130.00</td>
+      <td>1203.0</td>
+      <td>0.10960</td>
+      <td>0.15990</td>
+      <td>0.1974</td>
+      <td>0.12790</td>
+      <td>0.2069</td>
+      <td>0.05999</td>
+      <td>...</td>
+      <td>23.57</td>
+      <td>25.53</td>
+      <td>152.50</td>
+      <td>1709.0</td>
+      <td>0.1444</td>
+      <td>0.4245</td>
+      <td>0.4504</td>
+      <td>0.2430</td>
+      <td>0.3613</td>
+      <td>0.08758</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>11.42</td>
+      <td>20.38</td>
+      <td>77.58</td>
+      <td>386.1</td>
+      <td>0.14250</td>
+      <td>0.28390</td>
+      <td>0.2414</td>
+      <td>0.10520</td>
+      <td>0.2597</td>
+      <td>0.09744</td>
+      <td>...</td>
+      <td>14.91</td>
+      <td>26.50</td>
+      <td>98.87</td>
+      <td>567.7</td>
+      <td>0.2098</td>
+      <td>0.8663</td>
+      <td>0.6869</td>
+      <td>0.2575</td>
+      <td>0.6638</td>
+      <td>0.17300</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>20.29</td>
+      <td>14.34</td>
+      <td>135.10</td>
+      <td>1297.0</td>
+      <td>0.10030</td>
+      <td>0.13280</td>
+      <td>0.1980</td>
+      <td>0.10430</td>
+      <td>0.1809</td>
+      <td>0.05883</td>
+      <td>...</td>
+      <td>22.54</td>
+      <td>16.67</td>
+      <td>152.20</td>
+      <td>1575.0</td>
+      <td>0.1374</td>
+      <td>0.2050</td>
+      <td>0.4000</td>
+      <td>0.1625</td>
+      <td>0.2364</td>
+      <td>0.07678</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 30 columns</p>
+</div>
 
 
-
-Second, let's remember the extractors we have defined in the previous demo, and define the extractor factory:
 
 
 ```python
+get_binary_classification_bundle().index.head()
+```
+
+
+
+
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>label</th>
+      <th>split</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>train</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+      <td>display</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+      <td>train</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+      <td>train</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+      <td>train</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+We see that index label contains both label and split. This is a recommended way of splitting for `TorchTrainingTask`: set the split in bundle. The reason for this is that we can't really use several splits in batched training the way we did for single frme task, so the whole architecture of splits becomes unusable. Also, when comparing many networks against each other, it's good to ensure that they train on exactly same data.
+
+Let's define the extractors. This part didn't change in comparison with `tg.common.ml.batched_training`
+
+
+```python
+from tg.common.ml.batched_training import factories as btf
 from tg.common.ml import dft
-from tg.common.ml.batched_training import torch as btt
 
-tfac = dft.DataFrameTransformerFactory.default_factory
+def get_feature_extractor():
+    feature_extractor = (bt.PlainExtractor
+                 .build('features')
+                 .index('features')
+                 .apply(transformer = dft.DataFrameTransformerFactory.default_factory())
+                )
+    return feature_extractor
+    
+def get_binary_label_extractor():
+    label_extractor = (bt.PlainExtractor
+                   .build(btf.Conventions.LabelFrame)
+                   .index()
+                   .apply(take_columns=['label'], transformer=None)
+                  )
+    return label_extractor
 
-extractors = [
-    bt.PlainExtractor.build(name='label').apply(take_columns='Survived'),
-    bt.PlainExtractor.build(name='cabin').index().apply(transformer=tfac(), take_columns='Cabin'),
-    bt.PlainExtractor.build('passengers')
-                       .index()
-                       .join(frame_name='passengers', on_columns='Name')
-                       .apply(transformer=tfac()),
-    bt.PlainExtractor.build(name='tickets')
-                    .index()
-                    .join(frame_name='tickets', on_columns='Ticket')
-                    .apply(transformer=tfac())
-]
+def test_extractor(extractor, bundle):
+    extractor.fit(bundle)
+    return extractor.extract(bundle)
 
-extractor_factory = btt.PredefinedExtractorFactory(*extractors)
+db = get_binary_classification_bundle()
+idb = bt.IndexedDataBundle(db.index, db)
+test_extractor( get_feature_extractor(), idb).head()
 ```
 
-As a third step, we will define a network factory:
+
+
+
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>mean radius</th>
+      <th>mean texture</th>
+      <th>mean perimeter</th>
+      <th>mean area</th>
+      <th>mean smoothness</th>
+      <th>mean compactness</th>
+      <th>mean concavity</th>
+      <th>mean concave points</th>
+      <th>mean symmetry</th>
+      <th>mean fractal dimension</th>
+      <th>...</th>
+      <th>worst radius</th>
+      <th>worst texture</th>
+      <th>worst perimeter</th>
+      <th>worst area</th>
+      <th>worst smoothness</th>
+      <th>worst compactness</th>
+      <th>worst concavity</th>
+      <th>worst concave points</th>
+      <th>worst symmetry</th>
+      <th>worst fractal dimension</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1.097064</td>
+      <td>-2.073335</td>
+      <td>1.269934</td>
+      <td>0.984375</td>
+      <td>1.568466</td>
+      <td>3.283515</td>
+      <td>2.652874</td>
+      <td>2.532475</td>
+      <td>2.217515</td>
+      <td>2.255747</td>
+      <td>...</td>
+      <td>1.886690</td>
+      <td>-1.359293</td>
+      <td>2.303601</td>
+      <td>2.001237</td>
+      <td>1.307686</td>
+      <td>2.616665</td>
+      <td>2.109526</td>
+      <td>2.296076</td>
+      <td>2.750622</td>
+      <td>1.937015</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1.829821</td>
+      <td>-0.353632</td>
+      <td>1.685955</td>
+      <td>1.908708</td>
+      <td>-0.826962</td>
+      <td>-0.487072</td>
+      <td>-0.023846</td>
+      <td>0.548144</td>
+      <td>0.001392</td>
+      <td>-0.868652</td>
+      <td>...</td>
+      <td>1.805927</td>
+      <td>-0.369203</td>
+      <td>1.535126</td>
+      <td>1.890489</td>
+      <td>-0.375612</td>
+      <td>-0.430444</td>
+      <td>-0.146749</td>
+      <td>1.087084</td>
+      <td>-0.243890</td>
+      <td>0.281190</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1.579888</td>
+      <td>0.456187</td>
+      <td>1.566503</td>
+      <td>1.558884</td>
+      <td>0.942210</td>
+      <td>1.052926</td>
+      <td>1.363478</td>
+      <td>2.037231</td>
+      <td>0.939685</td>
+      <td>-0.398008</td>
+      <td>...</td>
+      <td>1.511870</td>
+      <td>-0.023974</td>
+      <td>1.347475</td>
+      <td>1.456285</td>
+      <td>0.527407</td>
+      <td>1.082932</td>
+      <td>0.854974</td>
+      <td>1.955000</td>
+      <td>1.152255</td>
+      <td>0.201391</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>-0.768909</td>
+      <td>0.253732</td>
+      <td>-0.592687</td>
+      <td>-0.764464</td>
+      <td>3.283553</td>
+      <td>3.402909</td>
+      <td>1.915897</td>
+      <td>1.451707</td>
+      <td>2.867383</td>
+      <td>4.910919</td>
+      <td>...</td>
+      <td>-0.281464</td>
+      <td>0.133984</td>
+      <td>-0.249939</td>
+      <td>-0.550021</td>
+      <td>3.394275</td>
+      <td>3.893397</td>
+      <td>1.989588</td>
+      <td>2.175786</td>
+      <td>6.046041</td>
+      <td>4.935010</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1.750297</td>
+      <td>-1.151816</td>
+      <td>1.776573</td>
+      <td>1.826229</td>
+      <td>0.280372</td>
+      <td>0.539340</td>
+      <td>1.371011</td>
+      <td>1.428493</td>
+      <td>-0.009560</td>
+      <td>-0.562450</td>
+      <td>...</td>
+      <td>1.298575</td>
+      <td>-1.466770</td>
+      <td>1.338539</td>
+      <td>1.220724</td>
+      <td>0.220556</td>
+      <td>-0.313395</td>
+      <td>0.613179</td>
+      <td>0.729259</td>
+      <td>-0.868353</td>
+      <td>-0.397100</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 30 columns</p>
+</div>
+
+
 
 
 ```python
-network_factory = (btt.FullyConnectedNetwork.Factory(sizes = [10,1])
-                   .prepend_extraction(input_frames = ['tickets', 'passengers', 'cabin']))
-
+test_extractor(get_binary_label_extractor(), idb).head()
 ```
 
-We will explain the architecture behind this definition a bit later. For now, let's define and run `TorchTrainingTask`:
+
+
+
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>label</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+In `tg.common.ml.batched_training.factories`, `TorchModelHandler` class is defined. A short reminder: `ModelHandler` class should handle initialization, training and prediction of the model. The `TorchModelHandler` addresses the last two in a generic way, and completely outsources the inialization to three entities:
+* Network factory
+* Optimizer constructor
+* Loss constructor
+
+Let's cover the first one. In general, network factory is an arbitrary function that accepts one batch and generates the network. This gives us the opportunity to adjust the network to the input data: the shape of the input data is determined after the extractors are fitted, which is very late in the initialization process.
 
 
 ```python
 from sklearn.metrics import roc_auc_score
 from tg.common import Logger
-import pandas as pd
-
-task = btt.TorchTrainingTask(
-    bt.TrainingSettings(
-        epoch_count=10,
-        batch_size=50
-    ),
-    btt.TorchTrainingSettings(
-        optimizer_ctor = btt.OptimizerConstructor('torch.optim:SGD',lr=0.5),
-        loss_ctor = btt.ModelConstructor('torch.nn:MSELoss')
-    ),
-    extractor_factory,
-    network_factory,
-    bt.MetricPool().add_sklearn(roc_auc_score)
-)
+from functools import partial
+import torch
 
 Logger.disable()
 
+class ClassificationNetwork(torch.nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(ClassificationNetwork, self).__init__()
+        self.hidden = torch.nn.Linear(input_size, hidden_size)
+        self.output = torch.nn.Linear(hidden_size, output_size)
 
-result = task.run(bundle)
+    def forward(self, input):
+        X = input['features']
+        X = torch.tensor(X.astype(float).values).float()
+        X = self.hidden(X)
+        X = torch.sigmoid(X)
+        X = self.output(X)
+        X = torch.sigmoid(X)
+        return X
+    
+def create_factory(hidden_size):
+    return lambda sample: ClassificationNetwork(
+        sample['features'].shape[1], 
+        hidden_size, 
+        sample[btf.Conventions.LabelFrame].shape[1]
+    )
+        
 
+class ClassificationTask(btf.TorchTrainingTask):
+    def initialize_task(self, data):
+        self.metric_pool = bt.MetricPool().add_sklearn(roc_auc_score)
+        self.settings.epoch_count = 10
+        self.settings.batch_size = 1000
+        self.settings.mini_match_size = None
+        self.setup_batcher(data, [get_feature_extractor(), get_binary_label_extractor()])
+        self.setup_model(create_factory(100))
+        
+        
+task = ClassificationTask()
+result = task.run(get_binary_classification_bundle())
 pd.DataFrame(result['output']['history']).set_index('iteration').plot()
 ```
 
@@ -9024,25 +9456,900 @@ pd.DataFrame(result['output']['history']).set_index('iteration').plot()
 
 
     
-![png](README_images/tg.common.ml.batched_training.torch_output_8_1.png?raw=true)
+![png](README_images/tg.common.ml.batched_training.factories_output_11_1.png?raw=true)
     
 
 
-We can see that definition of `TorchTrainingTask` is indeed performed with only existing components and does not require much coding.
+`create_factory` is somewhat of a awkward method that is, essentially, a factory of factories. Moreover, it returns a `lambda` function, which is not compatible with the delivery. Hence, let's consider another way of the factory definition:
 
-## Network factories
 
-Network factories are currently more like proof of concept than a comprehensive set of all possible architectures. Still, we find the concept useful. The features are:
+```python
+class ClassificationNetwork(torch.nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(ClassificationNetwork, self).__init__()
+        self.hidden = torch.nn.Linear(input_size, hidden_size)
+        self.output = torch.nn.Linear(hidden_size, output_size)
 
-* Networks accept batches instead of tensors
-* Networks adopt to the batches by choosing the input size so that it matches
+    def forward(self, input):
+        X = input['features']
+        X = torch.tensor(X.astype(float).values).float()
+        X = self.hidden(X)
+        X = torch.sigmoid(X)
+        X = self.output(X)
+        X = torch.sigmoid(X)
+        return X
+    
+    class Factory:
+        def __init__(self, hidden_size):
+            self.hidden_size = hidden_size
+            
+        def __call__(self, sample):
+            return ClassificationNetwork(
+                sample['features'].shape[1], 
+                self.hidden_size, 
+                sample[btf.Conventions.LabelFrame].shape[1]
+            )
+        
 
-This is achieved with the following architecture:
+class ClassificationTask(btf.TorchTrainingTask):
+    def initialize_task(self, data):
+        self.metric_pool = bt.MetricPool().add_sklearn(roc_auc_score)
+        self.settings.epoch_count = 10
+        self.settings.batch_size = 1000
+        self.settings.mini_match_size = None
+        self.setup_batcher(data, [get_feature_extractor(), get_binary_label_extractor()])
+        self.setup_model(ClassificationNetwork.Factory(100))
+        
+        
+task = ClassificationTask()
+result = task.run(get_binary_classification_bundle())
+pd.DataFrame(result['output']['history']).set_index('iteration').plot()
+```
 
-* We have "normal" networks, like `FeedForwardNetwork` or `LSTMNetwork`. These are normal `torch` modules that can be used "as is". 
-* Each of such classes, however, has a nested `Factory` class, that is the factory creating the network from the input batch. The input batch is expected to be a torch tensor.
-* There are also ways to organize networks (and factories) into structures, for instance, `FeedForwardNetwork` is a network that accepts several networks and pass the signal sequencially. Correspondindly, `FeedForwardNetwork.Factory` accepts several factories, creates instances for them, and in the end -- the instance for `FeedForwardNetwork`.
-* For convienience, `FeedForwardNetwork.Factory` has `prepend_extraction` methodm that returns a `FeedForwardNetwork.Factory` with two nested factories: `ExtractingNetwork.Factory` and `FeedForwardNetwork.Factory`. Here `ExtractingNetwork.Factory` create a fake network, that accepts batch, translates the frames into `torch` tensors and concatenates them.
+
+
+
+    <AxesSubplot:xlabel='iteration'>
+
+
+
+
+    
+![png](README_images/tg.common.ml.batched_training.factories_output_13_1.png?raw=true)
+    
+
+
+This way the `ClassificationNetwork.Factory` is a proper factory class, containing the parameters of the to-be-created network. `__call__` method makes the object callable. Placing `Factory` inside `ClassificationNetwork` allows you to import these classes always as a couple, and also allows avoiding excessive naming (`ClassificationNetwork` and `ClassificationNetworkFactory`).
+
+Now, to Optimizator constructor. This is an instance of `CtorAdapter` class that turns a type's constuctor into function with unnamed arguments. It contains: 
+* a `type`: either an instance of `type` or a string that encodes type the same way we saw in `tg.common.ml.single_frame`
+* `args_names`: mapping from the position of the unnamed parameter to the name of the argument in constructor.
+* additional named arguments of the constructor.
+
+
+```python
+task.optimizer_ctor.__dict__
+```
+
+
+
+
+    {'type': 'torch.optim:SGD', 'args_names': ('params',), 'kwargs': {'lr': 0.1}}
+
+
+
+You can simply change the arguments you need.
+
+
+```python
+class ClassificationTask(btf.TorchTrainingTask):
+    def initialize_task(self, data):
+        metrics = bt.MetricPool().add_sklearn(roc_auc_score)
+        self.metric_pool = bt.MetricPool().add_sklearn(roc_auc_score)
+        self.settings.epoch_count = 10
+        self.settings.batch_size = 1000
+        self.settings.mini_match_size = None
+        self.setup_batcher(data, [get_feature_extractor(), get_binary_label_extractor()])
+        
+        self.optimizer_ctor.type = 'torch.optim:Adam'
+        self.optimizer_ctor.kwargs.lr = 0.01
+        self.setup_model(ClassificationNetwork.Factory(100))
+        
+task = ClassificationTask()
+result = task.run(get_binary_classification_bundle())
+print(task.model_handler.optimizer)
+pd.DataFrame(result['output']['history']).set_index('iteration').plot()
+```
+
+    Adam (
+    Parameter Group 0
+        amsgrad: False
+        betas: (0.9, 0.999)
+        eps: 1e-08
+        lr: 0.01
+        weight_decay: 0
+    )
+
+
+
+
+
+    <AxesSubplot:xlabel='iteration'>
+
+
+
+
+    
+![png](README_images/tg.common.ml.batched_training.factories_output_18_2.png?raw=true)
+    
+
+
+## Other ways of defining network
+
+In the end, we need a network factory: a function, that takes a sample batch and creates a network. As we have seen in the example, the batch is actually used in this creation, as it defines the input size of the network. Note that this is, in general, variable, even for the same task and the same dataset: the transformers that perform one-hot encoding on categorical variables are trained on one batch, therefore, different runs may have slightly different amount of columns in categorical features.
+
+The most understandable way of defining the network and the factory was just presented: to create a `torch` component and a separate `Factory` class accepts the parameters in constructor and creates an object in `__call__`, so the `Factory` object is actually callable and can be invoked as a function. 
+
+**This is perfectly normal and functioning way, and we definitely recommend it for the first attempts.** However, it brings an enourmous amount of bad code in the project. If you change your model even slightly, you either need to create a new `Network/Factory` classes (and probably copy-paste the code), or insert flags. The way to prevent this is to find a way to decompose the factory into components and build the more complicated factory from the basic ones. This would be exactly the way `pytorch` itself works, allowing you to assemble network from basic building blocks.
+
+However, the idea of building a `Factory` for each `pytorch` block, which we initially tried, where `Factory` is a descendant of some `AbstractNetworkFactory` class, was a dead end. It brings in way too much of infrastructure code, which should more or less mirror `pytorch` classes. And when you want to add a new component in your network for an experiment, the last thing you want to do is to also write `Factory` for it.
+
+So we have choosen a more subtle way: allow defining factories as just functions, or even as components themselves. We will list several different ways of creating `Factory` out of component, and to combine them together.
+
+For this, let's first create a batch to test our networks:
+
+
+```python
+batch, _ = task.generate_sample_batch_and_temp_data(get_binary_classification_bundle())
+batch['features']
+```
+
+
+
+
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>mean radius</th>
+      <th>mean texture</th>
+      <th>mean perimeter</th>
+      <th>mean area</th>
+      <th>mean smoothness</th>
+      <th>mean compactness</th>
+      <th>mean concavity</th>
+      <th>mean concave points</th>
+      <th>mean symmetry</th>
+      <th>mean fractal dimension</th>
+      <th>...</th>
+      <th>worst radius</th>
+      <th>worst texture</th>
+      <th>worst perimeter</th>
+      <th>worst area</th>
+      <th>worst smoothness</th>
+      <th>worst compactness</th>
+      <th>worst concavity</th>
+      <th>worst concave points</th>
+      <th>worst symmetry</th>
+      <th>worst fractal dimension</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1.091268</td>
+      <td>-2.069159</td>
+      <td>1.270191</td>
+      <td>0.990942</td>
+      <td>1.614542</td>
+      <td>3.324519</td>
+      <td>2.653900</td>
+      <td>2.550951</td>
+      <td>2.275591</td>
+      <td>2.254197</td>
+      <td>...</td>
+      <td>1.878808</td>
+      <td>-1.363034</td>
+      <td>2.310694</td>
+      <td>2.032141</td>
+      <td>1.372010</td>
+      <td>2.571760</td>
+      <td>2.091379</td>
+      <td>2.318438</td>
+      <td>2.741997</td>
+      <td>1.910886</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1.825559</td>
+      <td>-0.373272</td>
+      <td>1.688311</td>
+      <td>1.927929</td>
+      <td>-0.816927</td>
+      <td>-0.477222</td>
+      <td>-0.022115</td>
+      <td>0.556434</td>
+      <td>0.021409</td>
+      <td>-0.857298</td>
+      <td>...</td>
+      <td>1.797949</td>
+      <td>-0.383978</td>
+      <td>1.537466</td>
+      <td>1.919285</td>
+      <td>-0.346334</td>
+      <td>-0.414532</td>
+      <td>-0.143391</td>
+      <td>1.105716</td>
+      <td>-0.237848</td>
+      <td>0.278243</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1.575103</td>
+      <td>0.425332</td>
+      <td>1.568257</td>
+      <td>1.573315</td>
+      <td>0.978863</td>
+      <td>1.075499</td>
+      <td>1.364844</td>
+      <td>2.053164</td>
+      <td>0.975815</td>
+      <td>-0.388597</td>
+      <td>...</td>
+      <td>1.503541</td>
+      <td>-0.042597</td>
+      <td>1.348655</td>
+      <td>1.476818</td>
+      <td>0.575486</td>
+      <td>1.068639</td>
+      <td>0.848784</td>
+      <td>1.976310</td>
+      <td>1.151458</td>
+      <td>0.199561</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>-0.778611</td>
+      <td>0.225681</td>
+      <td>-0.601828</td>
+      <td>-0.781835</td>
+      <td>3.355433</td>
+      <td>3.444899</td>
+      <td>1.917117</td>
+      <td>1.464635</td>
+      <td>2.936619</td>
+      <td>4.898402</td>
+      <td>...</td>
+      <td>-0.291933</td>
+      <td>0.113602</td>
+      <td>-0.258640</td>
+      <td>-0.567665</td>
+      <td>3.502039</td>
+      <td>3.823011</td>
+      <td>1.972584</td>
+      <td>2.197777</td>
+      <td>6.021276</td>
+      <td>4.866911</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1.745868</td>
+      <td>-1.160402</td>
+      <td>1.779387</td>
+      <td>1.844321</td>
+      <td>0.307067</td>
+      <td>0.557671</td>
+      <td>1.372375</td>
+      <td>1.441301</td>
+      <td>0.010268</td>
+      <td>-0.552360</td>
+      <td>...</td>
+      <td>1.289992</td>
+      <td>-1.469313</td>
+      <td>1.339664</td>
+      <td>1.236776</td>
+      <td>0.262246</td>
+      <td>-0.299819</td>
+      <td>0.609293</td>
+      <td>0.746787</td>
+      <td>-0.859253</td>
+      <td>-0.390551</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>564</th>
+      <td>2.107322</td>
+      <td>0.686944</td>
+      <td>2.065033</td>
+      <td>2.369033</td>
+      <td>1.079994</td>
+      <td>0.234744</td>
+      <td>1.948496</td>
+      <td>2.338355</td>
+      <td>-0.297965</td>
+      <td>-0.919415</td>
+      <td>...</td>
+      <td>1.893321</td>
+      <td>0.097499</td>
+      <td>1.756248</td>
+      <td>2.046472</td>
+      <td>0.423341</td>
+      <td>-0.260542</td>
+      <td>0.660138</td>
+      <td>1.649455</td>
+      <td>-1.348650</td>
+      <td>-0.698174</td>
+    </tr>
+    <tr>
+      <th>565</th>
+      <td>1.700331</td>
+      <td>2.031720</td>
+      <td>1.617935</td>
+      <td>1.740531</td>
+      <td>0.126477</td>
+      <td>-0.004106</td>
+      <td>0.694585</td>
+      <td>1.275632</td>
+      <td>-0.201410</td>
+      <td>-1.046472</td>
+      <td>...</td>
+      <td>1.528421</td>
+      <td>2.005692</td>
+      <td>1.423580</td>
+      <td>1.516228</td>
+      <td>-0.668523</td>
+      <td>-0.379619</td>
+      <td>0.236277</td>
+      <td>0.751369</td>
+      <td>-0.524403</td>
+      <td>-0.959354</td>
+    </tr>
+    <tr>
+      <th>566</th>
+      <td>0.695662</td>
+      <td>1.992708</td>
+      <td>0.669919</td>
+      <td>0.578957</td>
+      <td>-0.830652</td>
+      <td>-0.025125</td>
+      <td>0.048300</td>
+      <td>0.111796</td>
+      <td>-0.803020</td>
+      <td>-0.884121</td>
+      <td>...</td>
+      <td>0.551898</td>
+      <td>1.340642</td>
+      <td>0.575427</td>
+      <td>0.428871</td>
+      <td>-0.789344</td>
+      <td>0.351056</td>
+      <td>0.325611</td>
+      <td>0.430624</td>
+      <td>-1.094292</td>
+      <td>-0.312962</td>
+    </tr>
+    <tr>
+      <th>567</th>
+      <td>1.834097</td>
+      <td>2.279563</td>
+      <td>1.986377</td>
+      <td>1.752063</td>
+      <td>1.571200</td>
+      <td>3.313054</td>
+      <td>3.297800</td>
+      <td>2.677990</td>
+      <td>2.193890</td>
+      <td>1.047151</td>
+      <td>...</td>
+      <td>1.953447</td>
+      <td>2.194096</td>
+      <td>2.310694</td>
+      <td>1.677451</td>
+      <td>1.497305</td>
+      <td>3.834233</td>
+      <td>3.169087</td>
+      <td>2.312328</td>
+      <td>1.914531</td>
+      <td>2.189550</td>
+    </tr>
+    <tr>
+      <th>568</th>
+      <td>-1.820280</td>
+      <td>1.180334</td>
+      <td>-1.829694</td>
+      <td>-1.373145</td>
+      <td>-3.136430</td>
+      <td>-1.146386</td>
+      <td>-1.112854</td>
+      <td>-1.262821</td>
+      <td>-0.814161</td>
+      <td>-0.550948</td>
+      <td>...</td>
+      <td>-1.422709</td>
+      <td>0.736784</td>
+      <td>-1.448751</td>
+      <td>-1.103461</td>
+      <td>-1.860624</td>
+      <td>-1.176130</td>
+      <td>-1.291426</td>
+      <td>-1.735169</td>
+      <td>-0.043056</td>
+      <td>-0.739701</td>
+    </tr>
+  </tbody>
+</table>
+<p>455 rows × 30 columns</p>
+</div>
+
+
+
+Batch contains dataframes, as it's supposed to. But `torch` layers are working with tensors, not with dataframes. So the first component will pick some dataframes from the dictionary, concatenate it and convert to tensors:
+
+
+```python
+features = btf.InputConversionNetwork('features')(batch)
+features
+```
+
+
+
+
+    tensor([[ 1.0913, -2.0692,  1.2702,  ...,  2.3184,  2.7420,  1.9109],
+            [ 1.8256, -0.3733,  1.6883,  ...,  1.1057, -0.2378,  0.2782],
+            [ 1.5751,  0.4253,  1.5683,  ...,  1.9763,  1.1515,  0.1996],
+            ...,
+            [ 0.6957,  1.9927,  0.6699,  ...,  0.4306, -1.0943, -0.3130],
+            [ 1.8341,  2.2796,  1.9864,  ...,  2.3123,  1.9145,  2.1896],
+            [-1.8203,  1.1803, -1.8297,  ..., -1.7352, -0.0431, -0.7397]])
+
+
+
+How to create a factory for this network? Well, unlike `ClassificationNetwork`, this network does not really depend on the input. Thus, it does not require a factory. Some modules in `torch` are also like that, for instance, `Dropout` or `Embedding`.
+
+Then, we can use the class `btf.Perceptron` for one perceptron layer in our network.
+
+
+```python
+btf.Perceptron(features, 10)
+```
+
+
+
+
+    Perceptron(
+      (linear_layer): Linear(in_features=30, out_features=10, bias=True)
+    )
+
+
+
+`btf.Perceptron` accepts `input_size` and `output_size`, but both arguments can be `int` or `tensors`. If they are tensors, `btf.Perceptron` will try to deduce the required size out of them. 
+
+Do we need a factory? No: `btf.Perceptron` accepts tensor as a first argument, and other constructor arguments are fixed parameters, so:
+
+
+```python
+from functools import partial
+
+factory = partial(btf.Perceptron, output_size=10)
+factory(features)
+```
+
+
+
+
+    Perceptron(
+      (linear_layer): Linear(in_features=30, out_features=10, bias=True)
+    )
+
+
+
+But how to combine together all these? We have `FeedForwardNetwork` for this:
+
+
+```python
+factory = btf.FeedForwardNetwork.Factory(
+    btf.InputConversionNetwork('features'),
+    partial(btf.Perceptron,output_size=10),
+    partial(btf.Perceptron, output_size=1)
+)
+factory(batch)
+```
+
+
+
+
+    FeedForwardNetwork(
+      (networks): ModuleList(
+        (0): InputConversionNetwork()
+        (1): Perceptron(
+          (linear_layer): Linear(in_features=30, out_features=10, bias=True)
+        )
+        (2): Perceptron(
+          (linear_layer): Linear(in_features=10, out_features=1, bias=True)
+        )
+      )
+    )
+
+
+
+Looks good! However, we still had to indicate the output size of the network manually. This logic is implemented in `FullyConnectedNetworkFactory` class:
+
+
+```python
+factory = btf.Factories.FullyConnected([10],'features',btf.Conventions.LabelFrame)
+factory(batch)
+```
+
+
+
+
+    FeedForwardNetwork(
+      (networks): ModuleList(
+        (0): FeedForwardNetwork(
+          (networks): ModuleList(
+            (0): InputConversionNetwork()
+            (1): Perceptron(
+              (linear_layer): Linear(in_features=30, out_features=10, bias=True)
+            )
+          )
+        )
+        (1): Perceptron(
+          (linear_layer): Linear(in_features=10, out_features=1, bias=True)
+        )
+      )
+    )
+
+
+
+Now, let's try this network with our classification task:
+
+
+```python
+class ClassificationTask(btf.TorchTrainingTask):
+    def initialize_task(self, data):
+        self.metric_pool = bt.MetricPool().add_sklearn(roc_auc_score)
+        self.settings.epoch_count = 10
+        self.settings.batch_size = 1000
+        self.settings.mini_match_size = None
+        self.setup_batcher(data, [get_feature_extractor(), get_binary_label_extractor()])
+        self.setup_model(btf.Factories.FullyConnected([10],'features',btf.Conventions.LabelFrame))
+        
+task = ClassificationTask()
+result = task.run(get_binary_classification_bundle())
+pd.DataFrame(result['output']['history']).set_index('iteration').plot()
+```
+
+
+
+
+    <AxesSubplot:xlabel='iteration'>
+
+
+
+
+    
+![png](README_images/tg.common.ml.batched_training.factories_output_34_1.png?raw=true)
+    
+
+
+## Multilabel classification
+
+We will also demonstrate how the system works on multilabel classification. Let's create a bundle from the well-known `iris` dataset.
+
+
+```python
+def get_multilabel_classification_bundle():
+    ds = datasets.load_iris()
+    features = pd.DataFrame(ds['data'], columns=ds['feature_names'])
+    df = pd.DataFrame(ds['target_names'][ds['target']], columns = ['label'])
+    df['split'] = bt.train_display_test_split(df, 0.2, 0.2, 'label')
+    bundle = bt.DataBundle(index=df, features=features)
+    return bundle
+    
+get_multilabel_classification_bundle().index.head()
+```
+
+
+
+
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>label</th>
+      <th>split</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>setosa</td>
+      <td>train</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>setosa</td>
+      <td>train</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>setosa</td>
+      <td>train</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>setosa</td>
+      <td>test</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>setosa</td>
+      <td>display</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+def get_multilabel_extractor():
+    label_extractor = (bt.PlainExtractor
+                   .build(btf.Conventions.LabelFrame)
+                   .index()
+                   .apply(take_columns=['label'], transformer=dft.DataFrameTransformerFactory.default_factory())
+                  )
+    return label_extractor
+
+db = get_multilabel_classification_bundle()
+idb = bt.IndexedDataBundle(db.index, db)
+test_extractor( get_multilabel_extractor(), idb).head()
+```
+
+
+
+
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>label_setosa</th>
+      <th>label_versicolor</th>
+      <th>label_virginica</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+class ClassificationTask(btf.TorchTrainingTask):
+    def initialize_task(self, data):
+        self.metric_pool = bt.MetricPool().add(bt.MulticlassMetrics())
+        self.settings.epoch_count = 20
+        self.settings.batch_size = 10000
+        self.settings.mini_match_size = None
+        
+        self.setup_batcher(data, [get_feature_extractor(), get_multilabel_extractor()])
+        self.optimizer_ctor.kwargs.lr = 1
+        self.setup_model(btf.Factories.FullyConnected([],'features',btf.Conventions.LabelFrame))
+        
+task = ClassificationTask()
+result = task.run(get_multilabel_classification_bundle())
+pd.DataFrame(result['output']['history']).set_index('iteration').plot()
+```
+
+
+
+
+    <AxesSubplot:xlabel='iteration'>
+
+
+
+
+    
+![png](README_images/tg.common.ml.batched_training.factories_output_39_1.png?raw=true)
+    
+
+
+## Best practices
+
+
+
+### How to get aboard?
+
+
+
+### Configuring experiments
+
+
+
+Setting the sequence of the experiments is hard. It gets even harder if you don't do it right: in the end, you might end up with lots of jobs at Sagemaker with some metrics, but no one knows what are the parameters of the jobs, or how to use, reuse or reproduce them. To avoid these issues we recommend:
+
+* Configure with parameters, not code. This is not a good practice, when to conduct an experiment, you change something in the code, and then change it back after the experiment. Instead, you put the code, required by the experiment, into the network and isolate it with flags. Ideally, you are able to reproduce any past experiments you had by settings the corresponding parameters.
+* If there is a functionality that we may require in other experiments, we isolate it in the separate entities, and the parameters are contained in this entities, _not_ in `TorchTrainingTask` subclass. Examply here is `optimizer_ctor` which contains all the parameters of the optimizer. Don't duplicate settings fields.
+* Give meaningful names to the tasks, that represent the important parameters.
+
+To do so, we offer tro-tier initialization. First tier is the Task, such as classification Task. It should be functionable from the start, so use defaults for all the parameters you can:
+
+
+```python
+class ClassificationTask(btf.TorchTrainingTask):
+    def __init__(self):
+        super(ClassificationTask, self).__init__()
+        self.hidden_size = (50,)
+    
+    def initialize_task(self, data):
+        self.metric_pool = bt.MetricPool().add(bt.MulticlassMetrics())
+        self.setup_batcher(data, [get_feature_extractor(), get_multilabel_extractor()])
+        self.setup_model(btf.Factories.FullyConnected(self.hidden_size,'features',btf.Conventions.LabelFrame))
+        
+```
+
+Then, we recommend to create the function that accept all the parameters you want to use, and applies them in the corresponding fields:
+
+
+```python
+def create_task(epoch_count=20, network_size=(50,), learning_rate = 1, algorithm ='Adam'):
+    task = ClassificationTask()
+    task.settings.epoch_count = epoch_count
+    task.hidden_size = network_size
+    task.optimizer_ctor.kwargs.lr = learning_rate
+    task.optimizer_ctor.type='torch.optim:'+algorithm
+    return task
+    
+create_task()
+```
+
+
+
+
+    <__main__.ClassificationTask at 0x7f2e402c6b20>
+
+
+
+We can safely do this, because all the initialization happens in `late_initialization`, so, after we actually execute the task. Hence, we can modify the parameters after the object has been created.
+
+To maintain the meaningful names, use this class:
+
+
+```python
+from tg.common.delivery.sagemaker import Autonamer
+
+creator = Autonamer(create_task)
+tasks = creator.build_tasks(
+    network_size=[ (), (10,), (10,10) ],
+    learning_rate = [0.1, 0.3, 1],
+    algorithm = ['Adam','SGD']
+)
+tasks[-1].info['name']
+```
+
+
+
+
+    'NS10-10-LR1-ASGD'
+
+
+
+`Autonamer` accepts the ranges of each argument of the `create_task`, then runs to all possible combinations, create a task with these parameters and also assigns the name to it, trying to abbreviate the name of the argument and shorten it's value.
+
+
+```python
+results = {}
+for task in Query.en(tasks).feed(fluq.with_progress_bar()):
+    result = task.run(get_multilabel_classification_bundle())
+    results[task.info['name']] = pd.DataFrame(result['output']['history']).set_index('iteration').accuracy_test
+```
+
+
+      0%|          | 0/18 [00:00<?, ?it/s]
+
+
+
+```python
+from matplotlib import pyplot as plt
+_, ax = plt.subplots(1,1,figsize=(20,10))
+rdf = pd.DataFrame(results)
+rdf.plot(ax=ax)
+```
+
+
+
+
+    <AxesSubplot:xlabel='iteration'>
+
+
+
+
+    
+![png](README_images/tg.common.ml.batched_training.factories_output_50_1.png?raw=true)
+    
+
+
+
+```python
+rdf.iloc[-1].sort_values(ascending=False).plot(kind='barh')
+```
+
+
+
+
+    <AxesSubplot:>
+
+
+
+
+    
+![png](README_images/tg.common.ml.batched_training.factories_output_51_1.png?raw=true)
+    
+
+
+Now note, that all the parameters are available as fields somewhere deep in the `task` object. That means that hyperparameter optimization, explained in `tg.common.ml.single_frame` remains available.
 
 
 
@@ -9173,39 +10480,27 @@ df.shape
 
 
 
-The following code will create a `BatchedTrainingTask` for this classification task, similarly to what we've seen in the previous demos. It will also output a batch for the task.
+
+```python
+from tg.common.ml import batched_training as bt
+
+plain_bundle = bt.DataBundle(index=df)
+```
+
+First, let's define the extractors:
 
 
 ```python
+from tg.common.ml.batched_training import factories as btf
 from tg.common.ml import dft
-from tg.common.ml import batched_training as bt
-from tg.common.ml.batched_training import torch as btt
-from sklearn.metrics import roc_auc_score
-from tg.common import Logger
 
-Logger.disable()
-
-def create_plain_task(df, epochs = 500):
-    label_extractor = bt.PlainExtractor.build('label').index().apply(take_columns='label')
-    features_extractor = bt.PlainExtractor.build('features').index().apply(
-        take_columns=[f for f in df.columns if f.startswith('word')],
-        transformer=dft.DataFrameTransformerFactory.default_factory()
-    )
-    extractor_factory = btt.PredefinedExtractorFactory(label_extractor, features_extractor)
-    network_factory = btt.FullyConnectedNetwork.Factory(sizes=[100,1]).prepend_extraction('features')
-    task = btt.TorchTrainingTask(
-        bt.TrainingSettings(epoch_count = epochs),
-        btt.TorchTrainingSettings(),
-        extractor_factory,
-        network_factory,
-        bt.MetricPool().add_sklearn(roc_auc_score)
-    )
-    return task
-
-
-plain_bundle = bt.DataBundle(index=df)
-task = create_plain_task(df)
-task.generate_sample_batch(plain_bundle)['features'].head()
+label_extractor = bt.PlainExtractor.build('label').index().apply(take_columns=btf.Conventions.LabelFrame)
+features_extractor = bt.PlainExtractor.build('features').index().apply(
+    take_columns=[f for f in df.columns if f.startswith('word')],
+    transformer=dft.DataFrameTransformerFactory.default_factory()
+)
+plain_batch = bt.Batcher.generate_sample(plain_bundle, [label_extractor, features_extractor])
+plain_batch['features'].head()
 ```
 
 
@@ -9218,11 +10513,8 @@ task.generate_sample_batch(plain_bundle)['features'].head()
     <tr style="text-align: right;">
       <th></th>
       <th>word_0_A</th>
-      <th>word_0_B</th>
-      <th>word_0_C</th>
       <th>word_1_A</th>
       <th>word_1_B</th>
-      <th>word_1_C</th>
       <th>word_2_A</th>
       <th>word_2_B</th>
       <th>word_2_C</th>
@@ -9241,19 +10533,13 @@ task.generate_sample_batch(plain_bundle)['features'].head()
       <th></th>
       <th></th>
       <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
       <td>1.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
       <td>1.0</td>
-      <td>0.0</td>
       <td>0.0</td>
       <td>1.0</td>
       <td>0.0</td>
@@ -9265,10 +10551,7 @@ task.generate_sample_batch(plain_bundle)['features'].head()
     <tr>
       <th>1</th>
       <td>1.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
       <td>1.0</td>
-      <td>0.0</td>
       <td>0.0</td>
       <td>1.0</td>
       <td>0.0</td>
@@ -9280,10 +10563,7 @@ task.generate_sample_batch(plain_bundle)['features'].head()
     <tr>
       <th>2</th>
       <td>1.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
       <td>1.0</td>
-      <td>0.0</td>
       <td>0.0</td>
       <td>1.0</td>
       <td>0.0</td>
@@ -9295,10 +10575,7 @@ task.generate_sample_batch(plain_bundle)['features'].head()
     <tr>
       <th>3</th>
       <td>1.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
       <td>1.0</td>
-      <td>0.0</td>
       <td>0.0</td>
       <td>0.0</td>
       <td>1.0</td>
@@ -9310,10 +10587,7 @@ task.generate_sample_batch(plain_bundle)['features'].head()
     <tr>
       <th>4</th>
       <td>1.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
       <td>1.0</td>
-      <td>0.0</td>
       <td>0.0</td>
       <td>0.0</td>
       <td>1.0</td>
@@ -9326,6 +10600,102 @@ task.generate_sample_batch(plain_bundle)['features'].head()
 </table>
 </div>
 
+
+
+
+```python
+plain_batch['label'].head()
+```
+
+
+
+
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>label</th>
+    </tr>
+    <tr>
+      <th>sentence_id</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+from sklearn.metrics import roc_auc_score
+from tg.common import Logger
+
+Logger.disable()
+
+class PlainTask(btf.TorchTrainingTask):
+    def initialize_task(self, data):
+        metrics = bt.MetricPool().add_sklearn(roc_auc_score)
+        self.settings.batch_size = 1000
+        self.settings.mini_match_size = None
+        self.metric_pool = metrics
+        
+        label_extractor = bt.PlainExtractor.build('label').index().apply(take_columns=btf.Conventions.LabelFrame)
+        features_extractor = bt.PlainExtractor.build('features').index().apply(
+            take_columns=[f for f in df.columns if f.startswith('word')],
+            transformer=dft.DataFrameTransformerFactory.default_factory()
+        )
+        self.setup_batcher(data, [features_extractor, label_extractor])
+        
+        self.optimizer_ctor.kwargs.lr = 1
+        self.setup_model(btf.Factories.FullyConnected([100],'features',btf.Conventions.LabelFrame))
+        
+def run(task, bundle, epoch_count = 100, name = 'roc_auc'):
+    task.settings.epoch_count = epoch_count
+    result = task.run(bundle)
+    df = pd.DataFrame(result['output']['history']).set_index('iteration')
+    series = df.roc_auc_score_display
+    series.name = str(name)
+    return series
+
+run(PlainTask(), bt.DataBundle(index=df)).plot()
+```
+
+
+
+
+    <AxesSubplot:xlabel='iteration'>
+
+
+
+
+    
+![png](README_images/tg.common.ml.batched_training.context_output_10_1.png?raw=true)
+    
 
 
 We won't have any test data. As ***L*** is random, it's impossible to predict the status of the word without seeing it. So effectively, the neural network just needs to memorize the table. 
@@ -9346,7 +10716,7 @@ def get_roc_auc_curve(name, task, bundle):
 curves = (Query
           .en(range(5))
           .feed(fluq.with_progress_bar())
-          .select(lambda z: get_roc_auc_curve(z, create_plain_task(df, epochs=500), bt.DataBundle(index=df)))
+          .select(lambda z: run(PlainTask(), bt.DataBundle(index=df), epoch_count=500, name=str(z)))
           .to_list()
          )
 pd.DataFrame(curves).transpose().plot()
@@ -9359,7 +10729,7 @@ pass
 
 
     
-![png](README_images/tg.common.ml.batched_training.context_output_10_1.png?raw=true)
+![png](README_images/tg.common.ml.batched_training.context_output_13_1.png?raw=true)
     
 
 
@@ -9381,7 +10751,8 @@ def find_good_language(N):
     for i in Query.en(range(N)).feed(fluq.with_progress_bar()):
         df = generate_task(4, ['A','B','C'])
         tasks.append(df)
-        roc = get_roc_auc_curve(i, create_plain_task(df), bt.DataBundle(df, {}))
+        bundle = bt.DataBundle(index=df)
+        roc = run(PlainTask(), bundle, name=i)
         value = roc.iloc[-1]
         rocs.append(value)
         print(value, end=' ')
@@ -9886,36 +11257,42 @@ Now, we will assemble the neural network to train on this data.
 
 
 ```python
-def create_sequential_task(context_extractor, network_factory, lr = 1, epochs = 100):
-    task = btt.TorchTrainingTask(
-        bt.TrainingSettings(epoch_count=epochs),
-        btt.TorchTrainingSettings(
-            optimizer_ctor=btt.OptimizerConstructor('torch.optim:SGD', lr=lr)
-        ),
-        btt.PredefinedExtractorFactory(
-            context_extractor,
-            bt.PlainExtractor.build('label').index().apply(take_columns='label')
-        ),
-        network_factory,
-        bt.MetricPool().add_sklearn(roc_auc_score)
-    )
-    return task
+class SequentialTask(btf.TorchTrainingTask):
+    def __init__(self, context_extractor, network_factory, lr = 1):
+        super(SequentialTask, self).__init__()
+        self.context_extractor = context_extractor
+        self.network_factory = network_factory
+        self.lr = lr
+    
+    def initialize_task(self, data):
+        metrics = bt.MetricPool().add_sklearn(roc_auc_score)
+        self.settings.batch_size = 1000
+        self.settings.mini_match_size = None
+        self.metric_pool = metrics
+        
+        label_extractor = bt.PlainExtractor.build('label').index().apply(take_columns=btf.Conventions.LabelFrame)
+        self.setup_batcher(data, [self.context_extractor, label_extractor])
+        
+        self.optimizer_ctor.kwargs.lr = self.lr
+        self.setup_model(self.network_factory)
+        
 
-task = create_sequential_task(
+    
+task = SequentialTask(
     build_context_extractor(
         db.additional_information.context_length,
         btc.PivotAggregator()
     ),
-    btt.FullyConnectedNetwork.Factory([100,1]).prepend_extraction(['features'])
+    btf.Factories.FullyConnected([100],'features',btf.Conventions.LabelFrame)
 )
-    
-get_roc_auc_curve('', task, db).plot()
+
+run(task, db).plot()
 pass
 ```
 
 
     
-![png](README_images/tg.common.ml.batched_training.context_output_30_0.png?raw=true)
+![png](README_images/tg.common.ml.batched_training.context_output_33_0.png?raw=true)
     
 
 
@@ -9927,9 +11304,9 @@ Let's now explore the task a bit further and see how the context length affects 
 ```python
 curves = []
 for i in Query.en(range(1,db.additional_information.context_length+1)).feed(fluq.with_progress_bar()):
-    task = create_sequential_task(
+    task = SequentialTask(
         build_context_extractor(i, btc.PivotAggregator()),
-        btt.FullyConnectedNetwork.Factory([100,1]).prepend_extraction(['features'])
+        btf.Factories.FullyConnected([100],'features',btf.Conventions.LabelFrame)
     )
     curves.append(get_roc_auc_curve(i, task, db))
 pd.DataFrame(curves).transpose().plot()
@@ -9942,7 +11319,7 @@ pass
 
 
     
-![png](README_images/tg.common.ml.batched_training.context_output_32_1.png?raw=true)
+![png](README_images/tg.common.ml.batched_training.context_output_35_1.png?raw=true)
     
 
 
@@ -9955,11 +11332,11 @@ This is why you may also want to use other aggregators. For instance, `GroupByAg
 
 ```python
 context_extractor = build_context_extractor(i, btc.GroupByAggregator(['mean','max']))
-task = create_sequential_task(
+task = SequentialTask(
     context_extractor,
-    btt.FullyConnectedNetwork.Factory([100,1]).prepend_extraction('features')
+    btf.Factories.FullyConnected([100],'features',btf.Conventions.LabelFrame)
 )
-batch = task.generate_sample_batch(db)
+_ = task.generate_sample_batch_and_temp_data(db)
 Query.en(context_extractor.data_.agg_dfs.values()).first().head()
 ```
 
@@ -10047,9 +11424,9 @@ Let's evaluate performance of this system as well
 ```python
 curves = []
 for i in Query.en(range(1,db.additional_information.context_length+1)).feed(fluq.with_progress_bar()):
-    task = create_sequential_task(
+    task = SequentialTask(
         build_context_extractor(i, btc.GroupByAggregator(['mean', 'max'])),
-        btt.FullyConnectedNetwork.Factory([100,1]).prepend_extraction('features')
+        btf.Factories.FullyConnected([100],'features',btf.Conventions.LabelFrame)
     )
     curves.append(get_roc_auc_curve(i, task, db))
 pd.DataFrame(curves).transpose().plot()
@@ -10062,7 +11439,7 @@ pass
 
 
     
-![png](README_images/tg.common.ml.batched_training.context_output_37_1.png?raw=true)
+![png](README_images/tg.common.ml.batched_training.context_output_40_1.png?raw=true)
     
 
 
@@ -10085,11 +11462,11 @@ class CustomAggregator(btc.ContextAggregator):
         return df
     
 context_extractor = build_context_extractor(i, CustomAggregator())
-task = create_sequential_task(
+task = SequentialTask(
     context_extractor,
-    btt.FullyConnectedNetwork.Factory([100,1]).prepend_extraction('features')
+    btf.Factories.FullyConnected([100],'features',btf.Conventions.LabelFrame)
 )
-batch = task.generate_sample_batch(db)
+_ = task.generate_sample_batch_and_temp_data(db)
 Query.en(context_extractor.data_.agg_dfs.values()).first().head()
 ```
 
@@ -10154,9 +11531,9 @@ Query.en(context_extractor.data_.agg_dfs.values()).first().head()
 ```python
 curves = []
 for i in Query.en(range(1,db.additional_information.context_length+1)).feed(fluq.with_progress_bar()):
-    task = create_sequential_task(
+    task = SequentialTask(
         build_context_extractor(i, CustomAggregator()),
-        btt.FullyConnectedNetwork.Factory([100,1]).prepend_extraction('features')
+        btf.Factories.FullyConnected([100],'features',btf.Conventions.LabelFrame)
     )
     curves.append(get_roc_auc_curve(i, task, db))
 pd.DataFrame(curves).transpose().plot()
@@ -10169,7 +11546,7 @@ pass
 
 
     
-![png](README_images/tg.common.ml.batched_training.context_output_40_1.png?raw=true)
+![png](README_images/tg.common.ml.batched_training.context_output_43_1.png?raw=true)
     
 
 
@@ -10294,7 +11671,7 @@ def build_lstm_extractor(context_length):
                 take_columns=['word'], 
                 transformer = dft.DataFrameTransformerFactory.default_factory()
             )),
-        finalizer = btt.LSTMFinalizer()
+        finalizer = btc.LSTMFinalizer()
     )
     return context_extractor
 
@@ -10360,31 +11737,77 @@ value.dim_indices
 
 
 
-Now, we can train a neural network with `LSTMNetwork` component, which is a slim decorator over `LSTM` that manages it's output.
+Now, we can train a neural network with `LSTMNetwork` component, which is a slim decorator over `LSTM` that manages it's output. 
+
+First, let's create a batch:
 
 
 ```python
-def build_lstm_network_factory(lstm_size):
-    return btt.FeedForwardNetwork.Factory(
-        btt.ExtractingNetwork.Factory('features'),
-        btt.LSTMNetwork.Factory(lstm_size),
-        btt.FullyConnectedNetwork.Factory([1])
+batch = bt.Batcher.generate_sample(db, [label_extractor, lstm_extractor])
+{key: type(value) for key, value in batch.bundle.data_frames.items()}
+```
+
+
+
+
+    {'label': pandas.core.frame.DataFrame,
+     'features': tg.common.ml.batched_training.factories.networks.basics.AnnotatedTensor}
+
+
+
+Then create a factory, and also network to see how it looks like:
+
+
+```python
+from functools import partial
+
+lstm_factory = btf.Factories.Tailing(
+    btf.FeedForwardNetwork.Factory(
+        btf.InputConversionNetwork('features'),
+        partial(btc.LSTMNetwork, hidden_size=10),
+    ),
+    btf.Conventions.LabelFrame
+)
+
+network = lstm_factory(batch)
+network
+```
+
+
+
+
+    FeedForwardNetwork(
+      (networks): ModuleList(
+        (0): FeedForwardNetwork(
+          (networks): ModuleList(
+            (0): InputConversionNetwork()
+            (1): LSTMNetwork(
+              (lstm): LSTM(3, 10)
+            )
+          )
+        )
+        (1): Perceptron(
+          (linear_layer): Linear(in_features=10, out_features=1, bias=True)
+        )
+      )
     )
 
 
-task = create_sequential_task(
+
+
+```python
+task = SequentialTask(
     build_lstm_extractor(db.additional_information.context_length),
-    build_lstm_network_factory(10),
-    epochs = 100,
+    lstm_factory,
 )
 
-get_roc_auc_curve('', task, db).plot()
+run(task, db).plot()
 pass
 ```
 
 
     
-![png](README_images/tg.common.ml.batched_training.context_output_54_0.png?raw=true)
+![png](README_images/tg.common.ml.batched_training.context_output_60_0.png?raw=true)
     
 
 
@@ -10392,33 +11815,151 @@ We see that after 100 iterations the quality is low, but growing, while previous
 
 
 ```python
-task = create_sequential_task(
-    build_lstm_extractor(db.additional_information.context_length),
-    build_lstm_network_factory(10),
-    epochs = 1000
-)
-
-get_roc_auc_curve('', task, db).plot()
+run(task, db, epoch_count=1000).plot()
 pass
 ```
 
 
     
-![png](README_images/tg.common.ml.batched_training.context_output_56_0.png?raw=true)
+![png](README_images/tg.common.ml.batched_training.context_output_62_0.png?raw=true)
     
 
 
-In all the cases we run this cell, the quality of the "plain" networks was surpassed, often reaching the 0.9 value without stabilization. It might be the sign that this network architecture is indeed superior in comparison with the other, but this is anyway not the point we're trying to make. The point is that the classes, used for the data transformation, are working correctly and are ready to be used in conjustion with LSTM and other recurrent neural networks.
+In nearly all the cases we run this cell, the quality of the "plain" networks was surpassed, often reaching the 0.9 value without stabilization. It might be the sign that this network architecture is indeed superior in comparison with the other, but this is anyway not the point we're trying to make. The point is that the classes, used for the data transformation, are working correctly and are ready to be used in conjustion with LSTM and other recurrent neural networks.
+
+## Assembly Point
+
+We see that there is a lot of ways to configure networks and extractors for contextual processing. Also, there are actually multiple ways of processing 3-dimentional tensors: LSTM, LSTM with attention, attention only, or Dropout. To easy coordinate the networks and extractors, as well as to create richer networks, `AssemblyPoint` can be used.
+
+`AssemblyPoint` is a factory that produces both extractors and network factories in a coordinated way. Most of the settings will be filled with some default values that allow `AssemblyPoint` work _somehow_ (but not necesserily the way that is optimal for your task).
 
 
 
-# 4.1. Packages and Containers (tg.common.delivery.packaging)
+
+```python
+ibundle.bundle.additional_information.context_length
+```
+
+
+
+
+    4
+
+
+
+
+```python
+ap = btc.ContextualAssemblyPoint(
+    name = 'features',
+    context_builder = SentenceContextBuilder(),
+    extractor = bt.PlainExtractor.build('word').index().apply(
+        take_columns=['word'], 
+        transformer = dft.DataFrameTransformerFactory.default_factory())
+)
+ap.context_length = ibundle.bundle.additional_information.context_length
+
+```
+
+Let's write the method to ensure the extractor works with the network:
+
+
+```python
+def test_assembly_point(ap):
+    extractor = ap.create_extractor()
+    network_factory = ap.create_network_factory()
+    batch = bt.Batcher.generate_sample(db, [extractor])
+    network = network_factory(batch)
+    result = network(batch)
+    response = {
+        'features_type': type(batch['features']),
+        'features_shape': batch['features'].shape,
+        'network_output_shape': result.shape,
+        'network': network
+    }
+    return response
+    
+test_assembly_point(ap)
+```
+
+
+
+
+    {'features_type': pandas.core.frame.DataFrame,
+     'features_shape': (10, 17),
+     'network_output_shape': torch.Size([10, 20]),
+     'network': FeedForwardNetwork(
+       (networks): ModuleList(
+         (0): InputConversionNetwork()
+         (1): Perceptron(
+           (linear_layer): Linear(in_features=17, out_features=20, bias=True)
+         )
+       )
+     )}
+
+
+
+
+```python
+ap.reduction_type = btc.ReductionType.Dim3
+test_assembly_point(ap)
+```
+
+
+
+
+    {'features_type': tg.common.ml.batched_training.factories.networks.basics.AnnotatedTensor,
+     'features_shape': (4, 10, 3),
+     'network_output_shape': torch.Size([10, 20]),
+     'network': FeedForwardNetwork(
+       (networks): ModuleList(
+         (0): InputConversionNetwork()
+         (1): LSTMNetwork(
+           (lstm): LSTM(3, 20)
+         )
+       )
+     )}
+
+
+
+
+```python
+ap.dim_3_network_factory.droupout_rate = 0.5
+test_assembly_point(ap)
+```
+
+
+
+
+    {'features_type': tg.common.ml.batched_training.factories.networks.basics.AnnotatedTensor,
+     'features_shape': (4, 10, 3),
+     'network_output_shape': torch.Size([10, 20]),
+     'network': FeedForwardNetwork(
+       (networks): ModuleList(
+         (0): InputConversionNetwork()
+         (1): Dropout3d(p=0.5, inplace=False)
+         (2): LSTMNetwork(
+           (lstm): LSTM(3, 20)
+         )
+       )
+     )}
+
+
+
+The use case for the `AssemblyPoint` is:
+* create a field of `AssemblyPoint` type in your subclass of `TorchTrainingTask`, e.g., `assebly_point`
+* externally adjust fields of `assembly_point` to configure it
+* in `initialize_task`, use assemply point to generate extractors and network factories. Augment the network factory with a tailing that ensures the right dimentionality of the output, manually or with `btf.Factories.Tailing` 
+* you can even use multiple assemble points! Each will create extractor and head network for the part of the input data, and then you'll assemble these heads into the full network.
+
+
+
+# 4.1. Packages and Containers (tg.common.delivery.delivery)
 
 ## Overview
 
 In this part, we will deliver the featurization job to a remote server and execute it there. This actually can be done with just few lines of code. But we will show a lot of the process "under the hood" to make you familiar with it, and to explain why do we have this setup.
 
-Delivery is the most fundamental purpose of training grounds. It is extremely easy to write _some_ data science code, that is executable on your local machine. It is not so easy though to then deliver this code to a remote server (be it server for training or a web-server that exposes model to the world) so that everything continues to work.
+Delivery is the most fundamental purpose of Training Grounds. It is extremely easy to write _some_ data science code, that is executable on your local machine. It is not so easy though to then deliver this code to a remote server (be it server for training or a web-server that exposes model to the world) so that everything continues to work.
 
 Delivery in Training Grounds is built upon the following principles.
 
@@ -10445,7 +11986,7 @@ The simpler solution is to package the current source code into a Python package
 
 ### Multiple versions
 
-We wanted different versions of a model to be able to run at the same time. But how can we do that, if the models are represented as packages? In Python, we cannot have two modules with the same name installed at the same time. Thus, they have to have different name. This is why Training Grounds itself is not a Python package, but a folder inside your project. 
+We may want different versions of a model to be able to run at the same time. But how can we do that, if the models are represented as packages? In Python, we cannot have two modules with the same name installed at the same time. Thus, they have to have different name. This is why Training Grounds itself is not a Python package, but a folder inside your project. 
 
 Consider the file structure, recommended by TG:
 ```
@@ -10465,22 +12006,20 @@ When building a package, these files will be transfomed into something like:
 
 Note that everything outside of original `/myproject/tg/` folder is ignored. So outside of `tg` folder you can have data caches, temporal files, sensitive information (as long as it's not pushed in the repository) and so on. It will never be delivered anywhere. The corollary is that all the classes and functions you use in your object must be defined inside `/tg/` folder. Otherwise, they will not be delivered.
 
-The name of the TG is actually `UID.tg`, with different UID in each package. Hence, several versions of TG can be used at the same time! But that brings another limitation that must be observed inside `tg` folder: all the references inside TG must be relative. They cannot refer to `tg`, because `tg` will become `{UID}.tg` in the runtime on the remote server.
+The name of the TG is actually `UID.tg`, with different UID in each package. Hence, several versions of TG can be used at the same time! But that brings another limitation that must be observed inside `tg` folder: all the references inside TG must be relative. They cannot refer to `tg`, because `tg` will become `UID.tg` in the runtime on the remote server.
 
 
 ### Hot Module Replacement
 
-Now, the question arises, how to use this package. We cannot write something like:
+Now, the question arises, how to use this package. Sometimes we want UID to be created dynamically, and in this case we cannot write something like this:
 
 ```
 from UID.tg import *
 ```
 
-because the name `UID` is formed dynamically. 
+The solution is to install the module during runtime. During this process, the name becomes known, and then we can dynamically import from the module. Of course, importing classes or methods would not be handy, but remember that deliverables are objects, and these objects are pickled as the module resources. So all we need to do is to unpickle these objects, and all the classes and methods will be loaded dynamically by unpickler. This work is done by `EntryPoint` class.
 
-The solution is to install the module during runtime. During this process, the name becomes known, and then we can dynamically import from the module. Of course, importing classes or methods would not be handy, but remember that deliverables are objects, and these objects are pickled as the module resources. So all we need to do is to unpickle these objects, and all the classes and methods will be loaded dynamically by unpickler. 
-
-This work is done by `EntryPoint` class.
+However, with Packaging you can also create packages with predictable names, publish them with PyPi and export locally.
 
 #### Note for advanced users
 
@@ -10490,224 +12029,92 @@ It is also possible to do same trick when unpickling: if you want to transfer th
 
 ## Packaging
 
-Consider the following job we want to deliver to the remote server and execute there.
+
+
+Packaging allows you to create a Python package with the source code and pickled job (arbitrary class with `run` method). For this package to work correctly, the job needs to be defined withing `tg` folder, so we will use an example job from training grounds. This job simply outputs `SUCCESS` with the Logger.
 
 
 ```python
-from tg.common.datasets.featurization import FeaturizationJob, DataframeFeaturizer
-from tg.common.datasets.selectors import Selector
-from tg.common.datasets.access import MockDfDataSource
-from tg.common import MemoryFileSyncer
-import pandas as pd
+from tg.common.delivery.delivery.example_job import ExampleJob
 
-mem = MemoryFileSyncer()
-
-job = FeaturizationJob(
-    name = 'job',
-    version = 'v1',
-    source = MockDfDataSource(pd.read_csv('titanic.csv')),
-    featurizers = {
-        'passengers': DataframeFeaturizer(row_selector = Selector.identity)
-    },
-    syncer = mem,
-    location = './temp/featurization_job'
-)
-
+job = ExampleJob()
 job.run()
-mem.get_parquet(list(mem.cache)[0]).head()
 ```
 
-    2022-08-09 09:31:02.532632+00:00 INFO: Featurization Job job at version v1 has started
-    2022-08-09 09:31:02.537750+00:00 INFO: Fetching data
-    2022-08-09 09:31:02.663642+00:00 INFO: Data fetched, finalizing
-    2022-08-09 09:31:02.709174+00:00 INFO: Uploading data
-    2022-08-09 09:31:02.711615+00:00 INFO: Featurization job completed
+    2022-12-28 14:24:44.951052 INFO: SUCCESS
 
 
-
-
-
-<div>
-
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>PassengerId</th>
-      <th>Survived</th>
-      <th>Pclass</th>
-      <th>Name</th>
-      <th>Sex</th>
-      <th>Age</th>
-      <th>SibSp</th>
-      <th>Parch</th>
-      <th>Ticket</th>
-      <th>Fare</th>
-      <th>Cabin</th>
-      <th>Embarked</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Braund, Mr. Owen Harris</td>
-      <td>male</td>
-      <td>22.0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>A/5 21171</td>
-      <td>7.2500</td>
-      <td>None</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>2</td>
-      <td>1</td>
-      <td>1</td>
-      <td>Cumings, Mrs. John Bradley (Florence Briggs Th...</td>
-      <td>female</td>
-      <td>38.0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>PC 17599</td>
-      <td>71.2833</td>
-      <td>C85</td>
-      <td>C</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>3</td>
-      <td>1</td>
-      <td>3</td>
-      <td>Heikkinen, Miss. Laina</td>
-      <td>female</td>
-      <td>26.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>STON/O2. 3101282</td>
-      <td>7.9250</td>
-      <td>None</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>4</td>
-      <td>1</td>
-      <td>1</td>
-      <td>Futrelle, Mrs. Jacques Heath (Lily May Peel)</td>
-      <td>female</td>
-      <td>35.0</td>
-      <td>1</td>
-      <td>0</td>
-      <td>113803</td>
-      <td>53.1000</td>
-      <td>C123</td>
-      <td>S</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>5</td>
-      <td>0</td>
-      <td>3</td>
-      <td>Allen, Mr. William Henry</td>
-      <td>male</td>
-      <td>35.0</td>
-      <td>0</td>
-      <td>0</td>
-      <td>373450</td>
-      <td>8.0500</td>
-      <td>None</td>
-      <td>S</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-For details about mentioned classes, we refer you to the previous demos. Essentialy, the code above just passes the `titanik.csv` file through the TG machinery, decomposes and reconstructs it again, without changing anything.
-
-Let's build the package with this job:
+`Packaging` class is a representation of all the settings, required for packaging. In the constructor, it only accepts the absolutely necessary values:
 
 
 ```python
-from tg.common.delivery.packaging import PackagingTask, make_package
-import copy
+from tg.common.delivery.delivery import Packaging
 
-packaging_task = PackagingTask(
-    name = 'titanic_featurization',
-    version = '1',
-    payload = dict(job = job),
-    silent = True
+packaging = Packaging(
+    name = 'example_job',
+    version = '0.0.0',
+    payload = dict(job = job)
 )
-
-info = make_package(packaging_task)
-desc = copy.deepcopy(info.__dict__)
-del desc['properties']['dependencies'] # just for readbility
-desc
+packaging.silent = True
 ```
 
-    warning: no files found matching '*.rst' under directory 'titanic_featurization__1'
+There are many fields in `Packaging` class, but most of them you don't need to adjust. The `dependencies` field is, however, important: it shows the python dependencies the package will have:
+
+
+```python
+packaging.dependencies
+```
+
+
+
+
+    ({'min': ['boto3', 'yo_fluq_ds', 'simplejson']},)
+
+
+
+By default, it contains only the dependencies required by `tg.common` itself; not all the dependencies required, e.g., by `tg.common.ml`. You have to manually add all the dependencies you are using, preferrably with the versions. 
+
+Generally, all the packaging code is "semi-finished" products: when used in your projects, it is recommended to create a class that takes care of all delivery-related processes in one method, making necessary calls and adjusting settings. The strategies for this will be discussed in the next demos.
+
+Now, let's create a package file:
+
+
+```python
+packaging.make_package()
+pass
+```
+
+    warning: no files found matching '*.yml' under directory 'example_job__0_0_0'
+    warning: no files found matching '*.rst' under directory 'example_job__0_0_0'
     warning: sdist: standard file not found: should have one of README, README.rst, README.txt, README.md
     
-    warning: check: missing required meta-data: url
-    
-    warning: check: missing meta-data: either (author and author_email) or (maintainer and maintainer_email) must be supplied
-    
 
 
-
-
-
-    {'task': <tg.common.delivery.packaging.packaging_dto.PackagingTask at 0x7f688c42bf10>,
-     'module_name': 'titanic_featurization__1',
-     'path': PosixPath('/home/yura/Desktop/repos/lesvik-ml/temp/release/package/titanic_featurization__1-1.tar.gz'),
-     'properties': {'module_name': 'titanic_featurization',
-      'version': '1',
-      'full_module_name': 'titanic_featurization__1',
-      'tg_name': 'tg',
-      'full_tg_name': 'titanic_featurization__1.tg'}}
-
-
-
-Here `PackagingTask` defines all the properties of the package, and `make_package` creates the package. Normally, we don't use `silent=True` to see the intermediate steps.
-
-**Note**: `name` and `version` here are the name and version in the sense of Python. 
-
-If you create and install another package with the name `titanic_featurization` and higher version, the version 1 will be removed from the system - because Python does not allow you to have different versions of the same library at the same time. This is the way to go if you actually want to update the model.
-
-If you want several models to be used at the same time, you need to incorporate the version inside name, e.g. `name=titanic_featurization_1`
-
-Let us now install the created package. `make_package` stored a file in the local system, and now we will install it. In the code, it results in the `EntryPoint` object.
+`make_package` stores the file in the local system, and now we will install it "on the fly". As a result, we will get `EntryPoint` object:
 
 
 ```python
-from tg.common.delivery.packaging import install_package_and_get_loader
+from tg.common.delivery.delivery import install_package_and_get_loader
 
-entry_point = install_package_and_get_loader(info.path, silent = True)
-entry_point.__dict__
+entry_point = install_package_and_get_loader(packaging.package_location, silent = True)
+{k:v for k,v in entry_point.__dict__.items() if k!='resources_location'}
 ```
 
-    WARNING: Skipping titanic-featurization as it is not installed.
+    WARNING: Skipping example-job as it is not installed.
 
 
 
 
 
-    {'module_name': 'titanic_featurization',
-     'module_version': '1',
-     'tg_module_name': 'titanic_featurization__1.tg',
-     'python_module_name': 'titanic_featurization__1',
-     'original_tg_module_name': 'tg',
-     'resources_location': '/home/yura/anaconda3/envs/lesvik/lib/python3.8/site-packages/titanic_featurization__1/resources'}
+    {'name': 'example_job',
+     'version': '0.0.0',
+     'module_name': 'example_job__0_0_0',
+     'tg_import_path': 'example_job__0_0_0.tg',
+     'original_tg_import_path': 'tg'}
 
 
 
-Now we will load the job from the package. Note that the classes are indeed located in different modules.
+Now we will load the job from the package. 
 
 
 ```python
@@ -10716,205 +12123,189 @@ print(type(job))
 print(type(loaded_job))
 ```
 
-    <class 'tg.common.datasets.featurization.simple.featurization_job.FeaturizationJob'>
-    <class 'titanic_featurization__1.tg.common.datasets.featurization.simple.featurization_job.FeaturizationJob'>
+    <class 'tg.common.delivery.delivery.example_job.ExampleJob'>
+    <class 'example_job__0_0_0.tg.common.delivery.delivery.example_job.ExampleJob'>
 
+
+Note that:
+    
+  * the classes of `job` and `loaded_job` are different in located in the different models.
+  * the created module is not `example_job`, but `example_job__0_0_0`. The reason for this is that we may want to package and run different versions of `ExampleJobs` within one process, and we don't want the module with `0.0.1` version to remove the module with `0.0.1` version. If you don't want this behaviour, adjust `packaging.human_readable_module_name` parameter.
 
 ## Containering
 
 Although we could just run the package at the remote server via ssh, the more suitable way is to use Docker. Training Grounds defines methods to build the docker container out of the package.
 
-`make_container` produces a very extensive output, so we will remove it with `clear_output` function.
+Most of the container's settings can be inherited from the package, so it's the easiest way to create a containering object:
 
 
 ```python
-from tg.common.delivery.packaging import ContaineringTask, make_container
-from IPython.display import clear_output
+from tg.common.delivery.delivery import Containering
 
-ENTRY_FILE_TEMPLATE = '''
-import {module}.{tg_name}.common.delivery.jobs.ssh_docker_job_execution as feat
-from {module} import Entry
-import logging
 
-logger = logging.getLogger()
-
-logger.info("Hello, docker!")
-job = Entry.load_resource('job')
-job.run()
-logger.info(job.syncer.get_parquet(list(job.syncer.cache)[0]).head())
-
-'''
-
-DOCKERFILE_TEMPLATE  = '''FROM python:3.7
-
-{install_libraries}
-
-COPY . /featurization
-
-WORKDIR /featurization
-
-COPY {package_filename} package.tar.gz
-
-RUN pip install package.tar.gz
-
-CMD ["python3","/featurization/run.py"]
-'''
-
-task = ContaineringTask(
-    packaging_task = packaging_task,
-    entry_file_name = 'run.py',
-    entry_file_template=ENTRY_FILE_TEMPLATE,
-    dockerfile_template=DOCKERFILE_TEMPLATE,
-    image_name='titanic-featurization',
-    image_tag='test'
-)
-
-make_container(task)
-clear_output()
+containering = Containering.from_packaging(packaging)
+containering.silent = True
 ```
 
-Now, we can run this container locally:
+A comment regarding dependencies: when building the container, we first pre-install the dependencies, specified in the `Containering` object, then copy package and install the package (and this triggers installation of dependencies, specified in the `Packaging` object). This allows us to reuse the same Docker layer for many containering process, so, if your dependencies are stable and you build many containers with different jobs, it will save a great deal of time.
+
+Let's build the container:
 
 
 ```python
-!docker run titanic-featurization:test
+containering.make_container(packaging)
 ```
 
-    2022-08-09 09:31:24.096367+00:00 INFO: Featurization Job job at version v1 has started
-    2022-08-09 09:31:24.097195+00:00 INFO: Fetching data
-    2022-08-09 09:31:24.236697+00:00 INFO: Data fetched, finalizing
-    2022-08-09 09:31:24.304665+00:00 INFO: Uploading data
-    2022-08-09 09:31:24.306001+00:00 INFO: Featurization job completed
-
-
-This `make_container` function is not "standard" or "universal": it just allows building the containers that are suitable for Sagemaker tasks and featurization jobs. So if you need some more sophisticated containering, please check the source code of this function to understand how to create an analog for it. Most of the complicated job is done by packaging, so `make_container` really just fills templates with values and executes some shell commands.
+    sha256:eec5c21e38845c5a7881c373f5725f701b0bc3b3e1c28106120b1897d862a44c
 
 
 
-# 4.2. Deliverable Jobs (tg.common.delivery.jobs)
 
-## SSH/Docker routine
 
-Fortunately, you don't really need to do packaging or containering yourself, because we have a higher level level interfaces to do that, which is `Routine` classes. 
+    <tg.common.delivery.delivery.containering.Containering at 0x7f7c141e1430>
 
-Let's create a job that we are going to package:
+
+
+Now we can run the container locally:
 
 
 ```python
-from tg.common.datasets.featurization import FeaturizationJob, DataframeFeaturizer
-from tg.common.datasets.selectors import Selector
-from tg.common.datasets.access import MockDfDataSource
-from tg.common import MemoryFileSyncer
-import pandas as pd
-
-mem = MemoryFileSyncer()
-
-job = FeaturizationJob(
-    name = 'job',
-    version = 'v1',
-    source = MockDfDataSource(pd.read_csv('titanic.csv')),
-    featurizers = {
-        'passengers': DataframeFeaturizer(row_selector = Selector.identity)
-    },
-    syncer = mem,
-    location = './temp/featurization_job'
-)
-
-
+containering.image_name, containering.image_tag
 ```
 
-Then, `SSHDockerJobRoutine` allows you to execute your jobs in the docker at the remote server to which you have ssh access.
+
+
+
+    ('example_job', '0.0.0')
+
+
 
 
 ```python
-from tg.common.delivery.jobs import SSHDockerJobRoutine, DockerOptions
-from tg.common.delivery.packaging import FakeContainerHandler
-
-routine = SSHDockerJobRoutine(
-    job = job,
-    remote_host_address=None,
-    remote_host_user=None,
-    handler_factory = FakeContainerHandler.Factory(),
-    options = DockerOptions(propagate_environmental_variables=[])
-)
+!docker run example_job:0.0.0
 ```
 
-Most of the fields are specified to None, because we are not going to actually start the remote job with this notebook. `remote_host_address` and `remote_host_user` arguments are self-explainatory. 
-
-As for `handler_factory`, this argument must be set to one of the factories that generate `ContainerHandler`. This `ContainerHandler` class must define a remote image name and tag, and perform push operations. `ContainerHandlers` are not included to the Training Grounds core, as they usually have some company-specific code.
-
-`SSHDockerJobRoutine` has methods of running your code for debugging.
-
-Using the `.attached` accesor, we can run job in the same Python process that your current code is executed. This is, of course, the fastest way to do that, and therefore it's preferrable to use this to debug for typos, wrong logic, etc.
-
-
-```python
-routine.attached.execute()
-```
-
-    2022-08-09 09:31:27.848467+00:00 INFO: Featurization Job job at version v1 has started
-    2022-08-09 09:31:27.849815+00:00 INFO: Fetching data
-    2022-08-09 09:31:27.909123+00:00 INFO: Data fetched, finalizing
-    2022-08-09 09:31:27.935127+00:00 INFO: Uploading data
-    2022-08-09 09:31:27.941760+00:00 INFO: Featurization job completed
+    2022-12-28 13:25:06.816628 INFO: Welcome to Training Grounds!
+    2022-12-28 13:25:06.816758 INFO: Loading job
+    2022-12-28 13:25:06.817456 INFO: Job of type <class 'example_job__0_0_0.tg.common.delivery.delivery.example_job.ExampleJob'> is loaded
+    2022-12-28 13:25:06.817570 INFO: Job has `run` attribute
+    2022-12-28 13:25:06.817628 INFO: SUCCESS
+    2022-12-28 13:25:06.817675 INFO: Job has exited successfully
+    2022-12-28 13:25:06.817719 INFO: DONE. Exiting Training Grounds.
 
 
-The `.local` accessor builds package and container, then executes the container locally. This step allows debugging the following things:
 
-* If your job is serializable. This is usually achievable by not using `lambda` syntax.
-* If all the code the job uses is located inside the TG folder, and if all the references are relative. If something is wrong, you will see the import error.
-* If the environmental variables are carried to docker correctly. 
+
+# 4.2. Delivery via SSH (tg.common.delivery.ssh_docker)
+
+One of the scenarios for delivery is to start the job at a remote docker server via SSH. Training Grounds contain several classes that facilitate this process.
+
+First, we have `SSHDockerOptions`. This class contains the settings on how to run the job in the docker container: which environmental variables are to propagate from the local machine to the remote one, memory and CPU limits. 
+
+Second, we have `SSHDockerConfig`: a comprehensive configuration for the procedure that contains `Packaging`, `Containering` and `SSHDockerOptions`, as well as the address of the remote host and the username. 
+
+This `SSHDockerConfig` is an argument for `Executors`, which actually execute the job. We have:
+  
+  * `AttachedExecutor` that runs the job in the same process, without any docker at all.
+  * `LocalExecutor` that runs the job in the local docker
+  * `RemoteExecutor` that runs the job in the remote docker, using SSH.
+  
+These three executors help to debug the job. First, we can run `AttachedExecutor` to make sure that the job itself works. By running it in `LocalExecutor` we make sure that packaging and containering work, e.g.:
+
+* Your job is serializable. This is usually achievable by not using lambda syntax.
+* All the code the job uses is located inside the TG folder, and if all the references are relative. If something is wrong, you will see the import error.
+* If the environmental variables are carried to docker correctly.
 * If you have sufficient permissions to start docker
-* etc.
 
+Finally, `RemoteExecutor` will peform the same functionatily remotely.  The only problems you should have at these stage are permissions:
 
-This step allows you to check the deliverability of your work. As the output is quite big, we will remove it for better readability.
-
-
-```python
-from IPython.display import clear_output
-
-routine.local.execute()
-clear_output()
-```
-
-You can retrieve logs from the container with the following useful method. Note that logs printed via `logging` are placed in stderr instead of strdout.
+  * to push to your docker registry
+  * to connect to the remote machine via SSH
+  * to execute docker run at the remote machine
+  
+The best way to actually use this code in your project is to write a class, e.g., `SSHDockerRoutine`, in the following way:
 
 
 ```python
-output, errors = routine.local.get_logs()
-print(output)
+from tg.common.delivery.ssh_docker import (SSHAttachedExecutor, SSHLocalExecutor, SSHRemoteExecutor, 
+                                           SSHDockerOptions, SSHDockerConfig)
+from tg.common.delivery.delivery import Packaging, Containering
+
+variable_name = 'EXAMPLE_VARIABLE'
+
+class SSHDockerRoutine:
+    def __init__(self, job):
+        self.job = job
+        name = type(job).__name__.lower()
+        packaging = Packaging(name, '0.0.0', dict(job=job))
+        packaging.silent = True
+        containering = Containering.from_packaging(packaging)
+        containering.silent = True
+        options = SSHDockerOptions([variable_name])
+        self.config =  SSHDockerConfig(packaging, containering, options, None, None)
+
+    def attached(self):
+        return SSHAttachedExecutor(self.config)
+
+    def local(self):
+        return SSHLocalExecutor(self.config)
+    
+        
 ```
 
-    2022-08-09 09:31:40.607501+00:00 INFO: Welcome to Training Grounds. This is Job execution via Docker/SSH
-    2022-08-09 09:31:40.622256+00:00 INFO: Executing job job version v1
-    2022-08-09 09:31:40.622377+00:00 INFO: Featurization Job job at version v1 has started
-    2022-08-09 09:31:40.622756+00:00 INFO: Fetching data
-    2022-08-09 09:31:40.717595+00:00 INFO: Data fetched, finalizing
-    2022-08-09 09:31:40.752158+00:00 INFO: Uploading data
-    2022-08-09 09:31:40.752970+00:00 INFO: Featurization job completed
-    2022-08-09 09:31:40.753167+00:00 INFO: Job completed
+In the `_create_config` method you can place all the logic regarding dependencies, secrets, etc. After this, you can simply use `SSH3DockerRoutine` to run the job remotely. 
+
+Let's run the `ExampleJob` with attached executor:
+
+
+```python
+from tg.common.delivery.delivery.example_job import ExampleJob
+import os
+
+os.environ[variable_name] = 'TEST'
+
+job = ExampleJob([variable_name])
+routine = SSHDockerRoutine(job)
+routine.attached().execute()
+```
+
+    2022-12-28 14:25:11.493742 INFO: Variable EXAMPLE_VARIABLE is found: True
+    2022-12-28 14:25:11.494948 INFO: SUCCESS
+
+
+And now, with local:
+
+
+```python
+routine.local().execute()
+```
+
+    warning: no files found matching '*.yml' under directory 'examplejob__0_0_0'
+    warning: no files found matching '*.rst' under directory 'examplejob__0_0_0'
+    warning: sdist: standard file not found: should have one of README, README.rst, README.txt, README.md
     
 
 
-`routine.remote` has the same interface as `routine.local`, and will run the container at the remote machine. The only problems you should have at these stage are permissions:
-* to push to your docker registry
-* to connect to the remote machine via SSH
-* to execute `docker run` at the remote machine
-
-## Summary 
-
-In this demo, we delivered the job to the remote server and executed it there. That concludes the featurization-related part of the Training Grounds.
-
-Note that the packaging and containering techniques are not specific for the featurization, and can process any code. In the subsequent demos, the same techniques will be applied to run the training on the remote server as well.
-
+    sha256:6a9d1deca68272221c3ac4154fe538a0504f2ce9c5c47940dce82b3a8c71024b
+    2022-12-28 13:25:22.692513 INFO: Welcome to Training Grounds!
+    2022-12-28 13:25:22.692604 INFO: Loading job
+    2022-12-28 13:25:22.693027 INFO: Job of type <class 'examplejob__0_0_0.tg.common.delivery.delivery.example_job.ExampleJob'> is loaded
+    2022-12-28 13:25:22.693102 INFO: Job has `run` attribute
+    2022-12-28 13:25:22.693194 INFO: Variable EXAMPLE_VARIABLE is found: True
+    2022-12-28 13:25:22.693262 INFO: SUCCESS
+    2022-12-28 13:25:22.693328 INFO: Job has exited successfully
+    2022-12-28 13:25:22.693394 INFO: DONE. Exiting Training Grounds.
 
 
-# 4.3. Training Jobs and Sagemaker (tg.common.delivery.training)
+As we can see, the environment variable was sucessfully transferred from the notebook environment to the docker's environment.
+
+
+
+# 4.3. Training Jobs and Sagemaker (tg.common.delivery.sagemaker)
 
 ## Preparing the training task and data
 
-Another scenario for delivery is `Sagemaker` training, that is applicable to the descendants of `TrainingTask`. We will demonstrate it with `SingleFrameTrainingTask`, as it has simpler setup, and titanic dataset iris dataset. 
+Another scenario for delivery is `Sagemaker` training, that is applicable to the descendants of `TrainingTask`. We will demonstrate it with `SingleFrameTrainingTask`, as it has simpler setup, and titanic dataset. 
 
 First, we need to create a dataset and place it in the right folder.
 
@@ -10931,9 +12322,10 @@ for c in ['Pclass','SibSp','Parch','Survived']:
     df[c] = df[c].astype(float)
 features = ['Pclass', 'Sex', 'Age', 'SibSp', 'Parch', 'Fare', 'Embarked']
 df = df[features+['Survived']]
-folder = Path('temp/datasets/titanic')
-os.makedirs(folder, exist_ok=True)
-df.to_parquet(folder/'titanic.parquet')
+datasets_folder = Path('temp/datasets/titanic')
+dataset_file = datasets_folder/'titanic_project/titanic.parquet'
+os.makedirs(dataset_file.parent, exist_ok=True)
+df.to_parquet(dataset_file)
 ```
 
 We will store it locally. We will not actually run this task on the `Sagemaker`, hence, there is no need to upload it. In real setup, you would need to upload the dataset to your `[bucket]`, respecting the following convention:
@@ -10963,6 +12355,8 @@ task = sft.SingleFrameTrainingTask(
 To start Sagemaker training even on the local machine, one needs `AWS_ROLE`. We will import it from `environment.env` file:
 
 
+
+
 ```python
 from tg.common import Loc
 import dotenv
@@ -10978,145 +12372,227 @@ dotenv.load_dotenv(Loc.root_path/'environment.env')
 
 
 
+Sagemaker delivery has a similar structure to the SSH/Docker: SagemakerOptions, SagemakerConfig, and three executors. As with SSH/Docker, the best way to use all this is to write a SagemakerRoutine which will set up all these.
 
-```python
-from tg.common.delivery.training import SagemakerTrainingRoutine
-from tg.common.delivery.packaging import FakeContainerHandler
+Some notes before we start:
+  * The task is not, by itself, a job, it is not self-contained, as the artefacts output is controlled by `TrainingEnvironment`. So, `SagemakerJob` is a job in the sence of `tg.common.delivery` that wraps the task and adopts its behaviour to sagemaker. Other cloud providers will probably required different tasks.
+  * Sagemaker itself reqiures some specifics in container files, so this also needs to be reflected.
+  * There are many dependencies required for training are, so we will need to change the default dependency lists.
 
 
-routine = SagemakerTrainingRoutine(
-    local_dataset_storage = Path('temp/datasets'),
-    project_name = 'titanic',
-    handler_factory = FakeContainerHandler.Factory(),
-    aws_role = os.environ['AWS_ROLE'],
-    s3_bucket = None
-)
-```
-
-As with `SSHDockerRoutine`, there are `attached`, `local` and `remote` accessors. 
-
-## `attached` accesor
 
 
 ```python
-attached_task_id = routine.attached.execute(task,'titanic')
-```
+from tg.common.delivery.sagemaker import (SagemakerJob, SagemakerAttachedExecutor, SagemakerLocalExecutor, 
+                                          DOCKERFILE_TEMPLATE, SagemakerOptions, SagemakerConfig)
+from tg.common.delivery.delivery import Packaging, Containering, DependencyList
+from yo_fluq_ds import *
 
-    2022-08-09 09:31:45.922679+00:00 INFO: Starting stage 1/1
-    2022-08-09 09:31:46.098582+00:00 INFO: Saved artifact /home/yura/Desktop/repos/lesvik-ml/temp/training_results/_20220809_113145_650f41a138cb42b7897e252467ba98a2/runs/0/result_df
-    2022-08-09 09:31:46.101082+00:00 INFO: Saved artifact /home/yura/Desktop/repos/lesvik-ml/temp/training_results/_20220809_113145_650f41a138cb42b7897e252467ba98a2/runs/0/metrics
-    2022-08-09 09:31:46.103845+00:00 INFO: Saved artifact /home/yura/Desktop/repos/lesvik-ml/temp/training_results/_20220809_113145_650f41a138cb42b7897e252467ba98a2/runs/0/info
-    2022-08-09 09:31:46.109628+00:00 INFO: Saved artifact /home/yura/Desktop/repos/lesvik-ml/temp/training_results/_20220809_113145_650f41a138cb42b7897e252467ba98a2/runs/0/model
-    2022-08-09 09:31:46.112319+00:00 INFO: Saved artifact /home/yura/Desktop/repos/lesvik-ml/temp/training_results/_20220809_113145_650f41a138cb42b7897e252467ba98a2/runs/0/training_task
-    2022-08-09 09:31:46.115990+00:00 INFO: Saved artifact /home/yura/Desktop/repos/lesvik-ml/temp/training_results/_20220809_113145_650f41a138cb42b7897e252467ba98a2/runs/0/train_split
-    2022-08-09 09:31:46.117306+00:00 INFO: Saved artifact /home/yura/Desktop/repos/lesvik-ml/temp/training_results/_20220809_113145_650f41a138cb42b7897e252467ba98a2/runs/0/test_splits
-    2022-08-09 09:31:46.119063+00:00 INFO: Completed stage 1/1
-    2022-08-09 09:31:46.123981+00:00 INFO: ###METRIC###roc_auc_score_test:0.8538095238095237###
-    2022-08-09 09:31:46.124788+00:00 INFO: ###METRIC###roc_auc_score_train:0.8600247283139194###
+dependencies = FileIO.read_json('dependencies.json')
+dependencies = DependencyList('training', dependencies)
 
 
-Unlike `SSHDockerRoutine`, `SagemakerTrainingRoutine` has the output, and `local` and `attached` accessors try to emulate `Sagemaker` behaviour in how the output is handled. They store the output in `Loc.temp` folder, and `execute` method returns a task id to access the result. Let's browse the result.
+class SagemakerRoutine:
+    def __init__(self,
+                 task,
+                 dataset: str,
+                 project_name: str,
+                 ):
+        name = type(task).__name__
+        task.info['name'] = name
+        version = '0'
+        job = SagemakerJob(task)
+        packaging = Packaging(name, version, dict(job=job))
+        packaging.dependencies = [dependencies]
+        packaging.silent = True
 
+        containering = Containering.from_packaging(packaging)
+        containering.dependencies = [dependencies]
+        containering.dockerfile_template = DOCKERFILE_TEMPLATE
+        containering.run_file_name='train.py'
+        containering.silent = True
 
-```python
-from yo_fluq_ds import Query, FileIO
+        settings = SagemakerOptions(
+            os.environ.get('AWS_ROLE'),
+            None,
+            project_name,
+            datasets_folder,
+            dataset,
+        )
 
-attached_folder = Loc.temp_path/'training_results'/attached_task_id
-Query.folder(attached_folder, '**/*').foreach(lambda z: print(z.relative_to(attached_folder)))
-```
-
-    runs
-    runs/0
-    runs/0/metrics.pkl
-    runs/0/info.pkl
-    runs/0/train_split.pkl
-    runs/0/result_df.parquet
-    runs/0/test_splits.pkl
-    runs/0/model.pkl
-    runs/0/training_task.pkl
-
-
-We can view the resulting dataframe, and compute, for instance, ROC AUC optimat threshold:
-
-
-```python
-from tg.common.ml.miscellaneous import roc_optimal_threshold
-
-df = pd.read_parquet(attached_folder/'runs/0/result_df.parquet')
-roc_optimal_threshold(df.true, df.predicted)
-
+        self.config = SagemakerConfig(
+            job,
+            packaging,
+            containering,
+            settings
+        )
+        
+    def attached(self):
+        return SagemakerAttachedExecutor(self.config)
+        
+    def local(self):
+        return SagemakerLocalExecutor(self.config)
+    
+routine = SagemakerRoutine(task,'titanic.parquet','titanic_project')
+result = routine.attached().execute()
+result['metrics']
 ```
 
 
+      0%|          | 0/1 [00:00<?, ?it/s]
 
 
-    0.3483943081626346
+    2022-12-20 17:37:25.113050 INFO: Starting stage 1/1
+    2022-12-20 17:37:25.233140 INFO: Completed stage 1/1
+    2022-12-20 17:37:25.236670 INFO: ###roc_auc_score_test:0.8538095238095237
+    2022-12-20 17:37:25.237406 INFO: ###roc_auc_score_train:0.8600247283139194
 
 
 
-We can also unpickle model or the whole training task:
+
+
+    {'roc_auc_score_test': 0.8538095238095237,
+     'roc_auc_score_train': 0.8600247283139194}
+
+
+
+Now we will run it in the local container:
 
 
 ```python
-FileIO.read_pickle(attached_folder/'runs/0/training_task.pkl')
+id = routine.local().execute()
 ```
 
+    warning: no files found matching '*.yml' under directory 'SingleFrameTrainingTask__0'
+    warning: no files found matching '*.rst' under directory 'SingleFrameTrainingTask__0'
+    warning: sdist: standard file not found: should have one of README, README.rst, README.txt, README.md
+    
 
 
+    sha256:c5e1a98741882ce94e09ce458d7ace052fbdd2517633901743fe506d457c8cfd
+    Creating zuve7o5y6g-algo-1-zipal ... 
+    [1BAttaching to zuve7o5y6g-algo-1-zipal2mdone[0m
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:41,030 sagemaker-containers INFO     No GPUs detected (normal if no gpus installed)
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:41,064 sagemaker-containers INFO     No GPUs detected (normal if no gpus installed)
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:41,084 sagemaker-containers INFO     No GPUs detected (normal if no gpus installed)
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:41,097 sagemaker-containers INFO     Invoking user script
+    [36mzuve7o5y6g-algo-1-zipal |[0m 
+    [36mzuve7o5y6g-algo-1-zipal |[0m Training Env:
+    [36mzuve7o5y6g-algo-1-zipal |[0m 
+    [36mzuve7o5y6g-algo-1-zipal |[0m {
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "additional_framework_parameters": {},
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "channel_input_dirs": {
+    [36mzuve7o5y6g-algo-1-zipal |[0m         "training": "/opt/ml/input/data/training"
+    [36mzuve7o5y6g-algo-1-zipal |[0m     },
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "current_host": "algo-1-zipal",
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "framework_module": null,
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "hosts": [
+    [36mzuve7o5y6g-algo-1-zipal |[0m         "algo-1-zipal"
+    [36mzuve7o5y6g-algo-1-zipal |[0m     ],
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "hyperparameters": {},
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "input_config_dir": "/opt/ml/input/config",
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "input_data_config": {
+    [36mzuve7o5y6g-algo-1-zipal |[0m         "training": {
+    [36mzuve7o5y6g-algo-1-zipal |[0m             "TrainingInputMode": "File"
+    [36mzuve7o5y6g-algo-1-zipal |[0m         }
+    [36mzuve7o5y6g-algo-1-zipal |[0m     },
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "input_dir": "/opt/ml/input",
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "is_master": true,
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "job_name": "singleframetrainingtask-2022-12-20-16-37-38-243",
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "log_level": 20,
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "master_hostname": "algo-1-zipal",
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "model_dir": "/opt/ml/model",
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "module_dir": "/opt/ml/code",
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "module_name": "train",
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "network_interface_name": "eth0",
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "num_cpus": 4,
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "num_gpus": 0,
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "output_data_dir": "/opt/ml/output/data",
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "output_dir": "/opt/ml/output",
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "output_intermediate_dir": "/opt/ml/output/intermediate",
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "resource_config": {
+    [36mzuve7o5y6g-algo-1-zipal |[0m         "current_host": "algo-1-zipal",
+    [36mzuve7o5y6g-algo-1-zipal |[0m         "hosts": [
+    [36mzuve7o5y6g-algo-1-zipal |[0m             "algo-1-zipal"
+    [36mzuve7o5y6g-algo-1-zipal |[0m         ]
+    [36mzuve7o5y6g-algo-1-zipal |[0m     },
+    [36mzuve7o5y6g-algo-1-zipal |[0m     "user_entry_point": "train.py"
+    [36mzuve7o5y6g-algo-1-zipal |[0m }
+    [36mzuve7o5y6g-algo-1-zipal |[0m 
+    [36mzuve7o5y6g-algo-1-zipal |[0m Environment variables:
+    [36mzuve7o5y6g-algo-1-zipal |[0m 
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_HOSTS=["algo-1-zipal"]
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_NETWORK_INTERFACE_NAME=eth0
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_HPS={}
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_USER_ENTRY_POINT=train.py
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_FRAMEWORK_PARAMS={}
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_RESOURCE_CONFIG={"current_host":"algo-1-zipal","hosts":["algo-1-zipal"]}
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_INPUT_DATA_CONFIG={"training":{"TrainingInputMode":"File"}}
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_OUTPUT_DATA_DIR=/opt/ml/output/data
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_CHANNELS=["training"]
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_CURRENT_HOST=algo-1-zipal
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_MODULE_NAME=train
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_LOG_LEVEL=20
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_FRAMEWORK_MODULE=
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_INPUT_DIR=/opt/ml/input
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_INPUT_CONFIG_DIR=/opt/ml/input/config
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_OUTPUT_DIR=/opt/ml/output
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_NUM_CPUS=4
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_NUM_GPUS=0
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_MODEL_DIR=/opt/ml/model
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_MODULE_DIR=/opt/ml/code
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_TRAINING_ENV={"additional_framework_parameters":{},"channel_input_dirs":{"training":"/opt/ml/input/data/training"},"current_host":"algo-1-zipal","framework_module":null,"hosts":["algo-1-zipal"],"hyperparameters":{},"input_config_dir":"/opt/ml/input/config","input_data_config":{"training":{"TrainingInputMode":"File"}},"input_dir":"/opt/ml/input","is_master":true,"job_name":"singleframetrainingtask-2022-12-20-16-37-38-243","log_level":20,"master_hostname":"algo-1-zipal","model_dir":"/opt/ml/model","module_dir":"/opt/ml/code","module_name":"train","network_interface_name":"eth0","num_cpus":4,"num_gpus":0,"output_data_dir":"/opt/ml/output/data","output_dir":"/opt/ml/output","output_intermediate_dir":"/opt/ml/output/intermediate","resource_config":{"current_host":"algo-1-zipal","hosts":["algo-1-zipal"]},"user_entry_point":"train.py"}
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_USER_ARGS=[]
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_OUTPUT_INTERMEDIATE_DIR=/opt/ml/output/intermediate
+    [36mzuve7o5y6g-algo-1-zipal |[0m SM_CHANNEL_TRAINING=/opt/ml/input/data/training
+    [36mzuve7o5y6g-algo-1-zipal |[0m PYTHONPATH=/opt/ml/code:/usr/local/bin:/usr/local/lib/python37.zip:/usr/local/lib/python3.7:/usr/local/lib/python3.7/lib-dynload:/usr/local/lib/python3.7/site-packages
+    [36mzuve7o5y6g-algo-1-zipal |[0m 
+    [36mzuve7o5y6g-algo-1-zipal |[0m Invoking script with the following command:
+    [36mzuve7o5y6g-algo-1-zipal |[0m 
+    [36mzuve7o5y6g-algo-1-zipal |[0m /usr/local/bin/python train.py
+    [36mzuve7o5y6g-algo-1-zipal |[0m 
+    [36mzuve7o5y6g-algo-1-zipal |[0m 
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:43.176351 INFO: Welcome to Training Grounds!
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:43.176506 INFO: Loading job
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44.377714 INFO: Job of type <class 'SingleFrameTrainingTask__0.tg.common.delivery.sagemaker.job.SagemakerJob'> is loaded
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44.377987 INFO: Job has `run` attribute
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44.378119 INFO: This is Sagemaker Job performing a training task
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44.378330 INFO: Preparing package properties...
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44.378547 INFO: {"name": "SingleFrameTrainingTask", "version": "0", "module_name": "SingleFrameTrainingTask__0", "tg_import_path": "SingleFrameTrainingTask__0.tg", "original_tg_import_path": "tg", "resources_location": "/usr/local/lib/python3.7/site-packages/SingleFrameTrainingTask__0/resources"}
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44.379271 INFO: Preparing package file...
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44.380450 INFO: Processing hyperparameters...
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44.380910 INFO: No hyperparameters are provided
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44.381000 INFO: Model initialized. Jsonpickling...
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44.383134 INFO: Starting training now...
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44.474351 INFO: Starting stage 1/1
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44.609980 INFO: Saved artifact /opt/ml/model/runs/0/result_df
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44.610427 INFO: Saved artifact /opt/ml/model/runs/0/metrics
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44.610693 INFO: Saved artifact /opt/ml/model/runs/0/info
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44.611373 INFO: Saved artifact /opt/ml/model/runs/0/model
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44.611785 INFO: Saved artifact /opt/ml/model/runs/0/training_task
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44.612219 INFO: Saved artifact /opt/ml/model/runs/0/train_split
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44.612606 INFO: Saved artifact /opt/ml/model/runs/0/test_splits
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44.612696 INFO: Completed stage 1/1
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44.614647 INFO: ###METRIC###roc_auc_score_test:0.8538095238095237###
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44.614752 INFO: ###METRIC###roc_auc_score_train:0.8600247283139194###
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44.615094 INFO: Job has exited successfully
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44.615178 INFO: DONE. Exiting Training Grounds.
+    [36mzuve7o5y6g-algo-1-zipal |[0m 2022-12-20 16:37:44,919 sagemaker-containers INFO     Reporting training SUCCESS
+    [36mzuve7o5y6g-algo-1-zipal exited with code 0
+    [0mAborting on container exit...
+    ===== Job Complete =====
 
-    <tg.common.ml.single_frame_training.training_task.SingleFrameTrainingTask at 0x7fae1831cbb0>
 
-
-
-## `local` accesor
-
-Now, let's run the task in `local` mode, i.e. inside the docker container, but on the local machine:
+The result is stored in the local file system in the same format it would be stored in S3. This is a zipped file that contains not only the output, but also the package information:
 
 
 ```python
-from IPython.display import clear_output
-
-local_task_id = routine.local.execute(task,'titanic')
-clear_output()
-```
-
-The output from `local` training is even closer to the real Sagemaker output: the model is packaged in `.tar.gz` file.
-
-
-```python
-local_task_id
-```
-
-
-
-
-    '_20220809_113146_91f12a755f194b9f9f4e3bad6ef7913e'
-
-
-
-
-```python
-local_path = Loc.temp_path/'training_results'/local_task_id
-Query.folder(local_path).foreach(lambda z: print(z.relative_to(local_path)))
-```
-
-    model.tar.gz
-    output.tar.gz
-
-
-We have `open_sagemaker_result` method that will extract files from the archive and return `ResultPickleReader` instance.
-
-
-```python
-from tg.common.delivery.training import open_sagemaker_result
-
-reader = open_sagemaker_result(local_path/'model.tar.gz', local_task_id)
+loader = routine.local().load_result(id)
 ```
 
     package.tag.gz
     task.json
     package.json
-    hyperparameters.json
     runs/
     runs/0/
     runs/0/info.pkl
@@ -11128,63 +12604,44 @@ reader = open_sagemaker_result(local_path/'model.tar.gz', local_task_id)
     runs/0/training_task.pkl
 
 
-From this `reader`, we can get the paths to the files and open them directly:
+We can now read the dataframe with the results:
 
 
 ```python
-df = pd.read_parquet(reader.get_path('runs/0/result_df.parquet'))
-roc_optimal_threshold(df.true, df.predicted)
+df = pd.read_parquet(loader.get_path('runs/0/result_df.parquet'))
 ```
 
-
-
-
-    0.3483943081626341
-
-
-
-However, we cannot just open the `training_task`:
+We can also read pickled objects, although non-directly:
 
 
 ```python
 import traceback
 try:
-    FileIO.read_pickle(reader.get_path('runs/0/training_task.pkl'))
+    FileIO.read_pickle(loader.get_path('runs/0/training_task.pkl'))
 except:
     print(traceback.format_exc())
 ```
 
     Traceback (most recent call last):
-      File "/tmp/ipykernel_11999/225246354.py", line 3, in <module>
-        FileIO.read_pickle(reader.get_path('runs/0/training_task.pkl'))
-      File "/home/yura/anaconda3/envs/lesvik/lib/python3.8/site-packages/yo_fluq_ds/_misc/io.py", line 17, in read_pickle
+      File "/tmp/ipykernel_3186/1779605262.py", line 3, in <module>
+        FileIO.read_pickle(loader.get_path('runs/0/training_task.pkl'))
+      File "/home/yura/anaconda3/envs/fol/lib/python3.8/site-packages/yo_fluq_ds/_misc/io.py", line 17, in read_pickle
         return pickle.load(file)
-    ModuleNotFoundError: No module named 'titanic___20220809_113146_91f12a755f194b9f9f4e3bad6ef7913e'
+    ModuleNotFoundError: No module named 'SingleFrameTrainingTask__0'
     
 
 
-Why? Because when delivering, we run all the packaging procedures, and those include creating a Training Grounds package with a unique id, and translating all the classes into this package. This package is available in the Docker container, but is not available in the python environment of the notebook where we're trying to read the results. Consequently, the reading fails.
-
-Fortunately, `ResultPickleReader` contains a method that translates everything back:
+This is due to the fact that the delivered training task was delivered, and the delivery process changed the module name. But the `loader` contains the method to unpickle such files regardless:
 
 
 ```python
-task = reader.unpickle('runs/0/training_task.pkl')
-type(task)
+loader.unpickle('runs/0/training_task.pkl')
 ```
 
 
 
 
-    tg.common.ml.single_frame_training.training_task.SingleFrameTrainingTask
-
-
-
-## Notes on `remote` accesor
-
-In general, `remote` accesor performs the same way as `local`, but there are several important differences:
-* `execute` has `wait` method. When set to `False`, it will trigger the process on Sagemaker servers and exits `execute` method immediately after the process has started, without waiting for it to end. This will allow you to run several tasks. If you choose to leave `wait` to `True`, you can terminate the process on your machine once the remote training has started, it will not affect the training at `Sagemaker` servers.
-* instead of `open_sagemaker_result`, you may use `download_and_open_sagemaker_result`.
+    <tg.common.ml.single_frame_training.training_task.SingleFrameTrainingTask at 0x7f5f032d5d00>
 
 
 
@@ -11210,7 +12667,7 @@ This `build` method returns a mock for training task: we are now interested only
 
 
 ```python
-from tg.common.delivery.training import Autonamer
+from tg.common.delivery.sagemaker import Autonamer
 
 Autonamer(build).build_tasks(learning_rate = [1, 2], network_size = [[10], [10, 5]])
 ```
@@ -11810,7 +13267,7 @@ plt.legend()
 
 
 
-    <matplotlib.legend.Legend at 0x7f9fbecac4c0>
+    <matplotlib.legend.Legend at 0x7f6336de52b0>
 
 
 
@@ -11935,40 +13392,40 @@ rdf.head()
     <tr>
       <th>0</th>
       <td>Fare</td>
-      <td>41.845543</td>
-      <td>26.322968</td>
+      <td>50.930936</td>
+      <td>24.669352</td>
       <td>0</td>
       <td>0</td>
     </tr>
     <tr>
       <th>1</th>
       <td>Fare</td>
-      <td>42.229522</td>
-      <td>24.363418</td>
+      <td>39.013063</td>
+      <td>26.826770</td>
       <td>1</td>
       <td>1</td>
     </tr>
     <tr>
       <th>2</th>
       <td>Fare</td>
-      <td>48.869022</td>
-      <td>24.979670</td>
+      <td>40.308628</td>
+      <td>23.785594</td>
       <td>2</td>
       <td>2</td>
     </tr>
     <tr>
       <th>3</th>
       <td>Fare</td>
-      <td>44.753038</td>
-      <td>26.031914</td>
+      <td>49.674604</td>
+      <td>24.626052</td>
       <td>3</td>
       <td>3</td>
     </tr>
     <tr>
       <th>4</th>
       <td>Fare</td>
-      <td>40.803088</td>
-      <td>23.540866</td>
+      <td>44.814162</td>
+      <td>29.408505</td>
       <td>4</td>
       <td>4</td>
     </tr>
@@ -12030,14 +13487,14 @@ rdf[['female','male']].feed(Aggregators.normal_confint())
   <tbody>
     <tr>
       <th>0</th>
-      <td>37.893253</td>
-      <td>50.832493</td>
-      <td>44.362873</td>
-      <td>6.46962</td>
-      <td>22.000742</td>
-      <td>28.884838</td>
-      <td>25.44279</td>
-      <td>3.442048</td>
+      <td>38.011881</td>
+      <td>50.822352</td>
+      <td>44.417117</td>
+      <td>6.405235</td>
+      <td>22.013058</td>
+      <td>29.000021</td>
+      <td>25.506539</td>
+      <td>3.493481</td>
     </tr>
   </tbody>
 </table>

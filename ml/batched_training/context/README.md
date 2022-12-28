@@ -125,39 +125,27 @@ df.shape
 
 
 
-The following code will create a `BatchedTrainingTask` for this classification task, similarly to what we've seen in the previous demos. It will also output a batch for the task.
+
+```python
+from tg.common.ml import batched_training as bt
+
+plain_bundle = bt.DataBundle(index=df)
+```
+
+First, let's define the extractors:
 
 
 ```python
+from tg.common.ml.batched_training import factories as btf
 from tg.common.ml import dft
-from tg.common.ml import batched_training as bt
-from tg.common.ml.batched_training import torch as btt
-from sklearn.metrics import roc_auc_score
-from tg.common import Logger
 
-Logger.disable()
-
-def create_plain_task(df, epochs = 500):
-    label_extractor = bt.PlainExtractor.build('label').index().apply(take_columns='label')
-    features_extractor = bt.PlainExtractor.build('features').index().apply(
-        take_columns=[f for f in df.columns if f.startswith('word')],
-        transformer=dft.DataFrameTransformerFactory.default_factory()
-    )
-    extractor_factory = btt.PredefinedExtractorFactory(label_extractor, features_extractor)
-    network_factory = btt.FullyConnectedNetwork.Factory(sizes=[100,1]).prepend_extraction('features')
-    task = btt.TorchTrainingTask(
-        bt.TrainingSettings(epoch_count = epochs),
-        btt.TorchTrainingSettings(),
-        extractor_factory,
-        network_factory,
-        bt.MetricPool().add_sklearn(roc_auc_score)
-    )
-    return task
-
-
-plain_bundle = bt.DataBundle(index=df)
-task = create_plain_task(df)
-task.generate_sample_batch(plain_bundle)['features'].head()
+label_extractor = bt.PlainExtractor.build('label').index().apply(take_columns=btf.Conventions.LabelFrame)
+features_extractor = bt.PlainExtractor.build('features').index().apply(
+    take_columns=[f for f in df.columns if f.startswith('word')],
+    transformer=dft.DataFrameTransformerFactory.default_factory()
+)
+plain_batch = bt.Batcher.generate_sample(plain_bundle, [label_extractor, features_extractor])
+plain_batch['features'].head()
 ```
 
 
@@ -170,11 +158,8 @@ task.generate_sample_batch(plain_bundle)['features'].head()
     <tr style="text-align: right;">
       <th></th>
       <th>word_0_A</th>
-      <th>word_0_B</th>
-      <th>word_0_C</th>
       <th>word_1_A</th>
       <th>word_1_B</th>
-      <th>word_1_C</th>
       <th>word_2_A</th>
       <th>word_2_B</th>
       <th>word_2_C</th>
@@ -193,19 +178,13 @@ task.generate_sample_batch(plain_bundle)['features'].head()
       <th></th>
       <th></th>
       <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <th>0</th>
       <td>1.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
       <td>1.0</td>
-      <td>0.0</td>
       <td>0.0</td>
       <td>1.0</td>
       <td>0.0</td>
@@ -217,10 +196,7 @@ task.generate_sample_batch(plain_bundle)['features'].head()
     <tr>
       <th>1</th>
       <td>1.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
       <td>1.0</td>
-      <td>0.0</td>
       <td>0.0</td>
       <td>1.0</td>
       <td>0.0</td>
@@ -232,10 +208,7 @@ task.generate_sample_batch(plain_bundle)['features'].head()
     <tr>
       <th>2</th>
       <td>1.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
       <td>1.0</td>
-      <td>0.0</td>
       <td>0.0</td>
       <td>1.0</td>
       <td>0.0</td>
@@ -247,10 +220,7 @@ task.generate_sample_batch(plain_bundle)['features'].head()
     <tr>
       <th>3</th>
       <td>1.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
       <td>1.0</td>
-      <td>0.0</td>
       <td>0.0</td>
       <td>0.0</td>
       <td>1.0</td>
@@ -262,10 +232,7 @@ task.generate_sample_batch(plain_bundle)['features'].head()
     <tr>
       <th>4</th>
       <td>1.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
       <td>1.0</td>
-      <td>0.0</td>
       <td>0.0</td>
       <td>0.0</td>
       <td>1.0</td>
@@ -278,6 +245,102 @@ task.generate_sample_batch(plain_bundle)['features'].head()
 </table>
 </div>
 
+
+
+
+```python
+plain_batch['label'].head()
+```
+
+
+
+
+<div>
+
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>label</th>
+    </tr>
+    <tr>
+      <th>sentence_id</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+from sklearn.metrics import roc_auc_score
+from tg.common import Logger
+
+Logger.disable()
+
+class PlainTask(btf.TorchTrainingTask):
+    def initialize_task(self, data):
+        metrics = bt.MetricPool().add_sklearn(roc_auc_score)
+        self.settings.batch_size = 1000
+        self.settings.mini_match_size = None
+        self.metric_pool = metrics
+        
+        label_extractor = bt.PlainExtractor.build('label').index().apply(take_columns=btf.Conventions.LabelFrame)
+        features_extractor = bt.PlainExtractor.build('features').index().apply(
+            take_columns=[f for f in df.columns if f.startswith('word')],
+            transformer=dft.DataFrameTransformerFactory.default_factory()
+        )
+        self.setup_batcher(data, [features_extractor, label_extractor])
+        
+        self.optimizer_ctor.kwargs.lr = 1
+        self.setup_model(btf.Factories.FullyConnected([100],'features',btf.Conventions.LabelFrame))
+        
+def run(task, bundle, epoch_count = 100, name = 'roc_auc'):
+    task.settings.epoch_count = epoch_count
+    result = task.run(bundle)
+    df = pd.DataFrame(result['output']['history']).set_index('iteration')
+    series = df.roc_auc_score_display
+    series.name = str(name)
+    return series
+
+run(PlainTask(), bt.DataBundle(index=df)).plot()
+```
+
+
+
+
+    <AxesSubplot:xlabel='iteration'>
+
+
+
+
+    
+![png](README_images/tg.common.ml.batched_training.context_output_10_1.png?raw=true)
+    
 
 
 We won't have any test data. As ***L*** is random, it's impossible to predict the status of the word without seeing it. So effectively, the neural network just needs to memorize the table. 
@@ -298,7 +361,7 @@ def get_roc_auc_curve(name, task, bundle):
 curves = (Query
           .en(range(5))
           .feed(fluq.with_progress_bar())
-          .select(lambda z: get_roc_auc_curve(z, create_plain_task(df, epochs=500), bt.DataBundle(index=df)))
+          .select(lambda z: run(PlainTask(), bt.DataBundle(index=df), epoch_count=500, name=str(z)))
           .to_list()
          )
 pd.DataFrame(curves).transpose().plot()
@@ -311,7 +374,7 @@ pass
 
 
     
-![png](README_images/tg.common.ml.batched_training.context_output_10_1.png?raw=true)
+![png](README_images/tg.common.ml.batched_training.context_output_13_1.png?raw=true)
     
 
 
@@ -333,7 +396,8 @@ def find_good_language(N):
     for i in Query.en(range(N)).feed(fluq.with_progress_bar()):
         df = generate_task(4, ['A','B','C'])
         tasks.append(df)
-        roc = get_roc_auc_curve(i, create_plain_task(df), bt.DataBundle(df, {}))
+        bundle = bt.DataBundle(index=df)
+        roc = run(PlainTask(), bundle, name=i)
         value = roc.iloc[-1]
         rocs.append(value)
         print(value, end=' ')
@@ -838,36 +902,42 @@ Now, we will assemble the neural network to train on this data.
 
 
 ```python
-def create_sequential_task(context_extractor, network_factory, lr = 1, epochs = 100):
-    task = btt.TorchTrainingTask(
-        bt.TrainingSettings(epoch_count=epochs),
-        btt.TorchTrainingSettings(
-            optimizer_ctor=btt.OptimizerConstructor('torch.optim:SGD', lr=lr)
-        ),
-        btt.PredefinedExtractorFactory(
-            context_extractor,
-            bt.PlainExtractor.build('label').index().apply(take_columns='label')
-        ),
-        network_factory,
-        bt.MetricPool().add_sklearn(roc_auc_score)
-    )
-    return task
+class SequentialTask(btf.TorchTrainingTask):
+    def __init__(self, context_extractor, network_factory, lr = 1):
+        super(SequentialTask, self).__init__()
+        self.context_extractor = context_extractor
+        self.network_factory = network_factory
+        self.lr = lr
+    
+    def initialize_task(self, data):
+        metrics = bt.MetricPool().add_sklearn(roc_auc_score)
+        self.settings.batch_size = 1000
+        self.settings.mini_match_size = None
+        self.metric_pool = metrics
+        
+        label_extractor = bt.PlainExtractor.build('label').index().apply(take_columns=btf.Conventions.LabelFrame)
+        self.setup_batcher(data, [self.context_extractor, label_extractor])
+        
+        self.optimizer_ctor.kwargs.lr = self.lr
+        self.setup_model(self.network_factory)
+        
 
-task = create_sequential_task(
+    
+task = SequentialTask(
     build_context_extractor(
         db.additional_information.context_length,
         btc.PivotAggregator()
     ),
-    btt.FullyConnectedNetwork.Factory([100,1]).prepend_extraction(['features'])
+    btf.Factories.FullyConnected([100],'features',btf.Conventions.LabelFrame)
 )
-    
-get_roc_auc_curve('', task, db).plot()
+
+run(task, db).plot()
 pass
 ```
 
 
     
-![png](README_images/tg.common.ml.batched_training.context_output_30_0.png?raw=true)
+![png](README_images/tg.common.ml.batched_training.context_output_33_0.png?raw=true)
     
 
 
@@ -879,9 +949,9 @@ Let's now explore the task a bit further and see how the context length affects 
 ```python
 curves = []
 for i in Query.en(range(1,db.additional_information.context_length+1)).feed(fluq.with_progress_bar()):
-    task = create_sequential_task(
+    task = SequentialTask(
         build_context_extractor(i, btc.PivotAggregator()),
-        btt.FullyConnectedNetwork.Factory([100,1]).prepend_extraction(['features'])
+        btf.Factories.FullyConnected([100],'features',btf.Conventions.LabelFrame)
     )
     curves.append(get_roc_auc_curve(i, task, db))
 pd.DataFrame(curves).transpose().plot()
@@ -894,7 +964,7 @@ pass
 
 
     
-![png](README_images/tg.common.ml.batched_training.context_output_32_1.png?raw=true)
+![png](README_images/tg.common.ml.batched_training.context_output_35_1.png?raw=true)
     
 
 
@@ -907,11 +977,11 @@ This is why you may also want to use other aggregators. For instance, `GroupByAg
 
 ```python
 context_extractor = build_context_extractor(i, btc.GroupByAggregator(['mean','max']))
-task = create_sequential_task(
+task = SequentialTask(
     context_extractor,
-    btt.FullyConnectedNetwork.Factory([100,1]).prepend_extraction('features')
+    btf.Factories.FullyConnected([100],'features',btf.Conventions.LabelFrame)
 )
-batch = task.generate_sample_batch(db)
+_ = task.generate_sample_batch_and_temp_data(db)
 Query.en(context_extractor.data_.agg_dfs.values()).first().head()
 ```
 
@@ -999,9 +1069,9 @@ Let's evaluate performance of this system as well
 ```python
 curves = []
 for i in Query.en(range(1,db.additional_information.context_length+1)).feed(fluq.with_progress_bar()):
-    task = create_sequential_task(
+    task = SequentialTask(
         build_context_extractor(i, btc.GroupByAggregator(['mean', 'max'])),
-        btt.FullyConnectedNetwork.Factory([100,1]).prepend_extraction('features')
+        btf.Factories.FullyConnected([100],'features',btf.Conventions.LabelFrame)
     )
     curves.append(get_roc_auc_curve(i, task, db))
 pd.DataFrame(curves).transpose().plot()
@@ -1014,7 +1084,7 @@ pass
 
 
     
-![png](README_images/tg.common.ml.batched_training.context_output_37_1.png?raw=true)
+![png](README_images/tg.common.ml.batched_training.context_output_40_1.png?raw=true)
     
 
 
@@ -1037,11 +1107,11 @@ class CustomAggregator(btc.ContextAggregator):
         return df
     
 context_extractor = build_context_extractor(i, CustomAggregator())
-task = create_sequential_task(
+task = SequentialTask(
     context_extractor,
-    btt.FullyConnectedNetwork.Factory([100,1]).prepend_extraction('features')
+    btf.Factories.FullyConnected([100],'features',btf.Conventions.LabelFrame)
 )
-batch = task.generate_sample_batch(db)
+_ = task.generate_sample_batch_and_temp_data(db)
 Query.en(context_extractor.data_.agg_dfs.values()).first().head()
 ```
 
@@ -1106,9 +1176,9 @@ Query.en(context_extractor.data_.agg_dfs.values()).first().head()
 ```python
 curves = []
 for i in Query.en(range(1,db.additional_information.context_length+1)).feed(fluq.with_progress_bar()):
-    task = create_sequential_task(
+    task = SequentialTask(
         build_context_extractor(i, CustomAggregator()),
-        btt.FullyConnectedNetwork.Factory([100,1]).prepend_extraction('features')
+        btf.Factories.FullyConnected([100],'features',btf.Conventions.LabelFrame)
     )
     curves.append(get_roc_auc_curve(i, task, db))
 pd.DataFrame(curves).transpose().plot()
@@ -1121,7 +1191,7 @@ pass
 
 
     
-![png](README_images/tg.common.ml.batched_training.context_output_40_1.png?raw=true)
+![png](README_images/tg.common.ml.batched_training.context_output_43_1.png?raw=true)
     
 
 
@@ -1246,7 +1316,7 @@ def build_lstm_extractor(context_length):
                 take_columns=['word'], 
                 transformer = dft.DataFrameTransformerFactory.default_factory()
             )),
-        finalizer = btt.LSTMFinalizer()
+        finalizer = btc.LSTMFinalizer()
     )
     return context_extractor
 
@@ -1312,31 +1382,77 @@ value.dim_indices
 
 
 
-Now, we can train a neural network with `LSTMNetwork` component, which is a slim decorator over `LSTM` that manages it's output.
+Now, we can train a neural network with `LSTMNetwork` component, which is a slim decorator over `LSTM` that manages it's output. 
+
+First, let's create a batch:
 
 
 ```python
-def build_lstm_network_factory(lstm_size):
-    return btt.FeedForwardNetwork.Factory(
-        btt.ExtractingNetwork.Factory('features'),
-        btt.LSTMNetwork.Factory(lstm_size),
-        btt.FullyConnectedNetwork.Factory([1])
+batch = bt.Batcher.generate_sample(db, [label_extractor, lstm_extractor])
+{key: type(value) for key, value in batch.bundle.data_frames.items()}
+```
+
+
+
+
+    {'label': pandas.core.frame.DataFrame,
+     'features': tg.common.ml.batched_training.factories.networks.basics.AnnotatedTensor}
+
+
+
+Then create a factory, and also network to see how it looks like:
+
+
+```python
+from functools import partial
+
+lstm_factory = btf.Factories.Tailing(
+    btf.FeedForwardNetwork.Factory(
+        btf.InputConversionNetwork('features'),
+        partial(btc.LSTMNetwork, hidden_size=10),
+    ),
+    btf.Conventions.LabelFrame
+)
+
+network = lstm_factory(batch)
+network
+```
+
+
+
+
+    FeedForwardNetwork(
+      (networks): ModuleList(
+        (0): FeedForwardNetwork(
+          (networks): ModuleList(
+            (0): InputConversionNetwork()
+            (1): LSTMNetwork(
+              (lstm): LSTM(3, 10)
+            )
+          )
+        )
+        (1): Perceptron(
+          (linear_layer): Linear(in_features=10, out_features=1, bias=True)
+        )
+      )
     )
 
 
-task = create_sequential_task(
+
+
+```python
+task = SequentialTask(
     build_lstm_extractor(db.additional_information.context_length),
-    build_lstm_network_factory(10),
-    epochs = 100,
+    lstm_factory,
 )
 
-get_roc_auc_curve('', task, db).plot()
+run(task, db).plot()
 pass
 ```
 
 
     
-![png](README_images/tg.common.ml.batched_training.context_output_54_0.png?raw=true)
+![png](README_images/tg.common.ml.batched_training.context_output_60_0.png?raw=true)
     
 
 
@@ -1344,20 +1460,138 @@ We see that after 100 iterations the quality is low, but growing, while previous
 
 
 ```python
-task = create_sequential_task(
-    build_lstm_extractor(db.additional_information.context_length),
-    build_lstm_network_factory(10),
-    epochs = 1000
-)
-
-get_roc_auc_curve('', task, db).plot()
+run(task, db, epoch_count=1000).plot()
 pass
 ```
 
 
     
-![png](README_images/tg.common.ml.batched_training.context_output_56_0.png?raw=true)
+![png](README_images/tg.common.ml.batched_training.context_output_62_0.png?raw=true)
     
 
 
-In all the cases we run this cell, the quality of the "plain" networks was surpassed, often reaching the 0.9 value without stabilization. It might be the sign that this network architecture is indeed superior in comparison with the other, but this is anyway not the point we're trying to make. The point is that the classes, used for the data transformation, are working correctly and are ready to be used in conjustion with LSTM and other recurrent neural networks.
+In nearly all the cases we run this cell, the quality of the "plain" networks was surpassed, often reaching the 0.9 value without stabilization. It might be the sign that this network architecture is indeed superior in comparison with the other, but this is anyway not the point we're trying to make. The point is that the classes, used for the data transformation, are working correctly and are ready to be used in conjustion with LSTM and other recurrent neural networks.
+
+## Assembly Point
+
+We see that there is a lot of ways to configure networks and extractors for contextual processing. Also, there are actually multiple ways of processing 3-dimentional tensors: LSTM, LSTM with attention, attention only, or Dropout. To easy coordinate the networks and extractors, as well as to create richer networks, `AssemblyPoint` can be used.
+
+`AssemblyPoint` is a factory that produces both extractors and network factories in a coordinated way. Most of the settings will be filled with some default values that allow `AssemblyPoint` work _somehow_ (but not necesserily the way that is optimal for your task).
+
+
+
+
+```python
+ibundle.bundle.additional_information.context_length
+```
+
+
+
+
+    4
+
+
+
+
+```python
+ap = btc.ContextualAssemblyPoint(
+    name = 'features',
+    context_builder = SentenceContextBuilder(),
+    extractor = bt.PlainExtractor.build('word').index().apply(
+        take_columns=['word'], 
+        transformer = dft.DataFrameTransformerFactory.default_factory())
+)
+ap.context_length = ibundle.bundle.additional_information.context_length
+
+```
+
+Let's write the method to ensure the extractor works with the network:
+
+
+```python
+def test_assembly_point(ap):
+    extractor = ap.create_extractor()
+    network_factory = ap.create_network_factory()
+    batch = bt.Batcher.generate_sample(db, [extractor])
+    network = network_factory(batch)
+    result = network(batch)
+    response = {
+        'features_type': type(batch['features']),
+        'features_shape': batch['features'].shape,
+        'network_output_shape': result.shape,
+        'network': network
+    }
+    return response
+    
+test_assembly_point(ap)
+```
+
+
+
+
+    {'features_type': pandas.core.frame.DataFrame,
+     'features_shape': (10, 17),
+     'network_output_shape': torch.Size([10, 20]),
+     'network': FeedForwardNetwork(
+       (networks): ModuleList(
+         (0): InputConversionNetwork()
+         (1): Perceptron(
+           (linear_layer): Linear(in_features=17, out_features=20, bias=True)
+         )
+       )
+     )}
+
+
+
+
+```python
+ap.reduction_type = btc.ReductionType.Dim3
+test_assembly_point(ap)
+```
+
+
+
+
+    {'features_type': tg.common.ml.batched_training.factories.networks.basics.AnnotatedTensor,
+     'features_shape': (4, 10, 3),
+     'network_output_shape': torch.Size([10, 20]),
+     'network': FeedForwardNetwork(
+       (networks): ModuleList(
+         (0): InputConversionNetwork()
+         (1): LSTMNetwork(
+           (lstm): LSTM(3, 20)
+         )
+       )
+     )}
+
+
+
+
+```python
+ap.dim_3_network_factory.droupout_rate = 0.5
+test_assembly_point(ap)
+```
+
+
+
+
+    {'features_type': tg.common.ml.batched_training.factories.networks.basics.AnnotatedTensor,
+     'features_shape': (4, 10, 3),
+     'network_output_shape': torch.Size([10, 20]),
+     'network': FeedForwardNetwork(
+       (networks): ModuleList(
+         (0): InputConversionNetwork()
+         (1): Dropout3d(p=0.5, inplace=False)
+         (2): LSTMNetwork(
+           (lstm): LSTM(3, 20)
+         )
+       )
+     )}
+
+
+
+The use case for the `AssemblyPoint` is:
+* create a field of `AssemblyPoint` type in your subclass of `TorchTrainingTask`, e.g., `assebly_point`
+* externally adjust fields of `assembly_point` to configure it
+* in `initialize_task`, use assemply point to generate extractors and network factories. Augment the network factory with a tailing that ensures the right dimentionality of the output, manually or with `btf.Factories.Tailing` 
+* you can even use multiple assemble points! Each will create extractor and head network for the part of the input data, and then you'll assemble these heads into the full network.

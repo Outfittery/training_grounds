@@ -16,10 +16,10 @@ In this model, the training is an object, which is composition of other objects.
 
 ## If you don't want all this
 
-... That's also fine. TG is designed to make the life easier, not worse. We offer the SOLID implementation for two wide-spread training scenarios, and we believe that this is a generally better way. But if you are uncomfortable with the SOLID approach to training, or your training process is so specific that it does not fit into both scenarios we have implemented, you always have the following option:
+... That's also fine. TG is designed to make the life easier, not worse. We offer the SOLID implementation for two wide-spread training scenarios, and we believe that this is a generally better way. But if you are uncomfortable with the SOLID approach to machine learning, or your process is so specific that it does not fit into both scenarios we have implemented, you always have the following option:
 
 * Inherit from `AbstractTrainingTask`
-* Implement `run` method and write the code in any way you see appropriate
+* Implement `run_with_environment` method and write the code in any way you see appropriate
 * Consider implementing `get_metric_names`, as the metric names must be available prior to the training's start in Sagemaker. You can always return empty array. 
 
 After this, you code will be deliverable with TG delivery. You may also alter the delivery process, as it was explained in the corresponding part of the demo.
@@ -383,8 +383,8 @@ result = task.run(tdf)
       0%|          | 0/1 [00:00<?, ?it/s]
 
 
-    2022-08-09 09:26:17.820333+00:00 INFO: Starting stage 1/1
-    2022-08-09 09:26:18.007362+00:00 INFO: Completed stage 1/1
+    2022-12-28 14:20:29.533243 INFO: Starting stage 1/1
+    2022-12-28 14:20:29.726526 INFO: Completed stage 1/1
 
 
 Essential components are:
@@ -635,7 +635,7 @@ result['runs'][0]['model']
 
     Pipeline(steps=[('ColumnNamesKeeper', ColumnNamesKeeper()),
                     ('Transformer',
-                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f9d34046370>),
+                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7ff71a3ee9d0>),
                     ('ColumnNamesKeeperAfterTransformation', ColumnNamesKeeper()),
                     ('Model', LogisticRegression())])
 
@@ -899,28 +899,28 @@ pd.DataFrame([run['metrics'] for run in result['runs'].values()])
   <tbody>
     <tr>
       <th>0</th>
-      <td>0.865179</td>
-      <td>0.998308</td>
+      <td>0.870149</td>
+      <td>0.998156</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>0.840779</td>
-      <td>0.998793</td>
+      <td>0.833078</td>
+      <td>0.998982</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.846325</td>
-      <td>0.997314</td>
+      <td>0.833681</td>
+      <td>0.997666</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.826601</td>
-      <td>0.999662</td>
+      <td>0.817806</td>
+      <td>0.999574</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.877310</td>
-      <td>0.997893</td>
+      <td>0.884988</td>
+      <td>0.997668</td>
     </tr>
   </tbody>
 </table>
@@ -1034,13 +1034,13 @@ result['runs'][0]['model']
 
     Pipeline(steps=[('ColumnNamesKeeper', ColumnNamesKeeper()),
                     ('Transformer',
-                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f9d350c1460>),
+                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7ff718b93190>),
                     ('ColumnNamesKeeperAfterTransformation', ColumnNamesKeeper()),
                     ('Model',
                      Pipeline(steps=[('CategoricalVariablesSetter',
-                                      <tg.common.ml.single_frame_training.model_provider.CatBoostWrap object at 0x7f9d2b5b2670>),
+                                      <tg.common.ml.single_frame_training.model_provider.CatBoostWrap object at 0x7ff71a3bc3d0>),
                                      ('Model',
-                                      <catboost.core.CatBoostClassifier object at 0x7f9d350c12b0>)]))])
+                                      <catboost.core.CatBoostClassifier object at 0x7ff71a3bc2e0>)]))])
 
 
 
@@ -1319,7 +1319,7 @@ result['runs'][0]['model']
 
     Pipeline(steps=[('ColumnNamesKeeper', ColumnNamesKeeper()),
                     ('Transformer',
-                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f9d1d251700>),
+                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7ff70404b730>),
                     ('ColumnNamesKeeperAfterTransformation', ColumnNamesKeeper()),
                     ('Model', LogisticRegression(C=1))])
 
@@ -1357,7 +1357,7 @@ result['runs'][0]['model']
 
     Pipeline(steps=[('ColumnNamesKeeper', ColumnNamesKeeper()),
                     ('Transformer',
-                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7f9d1dec8130>),
+                     <tg.common.ml.dft.transform_factory.DataFrameTransformerFactory object at 0x7ff73d6dda60>),
                     ('ColumnNamesKeeperAfterTransformation', ColumnNamesKeeper()),
                     ('Model', LogisticRegression())])
 

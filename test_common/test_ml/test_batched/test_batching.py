@@ -35,12 +35,12 @@ class BatcherTestCase(TestCase):
     def test_batching(self):
         db = get_bundle()
         strategy = SimpleBatcherStrategy()
-        batcher = Batcher(2, [
+        batcher = Batcher([
             PlainExtractor.build('df1').join('df1', 'df1').apply(),
             PlainExtractor.build('df2').join('df2', 'df2').apply(),
             ])
-        self.assertEqual(2, batcher.get_batch_count(db, strategy))
-        batch = batcher.get_batch(db, 1, strategy)
+        self.assertEqual(2, batcher.get_batch_count(2, db, strategy))
+        batch = batcher.get_batch(2, db, 1, strategy)
         self.assertListEqual([5, 7], list(batch['df1'].a))
         self.assertListEqual([5, 7], list(batch['df1'].index))
         self.assertListEqual(['-5', '-3'], list(batch['df2'].b))
@@ -62,25 +62,25 @@ class BatcherTestCase(TestCase):
         self.assertListEqual(['a'], list(bundle1.data_frames['df1'].columns))
         self.assertListEqual(['b'], list(bundle1.data_frames['df2'].columns))
 
-    def _unwrap(self, batcher: Batcher, db, strategy):
+    def _unwrap(self, batch_size, batcher: Batcher, db, strategy):
         result = []
-        for i in range(batcher.get_batch_count(db, strategy)):
-            batch = batcher.get_batch(db, i, strategy)
+        for i in range(batcher.get_batch_count(batch_size, db, strategy)):
+            batch = batcher.get_batch(batch_size, db, i, strategy)
             result.extend(list(batch['df1']['a']))
         return result
 
     def test_uneven_batcch(self):
         strategy = SimpleBatcherStrategy()
-        batcher = Batcher(2, [
+        batcher = Batcher([
             PlainExtractor.build('df1').join('df1', 'df1').apply(),
             PlainExtractor.build('df2').join('df2', 'df2').apply(),
             ])
 
         db = get_bundle()
         db.index_frame = db.bundle.index.iloc[[0, 1, 2, 3]]
-        self.assertEqual(2, batcher.get_batch_count(db, strategy))
-        self.assertListEqual([0, 1, 2, 3], self._unwrap(batcher, db, strategy))
+        self.assertEqual(2, batcher.get_batch_count(2, db, strategy))
+        self.assertListEqual([0, 1, 2, 3], self._unwrap(2, batcher, db, strategy))
 
         db.index_frame = db.bundle.index.iloc[[0, 1, 2, 3, 4]]
-        self.assertEqual(3, batcher.get_batch_count(db, strategy))
-        self.assertListEqual([0, 1, 2, 3, 4], self._unwrap(batcher, db, strategy))
+        self.assertEqual(3, batcher.get_batch_count(2, db, strategy))
+        self.assertListEqual([0, 1, 2, 3, 4], self._unwrap(2, batcher, db, strategy))

@@ -2,9 +2,10 @@
 
 ## Overview
 
-The Data Cleaning phase occurs after Featurization. At this stage, we have the data as the tidy dataframe, but there are still:
+The Data Cleaning phase is applicable to the stage when we already have our dataset as a tidy dataframe. This dataframe may not, however, be immediately suitable for machine leaning as it may contain:
 
 * missing continuous values
+* non-normalized continuous values
 * categorical values in need of transformation
 
 In `sklearn` there are plenty of useful classes to address these problems. The only problem with them is that they do not keep the data in `pd.DataFrame` format, converting them to `numpy` arrays, thus losing the column names and making the debugging much harder.
@@ -300,12 +301,15 @@ tfac.fit_transform(df).head()
 
 
 
-`tfac` is a data transformer in the sense of `sklearn`, it has the `fit`, `transform` and `fit_transform` method.
+`tfac` is a data transformer in the sense of `sklearn`, it has the `fit`, `transform` and `fit_transform` methods.
 
 The default solution:
   * automatically determines if the feature is continuous or categorical
   * performs normalisation and imputation to continous variables, as well as adds the missing indicator
-  * applies one-hot encoding to categorical variables, checking for None values, and also limits the amount of columns per feature, placing least-popular values in `OTHER` column.
+  * for categorical variables:
+    * applies one-hot encoding
+    * Converts None variable to a string NONE
+    * limits the amount of values per feature, placing least-popular values in `OTHER` column (this is crucial, e.g., for decision trees)
 
 
 ## Class structure
@@ -714,7 +718,7 @@ Some notes on missing indicator. When the sklearn Missing indicator is used, the
 ```python
 import traceback
 
-test_df = pd.DataFrame([dict(Survived=0, Age=30, SibSp=0, Fare=None)]).astype(float)
+test_df = pd.DataFrame([dict(Survived=0, Age=30, SibSp=0, Fare=None, Parch=0, PClass=0)]).astype(float)
 from sklearn.impute import MissingIndicator
 
 tr = dft.DataFrameTransformer([
@@ -730,18 +734,17 @@ except ValueError as exp:
     traceback.print_exc() #We catch the exception so the Notebook could proceed uninterrupted
 ```
 
-    2022-08-09 09:26:12.708615+00:00 WARNING: Missing column in ContinuousTransformer
-    2022-08-09 09:26:12.716127+00:00 WARNING: Missing column in ContinuousTransformer
+    2022-12-28 14:20:25.225323 WARNING: Missing column in ContinuousTransformer
 
 
     Traceback (most recent call last):
-      File "/tmp/ipykernel_10529/2155061853.py", line 14, in <module>
+      File "/tmp/ipykernel_16374/777428497.py", line 14, in <module>
         tr.transform(test_df)
-      File "/home/yura/Desktop/repos/lesvik-ml/tg/common/ml/dft/architecture.py", line 48, in transform
+      File "/home/yura/Desktop/repos/appalack-ml/tg/common/ml/dft/architecture.py", line 48, in transform
         for res in transformer.transform(df):
-      File "/home/yura/Desktop/repos/lesvik-ml/tg/common/ml/dft/column_transformers.py", line 90, in transform
+      File "/home/yura/Desktop/repos/appalack-ml/tg/common/ml/dft/column_transformers.py", line 90, in transform
         missing = self.missing_indicator.transform(subdf)
-      File "/home/yura/anaconda3/envs/lesvik/lib/python3.8/site-packages/sklearn/impute/_base.py", line 885, in transform
+      File "/home/yura/anaconda3/envs/ap/lib/python3.8/site-packages/sklearn/impute/_base.py", line 885, in transform
         raise ValueError(
     ValueError: The features [4] have missing values in transform but have no missing values in fit.
 
@@ -760,11 +763,9 @@ tr.fit(df)
 tr.transform(test_df)
 ```
 
-    2022-08-09 09:26:12.796480+00:00 WARNING: Missing column in ContinuousTransformer
-    2022-08-09 09:26:12.812927+00:00 WARNING: Missing column in ContinuousTransformer
-    2022-08-09 09:26:12.873563+00:00 WARNING: Unexpected None in MissingIndicatorWithReporting
-    2022-08-09 09:26:12.881915+00:00 WARNING: Unexpected None in MissingIndicatorWithReporting
-    2022-08-09 09:26:12.883404+00:00 WARNING: Unexpected None in MissingIndicatorWithReporting
+    2022-12-28 14:20:25.256829 WARNING: Missing column in ContinuousTransformer
+    2022-12-28 14:20:25.265063 WARNING: Unexpected None in MissingIndicatorWithReporting
+    2022-12-28 14:20:25.265807 WARNING: Unexpected None in MissingIndicatorWithReporting
 
 
 
@@ -790,7 +791,7 @@ tr.transform(test_df)
       <td>0.0</td>
       <td>0.020727</td>
       <td>-0.474545</td>
-      <td>0.0</td>
+      <td>-0.473674</td>
       <td>0.0</td>
       <td>False</td>
     </tr>
@@ -811,11 +812,9 @@ Logger.initialize_kibana()
 tr.transform(test_df)
 ```
 
-    {"@timestamp": "2022-08-09 09:26:12.966395+00:00", "message": "Missing column in ContinuousTransformer", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/lesvik-ml/tg/common/ml/dft/column_transformers.py", "path_line": 75, "column": "Pclass"}
-    {"@timestamp": "2022-08-09 09:26:12.977181+00:00", "message": "Missing column in ContinuousTransformer", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/lesvik-ml/tg/common/ml/dft/column_transformers.py", "path_line": 75, "column": "Parch"}
-    {"@timestamp": "2022-08-09 09:26:13.083818+00:00", "message": "Unexpected None in MissingIndicatorWithReporting", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/lesvik-ml/tg/common/ml/dft/miscellaneous.py", "path_line": 36, "column": "Pclass"}
-    {"@timestamp": "2022-08-09 09:26:13.084559+00:00", "message": "Unexpected None in MissingIndicatorWithReporting", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/lesvik-ml/tg/common/ml/dft/miscellaneous.py", "path_line": 36, "column": "Parch"}
-    {"@timestamp": "2022-08-09 09:26:13.088141+00:00", "message": "Unexpected None in MissingIndicatorWithReporting", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/lesvik-ml/tg/common/ml/dft/miscellaneous.py", "path_line": 36, "column": "Fare"}
+    {"@timestamp": "2022-12-28T13:20:25.278713+00:00", "message": "Missing column in ContinuousTransformer", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/appalack-ml/tg/common/ml/dft/column_transformers.py", "path_line": 75, "column": "Pclass"}
+    {"@timestamp": "2022-12-28T13:20:25.290459+00:00", "message": "Unexpected None in MissingIndicatorWithReporting", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/appalack-ml/tg/common/ml/dft/miscellaneous.py", "path_line": 36, "column": "Pclass"}
+    {"@timestamp": "2022-12-28T13:20:25.292595+00:00", "message": "Unexpected None in MissingIndicatorWithReporting", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/appalack-ml/tg/common/ml/dft/miscellaneous.py", "path_line": 36, "column": "Fare"}
 
 
 
@@ -841,7 +840,7 @@ tr.transform(test_df)
       <td>0.0</td>
       <td>0.020727</td>
       <td>-0.474545</td>
-      <td>0.0</td>
+      <td>-0.473674</td>
       <td>0.0</td>
       <td>False</td>
     </tr>
@@ -1091,7 +1090,7 @@ tr.fit(df.loc[~df.Embarked.isnull()])
 tr.transform(df.loc[df.Embarked.isnull()])
 ```
 
-    {"@timestamp": "2022-08-09 09:26:13.469973+00:00", "message": "Unexpected value in MostPopularStrategy", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/lesvik-ml/tg/common/ml/dft/column_transformers.py", "path_line": 122, "column": "Embarked", "value": "NONE"}
+    {"@timestamp": "2022-12-28T13:20:25.390231+00:00", "message": "Unexpected value in MostPopularStrategy", "levelname": "WARNING", "logger": "tg", "path": "/home/yura/Desktop/repos/appalack-ml/tg/common/ml/dft/column_transformers.py", "path_line": 122, "column": "Embarked", "value": "NONE"}
 
 
 

@@ -9,6 +9,8 @@ from pathlib import Path
 from yo_fluq_ds import FileIO, Obj, Query
 from warnings import warn
 import copy
+import zipfile
+from io import BytesIO
 
 class DataBundle:
     def __init__(self, **frames: pd.DataFrame):
@@ -69,6 +71,20 @@ class DataBundle:
     def __repr__(self):
         return self.describe().__str__()
 
+
+    @staticmethod
+    def _load_zip(fname):
+        with zipfile.ZipFile(fname, 'r') as file:
+            bundle = DataBundle()
+            for f in file.filelist:
+                name = f.filename
+                parq = '.parquet'
+                if name.endswith(parq):
+                    buffer = BytesIO(file.read(name))
+                    df = pd.read_parquet(buffer)
+                    bundle[name.replace(parq, '')] = df
+            return bundle
+
     @staticmethod
     def _read_bundle(path: Path):
         files = (Query
@@ -93,7 +109,22 @@ class DataBundle:
         """
         if isinstance(inp, str):
             inp = Path(inp)
-        return DataBundle._read_bundle(inp)
+        if os.path.isfile(inp):
+            return DataBundle._load_zip(inp)
+        elif os.path.isdir(inp):
+            return DataBundle._read_bundle(inp)
+        else:
+            raise ValueError(f'{inp} is neither file nor folder')
+
+
+
+    def save_as_zip(self, fname):
+        with zipfile.ZipFile(fname, 'w', zipfile.ZIP_DEFLATED) as file:
+            for name, data in self.data_frames.items():
+                bytes = BytesIO()
+                data.to_parquet(bytes)
+                file.writestr(name + '.parquet', bytes.getbuffer())
+
 
     def save(self, folder: Union[str, Path]) -> None:
         if isinstance(folder, str):

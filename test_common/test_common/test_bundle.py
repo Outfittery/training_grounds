@@ -28,3 +28,15 @@ class DataBundleTestCase(TestCase):
         b1 = DataBundle.load(path)
         self.assertListEqual([0, 1, 2, 3], list(b1.a.a))
         self.assertListEqual([0, 3, 6, 9], list(b1.b.a))
+
+    def test_zip(self):
+        df1 = Query.en(range(4)).select(lambda z: dict(a=z, b=2 * z)).to_dataframe()
+        df2 = df1 * 3
+        b = DataBundle(a=df1, b=df2)
+        path = Loc.temp_path/'tests/bundle.zip'
+        b.save_as_zip(path)
+        b1 = DataBundle.load(path)
+        self.assertListEqual([0, 1, 2, 3], list(b1.a.a))
+        self.assertListEqual([0, 3, 6, 9], list(b1.b.a))
+
+

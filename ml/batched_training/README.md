@@ -456,10 +456,10 @@ test_df.loc[batch].groupby('x').size()
 
 
     x
-    1    1010
-    2    2021
-    3    2970
-    4    3999
+    1     982
+    2    1994
+    3    2967
+    4    4057
     dtype: int64
 
 
@@ -640,7 +640,7 @@ ibundle_sample.index_frame
 
 
 
-The most simple case is when data extracted from index itself, which is the case for the label in our case.
+The most simple case is when data extracted from index itself, which is the case for the label:
 
 
 ```python
@@ -1136,7 +1136,6 @@ Now we are ready to define the Batcher:
 
 ```python
 batcher = bt.Batcher(
-    batch_size = 100,
     extractors = [feature_extractor, label_extractor],
     batching_strategy = bt.PriorityRandomBatcherStrategy('priority')
 )
@@ -1146,16 +1145,19 @@ Let's take a look at the batch produced
 
 
 ```python
-batch = batcher.fit_extract(ibundle_fixed)
-list(batch)
+batch_size = 50
+batch = batcher.fit_extract(batch_size, ibundle_fixed)
+batch
 ```
 
 
 
 
-    ['index', 'features', 'labels']
+    <tg.common.ml.batched_training.data_bundle.IndexedDataBundle at 0x7f8c24b0fb50>
 
 
+
+So, batch is of type `DataBundle`, and contains index, features, and labels. 
 
 The batch is balanced
 
@@ -1168,8 +1170,8 @@ batch['labels'].groupby('Survived').size()
 
 
     Survived
-    0.0    54
-    1.0    39
+    0.0    30
+    1.0    17
     dtype: int64
 
 
@@ -1179,11 +1181,10 @@ batch['labels'].groupby('Survived').size()
 
 ```python
 test_batcher = bt.Batcher(
-    batch_size = 1000,
     extractors = [feature_extractor, label_extractor],
     batching_strategy = bt.PriorityRandomBatcherStrategy('priority')
 )
-test_batch = test_batcher.fit_extract(ibundle_fixed)
+test_batch = test_batcher.fit_extract(batch_size, ibundle_fixed)
 test_batch['labels'].groupby('Survived').size()
 ```
 
@@ -1191,8 +1192,8 @@ test_batch['labels'].groupby('Survived').size()
 
 
     Survived
-    0.0    341
-    1.0    269
+    0.0    22
+    1.0    27
     dtype: int64
 
 
@@ -1230,7 +1231,7 @@ mini_batch['index'].shape
 * Implements training on one batch. Again, this is more complicated in case of neural networks than just calling a `fit` method. 
 * Implements the prediction. For different tasks, we interpret the network's output differently. In Single Frame Training, we had Evaluation to address this. Still, here the options are more plentiful, so it's moved into `ModelHandler` as well.
 
-In `tg.common.ml.batched_training.torch` there is a generic definition for such `ModelHandler` that we will cover in the corresponding demo. Here, we will define `ModelHandler` from scratch, to demonstrate its logic.
+In `tg.common.ml.batched_training.factories` there is a generic definition for such `ModelHandler` that we will cover in the corresponding demo. Here, we will define `ModelHandler` from scratch, to demonstrate its logic.
 
 
 
@@ -1311,40 +1312,41 @@ task = bt.BatchedTrainingTask(
     metric_pool = bt.MetricPool().add_sklearn(roc_auc_score),
     settings = bt.TrainingSettings(epoch_count=1)
 )
+task.settings.batch_size=100
 
 result = task.run(ibundle_fixed)
 ```
 
-    2022-08-09 09:27:17.611954+00:00 INFO: Training starts. Info: {}
-    2022-08-09 09:27:17.613787+00:00 INFO: Ensuring/loading bundle. Bundle before:
-    <tg.common.ml.batched_training.data_bundle.IndexedDataBundle object at 0x7f42486597f0>
-    2022-08-09 09:27:17.615849+00:00 INFO: Bundle loaded
+    2022-12-28 14:21:10.014697 INFO: Training starts. Info: {}
+    2022-12-28 14:21:10.016047 INFO: Ensuring/loading bundle. Bundle before:
+    <tg.common.ml.batched_training.data_bundle.IndexedDataBundle object at 0x7f8c4038d640>
+    2022-12-28 14:21:10.016617 INFO: Bundle loaded
     {'index': {'shape': (891, 5), 'index_name': 'PassengerId', 'columns': ['Name', 'Ticket', 'Cabin', 'Survived', 'priority'], 'index': [1, 2, 3, 4, 5, '...']}, 'passengers': {'shape': (891, 4), 'index_name': 'Name', 'columns': ['Sex', 'Age', 'SibSp', 'Parch'], 'index': ['Braund, Mr. Owen Harris', 'Cumings, Mrs. John Bradley (Florence Briggs Thayer)', 'Heikkinen, Miss. Laina', 'Futrelle, Mrs. Jacques Heath (Lily May Peel)', 'Allen, Mr. William Henry', '...']}, 'tickets': {'shape': (681, 3), 'index_name': 'Ticket', 'columns': ['Pclass', 'Fare', 'Embarked'], 'index': ['A/5 21171', 'PC 17599', 'STON/O2. 3101282', '113803', '373450', '...']}}
-    2022-08-09 09:27:17.617984+00:00 INFO: Index frame is set to index, shape is (891, 5)
-    2022-08-09 09:27:17.618541+00:00 INFO: Skipping late initialization
-    2022-08-09 09:27:17.619928+00:00 INFO: Preprocessing bundle by batcher
-    2022-08-09 09:27:17.628825+00:00 INFO: Splits: train 712, test 179, display 143
-    2022-08-09 09:27:17.629428+00:00 INFO: New training. Instantiating the system
-    2022-08-09 09:27:17.631794+00:00 INFO: Fitting the transformers
-    2022-08-09 09:27:17.709878+00:00 INFO: Instantiating model
-    2022-08-09 09:27:17.722208+00:00 INFO: Initialization completed
-    2022-08-09 09:27:17.723317+00:00 INFO: Epoch 0 of 1
-    2022-08-09 09:27:17.724329+00:00 INFO: Training: 0/8
-    2022-08-09 09:27:17.786426+00:00 INFO: Training: 1/8
-    2022-08-09 09:27:17.817651+00:00 INFO: Training: 2/8
-    2022-08-09 09:27:17.848584+00:00 INFO: Training: 3/8
-    2022-08-09 09:27:17.879179+00:00 INFO: Training: 4/8
-    2022-08-09 09:27:17.946487+00:00 INFO: Training: 5/8
-    2022-08-09 09:27:18.029367+00:00 INFO: Training: 6/8
-    2022-08-09 09:27:18.073784+00:00 INFO: Training: 7/8
-    2022-08-09 09:27:18.111929+00:00 INFO: test: 0/2
-    2022-08-09 09:27:18.145219+00:00 INFO: test: 1/2
-    2022-08-09 09:27:18.182553+00:00 INFO: display: 0/2
-    2022-08-09 09:27:18.223480+00:00 INFO: display: 1/2
-    2022-08-09 09:27:18.258226+00:00 INFO: ###roc_auc_score_test:0.7712779973649538
-    2022-08-09 09:27:18.259060+00:00 INFO: ###roc_auc_score_display:0.709247311827957
-    2022-08-09 09:27:18.259976+00:00 INFO: ###loss:0.24872505478560925
-    2022-08-09 09:27:18.260502+00:00 INFO: ###iteration:0
+    2022-12-28 14:21:10.017190 INFO: Index frame is set to index, shape is (891, 5)
+    2022-12-28 14:21:10.017786 INFO: Skipping late initialization
+    2022-12-28 14:21:10.018319 INFO: Preprocessing bundle by batcher
+    2022-12-28 14:21:10.023948 INFO: Splits: train 712, test 179, display 143
+    2022-12-28 14:21:10.024546 INFO: New training. Instantiating the system
+    2022-12-28 14:21:10.025671 INFO: Fitting the transformers
+    2022-12-28 14:21:10.073160 INFO: Instantiating model
+    2022-12-28 14:21:10.074611 INFO: Initialization completed
+    2022-12-28 14:21:10.075486 INFO: Epoch 0 of 1
+    2022-12-28 14:21:10.075927 INFO: Training: 0/8
+    2022-12-28 14:21:10.103902 INFO: Training: 1/8
+    2022-12-28 14:21:10.128179 INFO: Training: 2/8
+    2022-12-28 14:21:10.156215 INFO: Training: 3/8
+    2022-12-28 14:21:10.180618 INFO: Training: 4/8
+    2022-12-28 14:21:10.205398 INFO: Training: 5/8
+    2022-12-28 14:21:10.230677 INFO: Training: 6/8
+    2022-12-28 14:21:10.257123 INFO: Training: 7/8
+    2022-12-28 14:21:10.282654 INFO: test: 0/2
+    2022-12-28 14:21:10.308441 INFO: test: 1/2
+    2022-12-28 14:21:10.334269 INFO: display: 0/2
+    2022-12-28 14:21:10.358629 INFO: display: 1/2
+    2022-12-28 14:21:10.387787 INFO: ###roc_auc_score_test:0.4130434782608696
+    2022-12-28 14:21:10.388229 INFO: ###roc_auc_score_display:0.43268817204301074
+    2022-12-28 14:21:10.388711 INFO: ###loss:0.2608289998024702
+    2022-12-28 14:21:10.389460 INFO: ###iteration:0
 
 
 As you can see, `TrainingTasks` logs quite extensively on the initialization process, so in case of error it's relativaly easy to understand the source of error. 
@@ -1423,7 +1425,7 @@ task = bt.BatchedTrainingTask(
     batcher = batcher,
     model_handler=TorchHandler(),
     metric_pool = bt.MetricPool().add_sklearn(roc_auc_score),
-    settings = bt.TrainingSettings(epoch_count=10),
+    settings = bt.TrainingSettings(epoch_count=10, batch_size=100),
     late_initialization=late_initialization
 )
 
@@ -1469,27 +1471,27 @@ prediction
   <tbody>
     <tr>
       <th>1</th>
-      <td>0.406955</td>
+      <td>0.385275</td>
       <td>0.0</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>0.650265</td>
+      <td>0.664146</td>
       <td>1.0</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>0.471039</td>
+      <td>0.462648</td>
       <td>1.0</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>0.603117</td>
+      <td>0.632161</td>
       <td>1.0</td>
     </tr>
     <tr>
       <th>5</th>
-      <td>0.399309</td>
+      <td>0.384694</td>
       <td>0.0</td>
     </tr>
   </tbody>
@@ -1524,7 +1526,7 @@ task = bt.BatchedTrainingTask(
     metric_pool = bt.MetricPool().add_sklearn(roc_auc_score),
     settings = bt.TrainingSettings(epoch_count=10)
 )
-batch = task.generate_sample_batch(ibundle_fixed)
+batch, temp_data = task.generate_sample_batch_and_temp_data(ibundle_fixed)
 ```
 
 This batch then can be used on different levels to debug network and handler:
@@ -1537,11 +1539,11 @@ task.model_handler.network(batch['features'])[:5]
 
 
 
-    tensor([[0.6271],
-            [0.6267],
-            [0.6402],
-            [0.6249],
-            [0.6380]], grad_fn=<SliceBackward>)
+    tensor([[0.4334],
+            [0.4201],
+            [0.4227],
+            [0.4231],
+            [0.4233]], grad_fn=<SliceBackward>)
 
 
 
@@ -1570,28 +1572,28 @@ task.model_handler.predict(batch).head()
   </thead>
   <tbody>
     <tr>
-      <th>62</th>
-      <td>0.627095</td>
-      <td>1.0</td>
-    </tr>
-    <tr>
-      <th>521</th>
-      <td>0.626716</td>
-      <td>1.0</td>
-    </tr>
-    <tr>
-      <th>244</th>
-      <td>0.640244</td>
+      <th>874</th>
+      <td>0.433400</td>
       <td>0.0</td>
     </tr>
     <tr>
-      <th>249</th>
-      <td>0.624913</td>
-      <td>1.0</td>
+      <th>833</th>
+      <td>0.420091</td>
+      <td>0.0</td>
     </tr>
     <tr>
-      <th>217</th>
-      <td>0.638028</td>
+      <th>105</th>
+      <td>0.422657</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>612</th>
+      <td>0.423145</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>284</th>
+      <td>0.423349</td>
       <td>1.0</td>
     </tr>
   </tbody>
@@ -1600,9 +1602,34 @@ task.model_handler.predict(batch).head()
 
 
 
+Temp data also contains lots of the information, useful for debugging, such as splits
+
+
+```python
+temp_data.__dict__
+```
+
+
+
+
+    {'original_ibundle': <tg.common.ml.batched_training.data_bundle.IndexedDataBundle at 0x7f8c4038d640>,
+     'env': <tg.common.ml.training_core.arch.TrainingEnvironment at 0x7f8bac086a90>,
+     'split': <tg.common.ml.training_core.splitter.DataFrameSplit at 0x7f8ba8f45a30>,
+     'first_iteration': 0,
+     'iteration': 0,
+     'losses': [],
+     'epoch_begins_at': None,
+     'train_bundle': None,
+     'result': None,
+     'batch': None,
+     'mini_batch_indices': None,
+     'mini_batch': None}
+
+
+
 ### Debug mode
 
-`BatchingTrainingTask` has a `debug` argument, which forces the task to keep the intermediate data as a field of the class. **Never** do it in production, as the intermediate data also contain the bundle, so pickling the task (which is an artefact of the training) will be impossible with any real data. 
+`BatchingTrainingTask` has a `debug` argument, which forces the task to keep the intermediate data as a field of the class (`temp_data` from the previous section). **Never** do it in production, as the intermediate data also contain the bundle, so pickling the task (which is an artefact of the training) will be impossible with any real data. 
 
 However, with toy datasets such as we have, it's very useful to look at the intermediate dataframes when debugging errors. For instance, let's check if the `test` and `display` splits are related to the train split the way we expect:
 
@@ -1707,7 +1734,6 @@ Or, we may ensure that the splits are consistant with our expectations:
     task.data_.result.test_splits['test'].isin(task.data_.result.train_split).mean(),
     task.data_.result.test_splits['display'].isin(task.data_.result.train_split).mean()
 )
-
 ```
 
 
@@ -1728,8 +1754,8 @@ task.data_.batch['index'].groupby('Survived').size()
 
 
     Survived
-    0.0    45
-    1.0    47
+    0.0    439
+    1.0    273
     dtype: int64
 
 

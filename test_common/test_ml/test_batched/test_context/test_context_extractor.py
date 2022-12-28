@@ -1,5 +1,4 @@
 import tg.common.ml.batched_training.context as btc
-import tg.common.ml.batched_training.torch as btt
 import tg.common.ml.batched_training as bt
 import tg.common.ml.dft as dft
 from functools import partial
@@ -98,7 +97,7 @@ class ContextExtractorTestCase(TestCase):
             btc.SimpleExtractorToAggregatorFactory(
                 bt.PlainExtractor.build('word').index().apply(dft.DataFrameTransformerFactory.default_factory(), take_columns='word')
             ),
-            btt.LSTMFinalizer()
+            btc.LSTMFinalizer()
         )
         ibundle = bt.IndexedDataBundle(bundle.src, bundle)
         ctx.fit(ibundle)

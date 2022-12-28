@@ -17,3 +17,8 @@ class IndexedDataBundle:
             return IndexedDataBundle(index, self.bundle)
         else:
             raise ValueError(f'`index` is expected to be pd.Index or pd.Dataframe, but was {type(index)}')
+
+    def __getitem__(self, key):
+        if key=='index':
+            return self.index_frame
+        return self.bundle.data_frames[key]

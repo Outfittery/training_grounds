@@ -23,7 +23,7 @@ from tg.common import Logger
 Logger.info('Message with default logger')
 ```
 
-    2022-08-09 09:25:48.886388+00:00 INFO: Message with default logger
+    2022-12-28 14:20:03.949207 INFO: Message with default logger
 
 
 
@@ -32,7 +32,7 @@ Logger.initialize_kibana()
 Logger.info('Message with Kibana logger')
 ```
 
-    {"@timestamp": "2022-08-09 09:25:48.896592+00:00", "message": "Message with Kibana logger", "levelname": "INFO", "logger": "tg", "path": "/tmp/ipykernel_10321/2907404717.py", "path_line": 2}
+    {"@timestamp": "2022-12-28T13:20:03.955688+00:00", "message": "Message with Kibana logger", "levelname": "INFO", "logger": "tg", "path": "/tmp/ipykernel_16175/2907404717.py", "path_line": 2}
 
 
 As said before, you may define a custom session keys:
@@ -45,8 +45,8 @@ Logger.clear_keys()
 Logger.info('Message without a key')
 ```
 
-    {"@timestamp": "2022-08-09 09:25:48.905318+00:00", "message": "Message with a key", "levelname": "INFO", "logger": "tg", "path": "/tmp/ipykernel_10321/71300885.py", "path_line": 2, "test_key": "test"}
-    {"@timestamp": "2022-08-09 09:25:48.906591+00:00", "message": "Message without a key", "levelname": "INFO", "logger": "tg", "path": "/tmp/ipykernel_10321/71300885.py", "path_line": 4}
+    {"@timestamp": "2022-12-28T13:20:03.961362+00:00", "message": "Message with a key", "levelname": "INFO", "logger": "tg", "path": "/tmp/ipykernel_16175/71300885.py", "path_line": 2, "test_key": "test"}
+    {"@timestamp": "2022-12-28T13:20:03.962184+00:00", "message": "Message without a key", "levelname": "INFO", "logger": "tg", "path": "/tmp/ipykernel_16175/71300885.py", "path_line": 4}
 
 
 If exception information is available, it will be put in the keys:
@@ -59,7 +59,7 @@ except:
     Logger.error('Error')
 ```
 
-    {"@timestamp": "2022-08-09 09:25:48.916677+00:00", "message": "Error", "levelname": "ERROR", "logger": "tg", "path": "/tmp/ipykernel_10321/1975102656.py", "path_line": 4, "exception_type": "<class 'ValueError'>", "exception_value": "Error", "exception_details": "Traceback (most recent call last):\n  File \"/tmp/ipykernel_10321/1975102656.py\", line 2, in <module>\n    raise ValueError('Error')\nValueError: Error\n"}
+    {"@timestamp": "2022-12-28T13:20:03.968112+00:00", "message": "Error", "levelname": "ERROR", "logger": "tg", "path": "/tmp/ipykernel_16175/1975102656.py", "path_line": 4, "exception_type": "<class 'ValueError'>", "exception_value": "Error", "exception_details": "Traceback (most recent call last):\n  File \"/tmp/ipykernel_16175/1975102656.py\", line 2, in <module>\n    raise ValueError('Error')\nValueError: Error\n"}
 
 
 To change the default way of logging, inherit `tg.common._common.logger.LoggerRoot` in `tg.your_project`, and then import from there. It will also affect all the logging within `TG` framework.

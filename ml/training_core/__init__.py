@@ -2,4 +2,4 @@ from .arch import TrainingEnvironment, InMemoryTrainingEnvironment, AbstractTrai
 from .artificiers import ArtifactRemover, ResultDFCleaner
 from .metrics import Metric, SklearnMetric, MetricPool
 from .splitter import DataFrameSplit, Splitter, FoldSplitter, TimeSplitter, OneTimeSplitter, UnionSplitter, CompositionSplitter, IdentitySplitter, PredefinedSplitter
-from .multiclass import MulticlassWinningArtificier, RecallAtK
+from .multiclass import MulticlassMetrics

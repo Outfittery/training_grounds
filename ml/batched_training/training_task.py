@@ -24,7 +24,7 @@ class TrainingSettings:
 
     def __init__(self,
                  epoch_count: int = 100,
-                 batch_size: Optional[int] = 10000,  # TODO: Optional here is a crutch. When None, Batcher.batch_size will be used
+                 batch_size: int = 10000,
                  continue_training: bool = False,
                  training_time_limit: Optional[timedelta] = None,
                  evaluation_time_limit: Optional[timedelta] = None,
@@ -119,7 +119,7 @@ class BatchedTrainingTask(AbstractTrainingTask):
         self.history = []
 
         Logger.info('Fitting the transformers')
-        test_batch = self.batcher.fit_extract(ibundle)
+        test_batch = self.batcher.fit_extract(self.settings.batch_size, ibundle)
 
         Logger.info('Instantiating model')
         self.model_handler.instantiate(self, test_batch)
@@ -135,6 +135,8 @@ class BatchedTrainingTask(AbstractTrainingTask):
             inp = Path(inp)
             if os.path.isdir(inp):
                 bundle = DataBundle._read_bundle(inp)
+            elif os.path.isfile(inp):
+                bundle = DataBundle._load_zip(inp)
             else:
                 raise ValueError(f'Path {inp} not found')
         else:
@@ -188,7 +190,7 @@ class BatchedTrainingTask(AbstractTrainingTask):
             ibundle = temp_data.original_ibundle.change_index(temp_data.split.train)
         else:
             ibundle = temp_data.original_ibundle.change_index(temp_data.split.tests[from_split])
-        batch = self.batcher.get_batch(ibundle, batch_index, force_default_strategy)
+        batch = self.batcher.get_batch(self.settings.batch_size, ibundle, batch_index, force_default_strategy)
         return batch, temp_data
 
     @staticmethod
@@ -217,7 +219,7 @@ class BatchedTrainingTask(AbstractTrainingTask):
 
     def _evaluation_for_one_stage(self, ibundle: IndexedDataBundle, stage_name: str):
         dfs = []
-        batch_count = self.batcher.get_batch_count(ibundle, True)
+        batch_count = self.batcher.get_batch_count(self.settings.batch_size, ibundle, True)
         if batch_count == 0:
             raise ValueError('There is no batches!')
         evaluation_begin = datetime.now()
@@ -229,7 +231,7 @@ class BatchedTrainingTask(AbstractTrainingTask):
             if self.settings.evaluation_batch_limit is not None and i >= self.settings.evaluation_batch_limit:
                 break
             Logger.info(f"{stage_name}: {i}/{batch_count}")
-            batch = self.batcher.get_batch(ibundle, i, True)
+            batch = self.batcher.get_batch(self.settings.batch_size, ibundle, i, True)
             df_addition = self.model_handler.predict(batch)
             dfs.append(df_addition)
         df = pd.concat(dfs, sort=False)
@@ -245,7 +247,7 @@ class BatchedTrainingTask(AbstractTrainingTask):
         return pd.concat(dfs, sort=False)
 
     def predict(self, ibundle: Union[str, Path, DataBundle, IndexedDataBundle]):
-        ibundle = self._ensure_bundle(ibundle)
+        ibundle = self._ensure_bundle(ibundle, self.settings.index_frame_name_in_bundle)
         self.batcher.preprocess_bundle(ibundle)
         return self._evaluation_for_one_stage(ibundle, 'prediction')
 
@@ -314,14 +316,14 @@ class BatchedTrainingTask(AbstractTrainingTask):
     def _train_simple_epoch(self, temp_data: _TrainingTempData):
         temp_data.losses = []
         temp_data.epoch_begins_at = datetime.now()
-        batch_count = self.batcher.get_batch_count(temp_data.train_bundle)
+        batch_count = self.batcher.get_batch_count(self.settings.batch_size, temp_data.train_bundle)
         if batch_count == 0:
             raise ValueError('There is no batches!')
         for i in range(0, batch_count):
             if not self._check_training_time_conditions(temp_data, i):
                 break
             Logger.info(f"Training: {i}/{batch_count}")
-            batch = self.batcher.get_batch(temp_data.train_bundle, i)
+            batch = self.batcher.get_batch(self.settings.batch_size, temp_data.train_bundle, i)
             temp_data.batch = batch
             loss = self.model_handler.train(batch)
             temp_data.losses.append(loss)
@@ -330,7 +332,7 @@ class BatchedTrainingTask(AbstractTrainingTask):
     def _train_epoch_with_minibatches(self, temp_data: _TrainingTempData):
         temp_data.losses = []
         temp_data.epoch_begins_at = datetime.now()
-        batch_count = self.batcher.get_batch_count(temp_data.train_bundle)
+        batch_count = self.batcher.get_batch_count(self.settings.batch_size, temp_data.train_bundle)
         if batch_count == 0:
             raise ValueError('There is no batches!')
         terminate = False
@@ -338,7 +340,7 @@ class BatchedTrainingTask(AbstractTrainingTask):
         for i in range(0, batch_count):
             if terminate:
                 break
-            batch = self.batcher.get_batch(temp_data.train_bundle, i)
+            batch = self.batcher.get_batch(self.settings.batch_size, temp_data.train_bundle, i)
             temp_data.batch = batch
             mini_epochs = self.settings.mini_epoch_count or 1
             for j in range(0, mini_epochs):

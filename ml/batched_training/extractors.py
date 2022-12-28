@@ -42,15 +42,15 @@ class Extractor:
         raise NotImplementedError()
 
     @staticmethod
-    def make_extraction(ibundle: IndexedDataBundle, extractors: List['Extractor']) -> Dict[str, pd.DataFrame]:
-        result = {'index': ibundle.index_frame}
+    def make_extraction(ibundle: IndexedDataBundle, extractors: List['Extractor']) -> IndexedDataBundle:
+        result = DataBundle()
         for extractor in extractors:
             try:
                 rs = extractor.extract(ibundle)
             except Exception as e:
                 raise ValueError(f'Error when extracting from extractor `{extractor.get_name()}`') from e
             result[extractor.get_name()] = rs
-        return result
+        return IndexedDataBundle(ibundle.index_frame, result)
 
 
 class CombinedExtractor(Extractor):
@@ -67,7 +67,10 @@ class CombinedExtractor(Extractor):
         frames = []
         for extractor in extractors:
             frame = extractor.extract(ibundle)
-            frame.columns = [extractor.get_name() + '_' + c for c in frame.columns]
+            prefix = extractor.get_name()
+            if prefix is not None and prefix!='':
+                prefix+='_'
+                frame.columns = [prefix + c for c in frame.columns]
             frames.append(frame)
         df = pd.concat(frames, axis=1)
         return df

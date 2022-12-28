@@ -35,13 +35,13 @@ class PrecomputingExtractor(Extractor):
         else:
             batch_size = len(index)
         ibundle = ibundle.change_index(index)
-        batcher = Batcher(batch_size, [self.inner_extractor])
+        batcher = Batcher([self.inner_extractor])
         dfs = []
         key = None
-        for i in range(batcher.get_batch_count(ibundle)):
-            batch = batcher.get_batch(ibundle, i)
+        for i in range(batcher.get_batch_count(batch_size, ibundle)):
+            batch = batcher.get_batch(batch_size, ibundle, i)
             if key is None:
-                key = [c for c in batch.keys() if c != 'index'][0]
+                key = [c for c in batch.bundle.data_frames.keys() if c != 'index'][0]
             dfs.append(batch[key])
         return dfs
 

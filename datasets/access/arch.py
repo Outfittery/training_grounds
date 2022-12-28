@@ -131,6 +131,17 @@ class CacheMode(Enum):
         return _FileApplicator(DataBundle.load, lambda db, fname: db.save(fname))
 
     @staticmethod
+    def raw_file(path, file_creator, cache_mode):
+        cache_mode = CacheMode.parse(cache_mode)
+        if cache_mode == CacheMode.No or cache_mode == CacheMode.Remake:
+            file_creator()
+        elif not os.path.isfile(path):
+            if cache_mode == CacheMode.Default:
+                file_creator()
+            else:
+                raise ValueError('Cache mode is Use and file was not found')
+
+    @staticmethod
     def parse(value: Union[None, str, 'CacheMode']) -> 'CacheMode':
         if value is None:
             return CacheMode.Default

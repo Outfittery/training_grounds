@@ -1,5 +1,6 @@
 from unittest import TestCase
-from tg.common.ml.batched_training.torch import lstm_data_transformation, AnnotatedTensor
+from tg.common.ml.batched_training.context import lstm_data_transformation
+from tg.common.ml.batched_training.factories import AnnotatedTensor
 import pandas as pd
 import torch
 
