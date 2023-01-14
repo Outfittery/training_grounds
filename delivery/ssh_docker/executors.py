@@ -35,8 +35,8 @@ class SSHDockerConfig:
         envs = []
         if self.options.env_variables_to_propagate is not None:
             for var in self.options.env_variables_to_propagate:
-                envs.append('--env')
                 if var in os.environ:
+                    envs.append('--env')
                     envs.append(f'{environment_quotation}{var}={os.environ[var]}{environment_quotation}')
 
         additional = []
@@ -106,19 +106,24 @@ class SSHRemoteExecutor():
     def __init__(self, config: SSHDockerConfig):
         self.config = config
 
+    def call(self, cmd):
+        #print(' '.join(cmd))
+        subprocess.call(cmd)
+
     def execute(self):
         # creating container and pushing it
         self.config.packaging.make_package()
         self.config.containering.make_container(self.config.packaging)
         self.config.containering.push_container()
 
-        subprocess.call(self.config.get_ssh() + self.config.containering.pusher.get_auth_command())
+        self.call(self.config.get_ssh() + self.config.containering.pusher.get_auth_command())
+
 
         remote_name = self.config.containering.get_remote_name()
-        subprocess.call(self.config.get_ssh() + ['docker', 'pull', remote_name])
+        self.call(self.config.get_ssh() + ['docker', 'pull', remote_name])
 
         run_command = self.config.get_docker_run_cmd(remote_name, '"')
-        subprocess.call(self.config.get_ssh() + run_command)
+        self.call(self.config.get_ssh() + run_command)
 
     def get_logs(self):
         result = SSHDockerConfig.get_logs_by_full_image_name(

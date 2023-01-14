@@ -244,7 +244,9 @@ class BatchedTrainingTask(AbstractTrainingTask):
             df = self._evaluation_for_one_stage(bundle_with_index, stage_name)
             df['stage'] = stage_name
             dfs.append(df)
-        return pd.concat(dfs, sort=False)
+        if len(dfs)>0:
+            return pd.concat(dfs, sort=False)
+        return pd.DataFrame([])
 
     def predict(self, ibundle: Union[str, Path, DataBundle, IndexedDataBundle]):
         ibundle = self._ensure_bundle(ibundle, self.settings.index_frame_name_in_bundle)
@@ -272,15 +274,16 @@ class BatchedTrainingTask(AbstractTrainingTask):
         result.test_splits = temp_data.split.tests
         result.train_split = temp_data.split.train
 
+        result.metrics = {}
+
+
         args = ArtificierArguments(result, temp_data.original_ibundle)
 
         for artificier in self.artificiers:
             artificier.run_before_metrics(args)
 
-        if self.metric_pool is not None:
+        if result.result_df.shape[0]>0 and self.metric_pool is not None:
             self.metric_pool.run(args)
-        else:
-            result.metrics = {}
 
         result.metrics['loss'] = np.mean(temp_data.losses)
         result.metrics['iteration'] = temp_data.first_iteration + temp_data.iteration

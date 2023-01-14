@@ -30,8 +30,14 @@ class LocationsClass:
         self.tg_common_path = _norm_relative_path('../')
         self.data_cache_path = self.root_path.joinpath('data-cache')
         self.temp_path = self.root_path.joinpath('temp')
-        self.tg_name = 'tg'
+        self.tg_name = str(self.tg_path.relative_to(self.root_path))
         self.git_username = _get_git_user()
+
+        import_path = type(self).__module__
+        suffix = '.common._common.locations'
+        if not import_path.endswith(suffix):
+            raise ValueError('Seems like the file structure of TG has been change. Update the suffix variable in the prev. line to make everything correct')
+        self.tg_import_path = import_path.replace(suffix,'')
 
     def get_default_temp_path(self, prefix: str, location: Optional[Union[str, Path]] = None) -> Path:
         if location is None:

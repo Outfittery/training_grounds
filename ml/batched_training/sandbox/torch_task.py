@@ -26,7 +26,7 @@ class SandboxTorchTask(btf.TorchTrainingTask):
             btf.Factories.FullyConnected(self.network_sizes, self.input_frame_name),
             btf.Conventions.LabelFrame
         )
-        self.setup_model(network_factory)
+        self.setup_model(network_factory, ignore_consistancy_check=True)
 
 
 

@@ -30,9 +30,9 @@ class Autonamer:
                 prefix = ''.join([c[0].upper() for c in key.split('_')])
                 v = ''
                 if isinstance(value, int):
-                    if value > 1000000:
+                    if value >= 1000000:
                         v = str(value // 1000000) + "M"
-                    elif value > 1000:
+                    elif value >= 1000:
                         v = str(value // 1000) + "K"
                     else:
                         v = str(value)

@@ -6,22 +6,43 @@ import torch
 from yo_fluq_ds import Obj
 
 
+class MulticlassPredictionInterpreter:
+    def interpret(self, input, labels, output):
+        result = input['index'].copy()
+        for i, c in enumerate(labels.columns):
+            result['true_' + c] = labels[c]
+            result['predicted_' + c] = output[:, i].tolist()
+        return result
+
 
 class TorchModelHandler(bt.BatchedModelHandler):
     def __init__(self,
                  network_factory: Callable,
                  optimizer_factory: Callable,
-                 loss_factory: Callable
+                 loss_factory: Callable,
+                 ignore_consistancy_check: bool
                  ):
         self.network_factory = network_factory
         self.optimizer_factory = optimizer_factory
         self.loss_factory = loss_factory
+        self.multiclass_prediction_interpreter = MulticlassPredictionInterpreter()
+        self.ignore_consistance_check = ignore_consistancy_check
 
 
-    def instantiate(self, task, input: Dict[str, pd.DataFrame]) -> None:
+    def instantiate(self, task, input: bt.IndexedDataBundle) -> None:
         self.network = self.network_factory(input)
         self.optimizer = self.optimizer_factory(self.network.parameters())
         self.loss = self.loss_factory()
+        ldf = input[Conventions.LabelFrame]
+
+        is_classification = True
+        for c in ldf.columns:
+            if len(ldf[c].unique())>2:
+                is_classification = False
+                break
+        if is_classification and isinstance(self.loss,torch.nn.MSELoss) and not self.ignore_consistance_check:
+            raise ValueError('Task seems to be classification task, but the metric is MSELoss. If it is intentional, set `ignore_consistancy_check` to True')
+
 
     def _predict_1_dim(self, input, labels):
         output = self.network(input)
@@ -32,11 +53,8 @@ class TorchModelHandler(bt.BatchedModelHandler):
         return result
 
     def _predict_multi_dim(self, input, labels):
-        result = input['index'].copy()
         output = self.network(input)
-        for i, c in enumerate(labels.columns):
-            result['true_' + c] = labels[c]
-            result['predicted_' + c] = output[:, i].tolist()
+        result = self.multiclass_prediction_interpreter.interpret(input, labels, output)
         return result
 
     def predict(self, input: Dict[str, pd.DataFrame]):

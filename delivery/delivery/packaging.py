@@ -50,6 +50,7 @@ class Packaging:
         self.silent = False
 
 
+
     @staticmethod
     def get_job_name_and_version(job):
         if hasattr(job, 'get_name'):
@@ -90,7 +91,7 @@ class Packaging:
 
         lib = release / full_module_name
 
-        shutil.copytree(str(root), str(lib/Loc.tg_name))
+        shutil.copytree(str(root), str(lib/'tg'))
 
         resources = lib/'resources'  # type: Path
         os.makedirs(str(resources))
@@ -100,8 +101,8 @@ class Packaging:
             version=self.version,
             module_name=full_module_name,
             dependencies=','.join(f"'{z}'" for dep_list in self.dependencies for z in dep_list.dependencies),
-            original_tg_import_path=Loc.tg_name,
-            tg_import_path=full_module_name + '.' + Loc.tg_name,
+            original_tg_import_path=Loc.tg_import_path,
+            tg_import_path=full_module_name + '.tg',
         )
 
         if self.callback_before_calling_template:

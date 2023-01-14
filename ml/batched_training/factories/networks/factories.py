@@ -2,7 +2,9 @@ from typing import *
 from .perceptron import Perceptron
 from .feed_forward_network import FeedForwardNetwork
 from .input_conversion_network import InputConversionNetwork
+from .basics import call_factory
 from functools import partial
+import torch
 
 class Factories:
     class Tailing:
@@ -37,3 +39,12 @@ class Factories:
         return Factories.Tailing(factory, output_frame_name)
 
 
+    class Factory:
+        def __init__(self, inner: Union[torch.nn.Module, Callable], **kwargs):
+            self.inner = inner
+            self.kwargs = kwargs
+
+        def __call__(self, sample):
+            if len(self.kwargs)>0:
+                return self.inner(sample, **self.kwargs)
+            return call_factory(self.inner, sample)

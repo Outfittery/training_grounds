@@ -41,6 +41,10 @@ class Extractor:
     def get_name(self):
         raise NotImplementedError()
 
+    def fit_extract(self, ibundle: IndexedDataBundle):
+        self.fit(ibundle)
+        return self.extract(ibundle)
+
     @staticmethod
     def make_extraction(ibundle: IndexedDataBundle, extractors: List['Extractor']) -> IndexedDataBundle:
         result = DataBundle()

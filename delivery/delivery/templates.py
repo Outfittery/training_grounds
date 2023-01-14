@@ -45,8 +45,15 @@ Logger.initialize_default()
 Logger.info('Welcome to Training Grounds!')
 
 Logger.info('Loading job')
-job = Entry.load_resource('job')
-Logger.info('Job of type '+str(type(job))+' is loaded')
+try:
+    job = Entry.load_resource('job')
+    Logger.info('Job of type '+str(type(job))+' is loaded')
+except:
+    tb = traceback.format_exc()
+    Logger.error('Job is NOT loaded')
+    Logger.error(tb)
+    raise
+    
 
 def run(m):
     try:

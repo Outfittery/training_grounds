@@ -50,6 +50,9 @@ class DataBundle:
     def describe(self, limits: Optional[int] = None):
         result = {}
         for key, value in self.data_frames.items():
+            if not isinstance(value, pd.DataFrame):
+                result[key] = type(value).__name__
+                continue
             r = {}
             r['shape'] = value.shape
             r['index_name'] = value.index.name

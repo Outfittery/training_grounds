@@ -12,11 +12,11 @@ class AssemblyPoint:
         raise NotImplementedError()
 
 
-def _initialization_bridge(task, data):
+def _initialization_bridge(task: 'TorchTrainingTask', data: bt.IndexedDataBundle) -> None:
     return task.initialize_task(data)
 
 
-class TorchTrainingTask(bt.BatchedTrainingTask):
+class  TorchTrainingTask(bt.BatchedTrainingTask):
     def __init__(self):
         splitter = bt.PredefinedSplitter(
                 Conventions.SplitColumnName,
@@ -32,7 +32,7 @@ class TorchTrainingTask(bt.BatchedTrainingTask):
         self.optimizer_ctor = CtorAdapter('torch.optim:SGD', ('params',), lr = 0.1)
         self.loss_ctor = CtorAdapter('torch.nn:MSELoss')
 
-    def initialize_task(self, data):
+    def initialize_task(self, idb: bt.IndexedDataBundle):
         raise NotImplementedError()
 
     def setup_batcher(self, ibundle, extractors, index_frame_name='index', stratify_by_column = None):
@@ -44,8 +44,8 @@ class TorchTrainingTask(bt.BatchedTrainingTask):
         self.batcher = bt.Batcher(extractors, strategy)
 
 
-    def setup_model(self, network_factory):
-        self.model_handler = TorchModelHandler(network_factory, self.optimizer_ctor, self.loss_ctor)
+    def setup_model(self, network_factory, ignore_consistancy_check = False):
+        self.model_handler = TorchModelHandler(network_factory, self.optimizer_ctor, self.loss_ctor, ignore_consistancy_check)
 
 
 
