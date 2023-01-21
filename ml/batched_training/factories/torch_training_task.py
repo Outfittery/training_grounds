@@ -31,6 +31,8 @@ class  TorchTrainingTask(bt.BatchedTrainingTask):
         )
         self.optimizer_ctor = CtorAdapter('torch.optim:SGD', ('params',), lr = 0.1)
         self.loss_ctor = CtorAdapter('torch.nn:MSELoss')
+        self.settings.mini_batch_size = 200
+        self.settings.mini_epoch_count = 4
 
     def initialize_task(self, idb: bt.IndexedDataBundle):
         raise NotImplementedError()
