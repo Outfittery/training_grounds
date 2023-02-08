@@ -3,26 +3,27 @@ from typing import *
 import math
 import numpy as np
 import pandas as pd
+from .data_bundle import IndexedDataBundle
 
 
-class BatcherStrategy:
-    def get_batch_count(self, batch_size: int, df: pd.DataFrame) -> int:
+class Sampler:
+    def get_batch_count(self, batch_size: int, db: IndexedDataBundle) -> int:
         raise NotImplementedError()
 
-    def get_batch(self, batch_size: int, df: pd.DataFrame, batch_index: int) -> pd.Index:
+    def get_batch_index_frame(self, batch_size: int, db: IndexedDataBundle, batch_index: int) -> pd.DataFrame:
         raise NotImplementedError()
 
 
-class SimpleBatcherStrategy(BatcherStrategy):
-    def get_batch_count(self, batch_size: int, df: pd.DataFrame) -> int:
-        return int(math.ceil(df.shape[0] / batch_size))
+class SequencialSampler(Sampler):
+    def get_batch_count(self, batch_size: int, db: IndexedDataBundle) -> int:
+        return int(math.ceil(db.index_frame.shape[0] / batch_size))
 
-    def get_batch(self, batch_size: int, df: pd.DataFrame, batch_index: int) -> pd.Index:
-        index = df.index[batch_size * batch_index:batch_size * (batch_index + 1)]
+    def get_batch_index_frame(self, batch_size: int, db: IndexedDataBundle, batch_index: int) -> pd.DataFrame:
+        index = db.index_frame.iloc[batch_size * batch_index:batch_size * (batch_index + 1)]
         return index
 
 
-class PriorityRandomBatcherStrategy(BatcherStrategy):
+class PriorityRandomSampler(Sampler):
     def __init__(self,
                  priority_column: Optional[str] = None,
                  dataset_size_factor: float = 1.0,
@@ -33,22 +34,22 @@ class PriorityRandomBatcherStrategy(BatcherStrategy):
         self.random_state = random_state
         self.deduplicate = deduplicate
 
-    def get_batch_count(self, batch_size: int, df: pd.DataFrame) -> int:
-        return int(math.ceil(self.dataset_size_factor * df.shape[0] / batch_size))
+    def get_batch_count(self, batch_size: int, db: IndexedDataBundle) -> int:
+        return int(math.ceil(self.dataset_size_factor * db.index_frame.shape[0] / batch_size))
 
-    def get_batch(self, batch_size: int, df: pd.DataFrame, batch_index: int) -> pd.Index:
+    def get_batch_index_frame(self, batch_size: int, db: IndexedDataBundle, batch_index: int) -> pd.DataFrame:
         if self.priority_column is None:
-            probs = pd.Series([1 for _ in range(df.shape[0])])
+            probs = pd.Series([1 for _ in range(db.index_frame.shape[0])])
         else:
-            probs = df[self.priority_column]
+            probs = db.index_frame[self.priority_column]
         probs = probs / probs.sum()
         idx = list(np.random.choice(
-            list(range(len(df.index))),
+            list(range(len(db.index_frame.index))),
             batch_size,
             True,
             probs
         ))
-        result = df.index[idx]
+        result = db.index_frame.iloc[idx]
         if self.deduplicate:
             result = result[~result.duplicated()]
         return result

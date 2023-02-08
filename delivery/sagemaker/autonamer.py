@@ -3,9 +3,10 @@ from enum import Enum
 
 
 class Autonamer:
-    def __init__(self, build_method, prefix = None):
+    def __init__(self, build_method, prefix = None, common_arguments = None):
         self.build_method = build_method
         self.prefix = prefix
+        self.common_arguments = {} if common_arguments is None else common_arguments
 
     def _build_arguments(self, kwargs):
         grid = {}
@@ -46,6 +47,8 @@ class Autonamer:
                     v = str(value)
                 parts.append(prefix + v)
             name_suffix = '-'.join(parts)
+            for key, value in self.common_arguments.items():
+                call[key] = value
             task = self.build_method(**call)
             if 'name' not in task.info:
                 task.info['name'] = ''

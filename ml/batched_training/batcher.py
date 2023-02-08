@@ -2,12 +2,11 @@ from typing import *
 
 import pandas as pd
 
-from .batcher_strategy import BatcherStrategy, SimpleBatcherStrategy
+from .samplers import Sampler, SequencialSampler
 from .data_bundle import DataBundle, IndexedDataBundle
 from .extractors import Extractor
 
 
-#TODO: Why is batch a  dictionary and not a bundle?
 
 class Batcher:
     """
@@ -22,15 +21,15 @@ class Batcher:
 
     def __init__(self,
                  extractors: List[Extractor],
-                 batching_strategy: Optional[BatcherStrategy] = None,
-                 mini_batching_strategy: Optional[BatcherStrategy] = None,
+                 training_sampler: Optional[Sampler] = None,
+                 mini_batching_sampler: Optional[Sampler] = None,
                  ):
         if isinstance(extractors, int):
             raise ValueError('You try to pass a batch size to the Batcher. In the new version, the proper place for the batch size is task.settings.batch_size')
         self.extractors = extractors
-        self.default_batching_strategy = SimpleBatcherStrategy()
-        self.batching_strategy = batching_strategy or SimpleBatcherStrategy()
-        self.mini_batching_strategy = mini_batching_strategy or SimpleBatcherStrategy()
+        self.inference_sampler = SequencialSampler()
+        self.training_sampler = training_sampler if training_sampler is not None else SequencialSampler()
+        self.mini_batching_sampler = mini_batching_sampler if mini_batching_sampler is not None else SequencialSampler()
 
     def preprocess_bundle(self, ibundle: IndexedDataBundle):
         for extractor in self.extractors:
@@ -44,21 +43,20 @@ class Batcher:
         batch = Extractor.make_extraction(ibundle, self.extractors)
         return batch
 
-    def _get_strategy(self, force_default_strategy):
-        if force_default_strategy:
-            return self.default_batching_strategy
+    def _get_strategy(self, in_inference):
+        if in_inference:
+            return self.inference_sampler
         else:
-            return self.batching_strategy
+            return self.training_sampler
 
-    def get_batch_count(self, batch_size:int,  db: IndexedDataBundle, force_default_strategy=False) -> int:
-        return self._get_strategy(force_default_strategy).get_batch_count(batch_size, db.index_frame)
+    def get_batch_count(self, batch_size:int,  db: IndexedDataBundle, in_inference=False) -> int:
+        return self._get_strategy(in_inference).get_batch_count(batch_size, db)
 
-    def get_batch_index(self, batch_size: int, db: IndexedDataBundle, batch_index: int, force_default_strategy: bool) -> pd.DataFrame:
-        index = self._get_strategy(force_default_strategy).get_batch(batch_size, db.index_frame, batch_index)
-        index_df = db.index_frame.loc[index]
+    def get_batch_index(self, batch_size: int, db: IndexedDataBundle, batch_index: int, in_inference: bool) -> pd.DataFrame:
+        index_df = self._get_strategy(in_inference).get_batch_index_frame(batch_size, db, batch_index)
         return index_df
 
-    def get_batch(self, batch_size: int, db: IndexedDataBundle, batch_index: int, force_default_strategy=False) -> IndexedDataBundle:
+    def get_batch(self, batch_size: int, db: IndexedDataBundle, batch_index: int, in_inference=False) -> IndexedDataBundle:
         """
         Args:
             db:
@@ -67,13 +65,13 @@ class Batcher:
 
         Returns: a dictionary with batch component, one per key of ``self.transformers``
         """
-        index_df = self.get_batch_index(batch_size, db, batch_index, force_default_strategy)
+        index_df = self.get_batch_index(batch_size, db, batch_index, in_inference)
         batch = Extractor.make_extraction(db.change_index(index_df), self.extractors)
         return batch
 
     def get_mini_batch_indices(self, mini_batch_size, batch: DataBundle) -> List[pd.Index]:
-        n = self.mini_batching_strategy.get_batch_count(mini_batch_size, batch['index'])
-        mini_batches = [self.mini_batching_strategy.get_batch(mini_batch_size, batch['index'], i) for i in range(n)]
+        n = self.mini_batching_sampler.get_batch_count(mini_batch_size, batch)
+        mini_batches = [self.mini_batching_sampler.get_batch_index_frame(mini_batch_size, batch, i).index for i in range(n)]
         return mini_batches
 
     def get_mini_batch(self, index: pd.Index, batch: IndexedDataBundle) -> IndexedDataBundle:

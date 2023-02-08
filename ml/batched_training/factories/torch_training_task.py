@@ -13,7 +13,9 @@ class AssemblyPoint:
 
 
 def _initialization_bridge(task: 'TorchTrainingTask', data: bt.IndexedDataBundle) -> None:
-    return task.initialize_task(data)
+    task.fix_bundle(data)
+    if not task.settings.continue_training:
+        task.initialize_task(data)
 
 
 class  TorchTrainingTask(bt.BatchedTrainingTask):
@@ -31,6 +33,11 @@ class  TorchTrainingTask(bt.BatchedTrainingTask):
         )
         self.optimizer_ctor = CtorAdapter('torch.optim:SGD', ('params',), lr = 0.1)
         self.loss_ctor = CtorAdapter('torch.nn:MSELoss')
+        self.settings.mini_batch_size = 200
+        self.settings.mini_epoch_count = 4
+
+    def fix_bundle(self, idb: bt.IndexedDataBundle):
+        pass
 
     def initialize_task(self, idb: bt.IndexedDataBundle):
         raise NotImplementedError()
@@ -39,8 +46,8 @@ class  TorchTrainingTask(bt.BatchedTrainingTask):
         strategy = None
         if stratify_by_column is not None:
             df = ibundle.bundle[index_frame_name]
-            df[Conventions.PriorityColumnName] = bt.PriorityRandomBatcherStrategy.make_priorities_for_even_representation(df, stratify_by_column)
-            strategy = bt.PriorityRandomBatcherStrategy(Conventions.PriorityColumnName)
+            df[Conventions.PriorityColumnName] = bt.PriorityRandomSampler.make_priorities_for_even_representation(df, stratify_by_column)
+            strategy = bt.PriorityRandomSampler(Conventions.PriorityColumnName)
         self.batcher = bt.Batcher(extractors, strategy)
 
 

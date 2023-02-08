@@ -29,7 +29,7 @@ class DayPartitionedDataset(TimePartitionedDatasetBase['PartitionedDataset.Descr
 
     DescriptionHandler = PartitionedDatasetRecordHandler('partitions_description.parquet', DescriptionItem, 'name')
 
-    def filter_relevant_records(self, records: List[DescriptionItem], from_time: datetime, to_time: datetime) -> List[DescriptionItem]:
+    def filter_relevant_records(self, records: List[DescriptionItem], from_time: datetime, to_time: datetime, partitions) -> List[DescriptionItem]:
         records = Query.en(records)
         if to_time is not None:
             records = records.where(lambda z: parser.parse(z.name) < to_time)

@@ -27,14 +27,14 @@ def get_bundle() -> IndexedDataBundle:
 class BatcherTestCase(TestCase):
     def test_batching_strategy(self):
         db = get_bundle()
-        strategy = SimpleBatcherStrategy()
-        idx = strategy.get_batch(2, db.index_frame, 0)
-        self.assertIsInstance(idx, pd.Int64Index)
-        self.assertListEqual([1, 3], list(idx))
+        strategy = SequencialSampler()
+        idx = strategy.get_batch_index_frame(2, db, 0)
+        self.assertIsInstance(idx, pd.DataFrame)
+        self.assertListEqual([1, 3], list(idx.index))
 
     def test_batching(self):
         db = get_bundle()
-        strategy = SimpleBatcherStrategy()
+        strategy = SequencialSampler()
         batcher = Batcher([
             PlainExtractor.build('df1').join('df1', 'df1').apply(),
             PlainExtractor.build('df2').join('df2', 'df2').apply(),
@@ -70,7 +70,7 @@ class BatcherTestCase(TestCase):
         return result
 
     def test_uneven_batcch(self):
-        strategy = SimpleBatcherStrategy()
+        strategy = SequencialSampler()
         batcher = Batcher([
             PlainExtractor.build('df1').join('df1', 'df1').apply(),
             PlainExtractor.build('df2').join('df2', 'df2').apply(),

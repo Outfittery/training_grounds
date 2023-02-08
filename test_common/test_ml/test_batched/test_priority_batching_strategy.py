@@ -10,10 +10,11 @@ class PRBSTestCase(TestCase):
         lst = list(range(4))
         index = pd.Series([100 + c for c in lst])
         prios = pd.DataFrame(dict(prio=lst), index=index)
-        strategy = PriorityRandomBatcherStrategy('prio', 1, deduplicate=False)
+        strategy = PriorityRandomSampler('prio', 1, deduplicate=False)
         N = 10000
-        result = strategy.get_batch(N, prios, 0)
-        self.assertIsInstance(result, pd.Int64Index)
+        result = strategy.get_batch_index_frame(N, IndexedDataBundle(prios,None), 0)
+        self.assertIsInstance(result, pd.DataFrame)
+        result = result.index
         r = result.to_frame().groupby(0).size() / N
         s = 1 + 2 + 3
         self.assertLess(abs(1 / s - r[101]), 0.1)
@@ -25,12 +26,11 @@ class PRBSTestCase(TestCase):
         df['value'] = (np.log(df.key) / np.log(2)).astype(int)
         df = df.set_index('key')
         df = df.sample(frac=1)
-        prios = PriorityRandomBatcherStrategy.make_priorities_for_even_representation(df, 'value', magnitude)
+        prios = PriorityRandomSampler.make_priorities_for_even_representation(df, 'value', magnitude)
         df['prio'] = prios
-        strategy = PriorityRandomBatcherStrategy('prio', 1, deduplicate=False)
+        strategy = PriorityRandomSampler('prio', 1, deduplicate=False)
         N = 10000
-        result = strategy.get_batch(N, df, 0)
-        x = df.loc[result]
+        x = strategy.get_batch_index_frame(N, IndexedDataBundle(df,None), 0)
         x = x.groupby('value').feed(fluq.fractions())
         return x
 

@@ -135,8 +135,7 @@ class S3Handler:
 
         result = []
         if response['ResponseMetadata']['HTTPStatusCode'] == 200 and len(response['Contents']) > 0:
-            max_modified = response['Contents'][0]['LastModified']
-            path = response['Contents'][0]['Key']
-            result.append(path)
-
+            for c in response['Contents']:
+                result.append(c['Key'])
+                
         return result
