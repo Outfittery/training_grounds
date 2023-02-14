@@ -9,7 +9,6 @@ from yo_fluq_ds import Query
 from ..training_core import DataFrameSplit
 
 
-
 class DataFrameLoader:
     """
     Default data provider, currently solving all the use cases.

@@ -1,5 +1,6 @@
-import pandas as pd
 from typing import *
+
+import pandas as pd
 import copy
 import numpy as np
 
@@ -7,10 +8,8 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
 
 from .architecture import DataFrameColumnsTransformer
-
 from .miscellaneous import MissingIndicatorWithReporting
-from ..._common import TGWarningStorage
-
+from ..._common import Logger
 
 
 class ContinousTransformer(DataFrameColumnsTransformer):
@@ -23,7 +22,8 @@ class ContinousTransformer(DataFrameColumnsTransformer):
                  ignore_none_columns=True,
                  scaler: Any = StandardScaler(),
                  imputer: Any = SimpleImputer(),
-                 missing_indicator: Any = MissingIndicatorWithReporting()
+                 missing_indicator: Any = MissingIndicatorWithReporting(),
+                 preprocessor: Optional[Callable] = None
                  ):
         """
 
@@ -39,6 +39,7 @@ class ContinousTransformer(DataFrameColumnsTransformer):
         self.imputer = copy.deepcopy(imputer)
         self.missing_indicator = copy.deepcopy(missing_indicator)
         self.ignore_none_columns = copy.deepcopy(ignore_none_columns)
+        self.preprocessor = preprocessor
 
         self.columns_ = None
         self.columns_ignored_because_of_none_ = None
@@ -53,9 +54,15 @@ class ContinousTransformer(DataFrameColumnsTransformer):
             self.columns_ = [c for c in self.columns_ if c not in self.columns_ignored_because_of_none_]
 
         if len(self.columns_) > 0:
-            self.scaler.fit(df[self.columns_])
-            self.imputer.fit(df[self.columns_])
-            self.missing_indicator.fit(df[self.columns_])
+            arg_df = df[self.columns_]
+            if self.preprocessor is not None:
+                arg_df = self.preprocessor(arg_df)
+            if self.scaler is not None:
+                self.scaler.fit(arg_df)
+            if self.imputer is not None:
+                self.imputer.fit(arg_df)
+            if self.missing_indicator is not None:
+                self.missing_indicator.fit(arg_df)
 
     def transform(self, df):
         warnings = []
@@ -65,17 +72,24 @@ class ContinousTransformer(DataFrameColumnsTransformer):
             if column in df.columns:
                 subdf[column] = df[column]
             else:
-                TGWarningStorage.add_warning('Missing column', dict(reporter='ContinousTransformer'),
-                                             dict(column=column))
+                Logger.warning('Missing column in ContinuousTransformer',
+                               column=column)
                 subdf[column] = None
 
         if len(self.columns_) > 0:
-            values = self.scaler.transform(self.imputer.transform(subdf))
-            yield pd.DataFrame(values, index=df.index, columns=self.columns_, dtype='float')
+            result = subdf
+            if self.preprocessor is not None:
+                result = self.preprocessor(result)
+            if self.imputer is not None:
+                result = pd.DataFrame(self.imputer.transform(result), index=df.index, columns=self.columns_, dtype='float')
+            if self.scaler is not None:
+                result = pd.DataFrame(self.scaler.transform(result), index=df.index, columns=self.columns_, dtype='float')
+            yield result
 
-            missing = self.missing_indicator.transform(subdf)
-            missing_column_names = [str(self.columns_[ind]) + '_missing' for ind in self.missing_indicator.features_]
-            yield pd.DataFrame(missing, index=df.index, columns=missing_column_names, dtype='object')
+            if self.missing_indicator is not None:
+                missing = self.missing_indicator.transform(subdf)
+                missing_column_names = [str(self.columns_[ind]) + '_missing' for ind in self.missing_indicator.features_]
+                yield pd.DataFrame(missing, index=df.index, columns=missing_column_names, dtype='object')
 
     def get_columns(self):
         return self.columns
@@ -105,8 +119,9 @@ class MostPopularStrategy(ReplacementStrategy):
         wrong_values = column.loc[~column.isin(self.values)].unique()
         if len(wrong_values) > 0:
             for value in wrong_values:
-                TGWarningStorage.add_warning('Unexpected value', dict(reporter='MostPopularStrategy'),
-                                             dict(column=column.name), dict(value=value))
+                Logger.warning('Unexpected value in MostPopularStrategy',
+                               column=column.name,
+                               value=value)
         return pd.Series(
             np.where(column.isin(self.values), column, self.most_popular),
             index=column.index
@@ -176,8 +191,7 @@ class CategoricalTransformer(DataFrameColumnsTransformer):
     def transform(self, df):
         for column_name in self.columns:
             if column_name not in df.columns:
-                TGWarningStorage.add_warning('Missing column', dict(reporter='CategoricalTransformer'),
-                                             dict(column=column_name))
+                Logger.warning('Missing column in CategoricalTransformer', column=column_name)
                 column = pd.Series(self.none_replacement, df.index, dtype='object', name=column_name)
             else:
                 column = self._format(df, column_name)

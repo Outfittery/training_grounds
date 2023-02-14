@@ -1,23 +1,15 @@
 from typing import *
 
 import pandas as pd
-import logging
 
 from ._hyperparams import _apply_hyperparams
-
-
-
-logger = logging.getLogger(__name__)
+from ..._common import Logger
 
 
 class TrainingEnvironment:
     """
     This class isolates the training from the environment
     """
-
-    def log(self, message) -> None:
-        """Logs message"""
-        pass
 
     def store_artifact(self, path: List[Any], name: Any, object: Any) -> None:
         """
@@ -50,8 +42,11 @@ class InMemoryTrainingEnvironment(TrainingEnvironment):
     Default environment when the process is launched within current process, usually for debugging
     """
 
-    def __init__(self):
+    def __init__(self, silent=False, notebook=False):
         self.result = {'metrics': {}, 'runs': {}}
+        self.notebook = notebook
+        self.silent = silent
+        self.message_buffer = []
 
     def store_artifact(self, path: List[Any], name: Any, object: Any):
         loc = self.result
@@ -63,9 +58,7 @@ class InMemoryTrainingEnvironment(TrainingEnvironment):
 
     def output_metric(self, metric_name: str, metric_value: float):
         self.result['metrics'][metric_name] = metric_value
-
-    def log(self, s):
-        logger.info(s)
+        Logger.info(f'###{metric_name}:{metric_value}')
 
 
 class AbstractTrainingTask:
@@ -107,5 +100,8 @@ class ArtificierArguments:
 
 
 class Artificier:
-    def run(self, args: ArtificierArguments):
-        raise NotImplementedError()
+    def run_before_storage(self, args: ArtificierArguments):
+        pass
+
+    def run_before_metrics(self, args: ArtificierArguments):
+        pass

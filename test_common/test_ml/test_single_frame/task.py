@@ -1,18 +1,21 @@
 from ....ml.single_frame_training import *
 from sklearn import datasets
+import pandas as pd
+
 
 def create_task(max_iter=1000):
     return SingleFrameTrainingTask(
-        data_loader = DataFrameLoader('target'),
+        data_loader=DataFrameLoader('target'),
         model_provider=ModelProvider(ModelConstructor(
                 'sklearn.linear_model:LogisticRegression',
-                max_iter = max_iter
+                max_iter=max_iter
             ),
             keep_column_names=False),
         evaluator=Evaluation.multiclass_classification,
         splitter=FoldSplitter(),
         with_tqdm=False
     )
+
 
 def get_data():
     iris = datasets.load_iris()

@@ -1,9 +1,8 @@
 from typing import *
+
 from .architecture import CombinedSelector, SelectionContext, SelectorException
-
 from .architecture import _get_selector_name
-from ..._common import OldTGWarning
-
+from ..._common import Logger
 
 
 # TODO: add short description of module
@@ -26,7 +25,7 @@ class AbstractPipeline(CombinedSelector):
         raise NotImplementedError()
 
     def get_structure(self):
-        return {key:value for key, value in self._get_selectors(None)}
+        return {key: value for key, value in self._get_selectors(None)}
 
     def _internal_call(self, obj, context: SelectionContext):
         result_chain = tuple()
@@ -57,8 +56,6 @@ class Pipeline(AbstractPipeline):
 
     def get_structure(self):
         return {key: value for key, value in self.selectors}
-
-
 
 
 class MergeException(Exception):
@@ -136,9 +133,9 @@ class Ensemble(AbstractEnsemble):
     def get_structure(self):
         result = {}
         for index, selector in enumerate(self.selectors):
-            result[index]=selector
+            result[index] = selector
         for key, selector in self.named_selectors.items():
-            result[key]=selector
+            result[key] = selector
         return result
 
 
@@ -155,18 +152,27 @@ class FieldGetter(CombinedSelector):
 
     def _internal_call(self, obj, context: SelectionContext):
         if not self.none_propagation:
-            return obj[self.field]
+            try:
+                return obj[self.field]
+            except:
+                return getattr(obj, self.field)
         else:
             if isinstance(obj, dict) and self.field in obj:
                 return obj[self.field]
-            if isinstance(obj, list) and isinstance(self.field, int) and 0 <= self.field < len(obj):
-                return obj[self.field]
-            context.warnings.append(OldTGWarning(
-                "Missing field {field},  code_path {code_path}, data path {data_path}",
-                field=self.field,
-                code_path=context.get_code_path(),
-                data_path=context.get_data_path()
-            ))
+            if (isinstance(obj, list) or isinstance(obj, tuple)):
+                try:
+                    field = int(self.field)
+                except:
+                    return None
+                if 0 <= field < len(obj):
+                    return obj[field]
+            if hasattr(obj, self.field):
+                return getattr(obj, self.field)
+            Logger.warning('Missing field in FieldGetter',
+                           field=self.field,
+                           code_path=context.get_code_path(),
+                           data_path=context.get_data_path()
+                           )
             return None
 
     def __repr__(self):
@@ -188,12 +194,11 @@ class FunctionFeed(CombinedSelector):
     def _internal_call(self, obj, context: SelectionContext):
         if self.none_propagation:
             if obj is None:
-                context.warnings.append(OldTGWarning(
-                    "None argument for Feed to {callable}, code path {code_path}, data path {data_path}",
-                    callable=str(self.callable),
-                    code_path=context.get_code_path(),
-                    data_path=context.get_data_path()
-                ))
+                Logger.warning('None argument in FunctionFeed',
+                               callable=str(self.callable),
+                               code_path=context.get_code_path(),
+                               data_path=context.get_data_path()
+                               )
                 return None
         return self.callable(obj)
 
@@ -223,7 +228,6 @@ class Listwise(AbstractEnsemble):
         return {'*': self._build_pipeline('*')}
 
 
-
 class Dictwise(AbstractEnsemble):
     """
     Applied the same selector to all the elements of the dictionary
@@ -244,8 +248,6 @@ class Dictwise(AbstractEnsemble):
 
     def get_structure(self):
         return {'*': self._build_pipeline('*')}
-
-
 
 
 def transpose_list_of_dicts_to_dict_of_lists(obj):
@@ -283,5 +285,3 @@ class ListFeaturizer(AbstractPipeline):
 
     def get_structure(self):
         return self._get_selectors(None)
-
-

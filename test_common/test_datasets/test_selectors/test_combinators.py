@@ -47,11 +47,10 @@ class CombinatorsTestCase(TestCase):
         self.assertHistory(exp, 0, 'Pipeline', 'x', 2)
         self.assertEqual(exp.context.call_stack.called_object_name, '_throwing')
 
-
     def test_error_in_ensemble_index(self):
         exp = self.getExp(Ensemble(lambda z: {}, _throwing).assign_name('y'))
         self.assertHistory(exp, 0, 'Ensemble', 'y', 1)
-        self.assertEqual(exp.context.call_stack.called_object_name,'_throwing')
+        self.assertEqual(exp.context.call_stack.called_object_name, '_throwing')
 
     def test_error_in_ensemble_key(self):
         exp = self.getExp(Ensemble(a=lambda z: {}, b=_throwing))
@@ -63,8 +62,7 @@ class CombinatorsTestCase(TestCase):
         pip.named_selectors['b'].selectors = None
         exp = self.getExp(pip)
         self.assertHistory(exp, 0, 'Ensemble', 'Ensemble', 'b')
-        self.assertEqual(exp.context.call_stack.called_object_name,'Pipeline')
-
+        self.assertEqual(exp.context.call_stack.called_object_name, 'Pipeline')
 
     def test_merge_index(self):
         exp = self.getExp(Ensemble(lambda z: {'a': 1}, lambda z: {'a': 2}), MergeException)
@@ -84,13 +82,13 @@ class CombinatorsTestCase(TestCase):
     def test_listwise(self):
         ppl = Listwise(str)
         self.assertListEqual(
-            ['0','1'],
-            ppl([0,1])
+            ['0', '1'],
+            ppl([0, 1])
         )
 
     def test_dictwise(self):
         ppl = Dictwise(str)
         self.assertDictEqual(
-            dict(a='4',b='5'),
-            ppl(dict(a=4,b=5))
+            dict(a='4', b='5'),
+            ppl(dict(a=4, b=5))
         )

@@ -2,14 +2,14 @@ from typing import *
 
 import pandas as pd
 
-from yo_ds import Query, fluq
+from yo_fluq_ds import Query, fluq
 from pathlib import Path
 
-from ..training_core import AbstractTrainingTask, TrainingEnvironment, Splitter, IdentitySplit, Artificier, MetricPool, DataFrameSplit, TrainingResult, ArtificierArguments
+from ..training_core import AbstractTrainingTask, TrainingEnvironment, Splitter, IdentitySplitter, Artificier, MetricPool, DataFrameSplit, TrainingResult, ArtificierArguments
 from .df_loader import DataFrameLoader
 from .model_provider import AbstractModelProvider
 from ._kraken import _make_kraken_task
-
+from ..._common import Logger
 
 
 class Evaluation:
@@ -46,11 +46,11 @@ class SingleFrameTrainingTask(AbstractTrainingTask):
                  model_provider: Optional[AbstractModelProvider] = None,
                  evaluator: Optional[Callable] = None,
                  metrics_pool: Optional[MetricPool] = None,
-                 splitter: Splitter = IdentitySplit(),
+                 splitter: Splitter = IdentitySplitter(),
                  artificers: Optional[List[Artificier]] = None,
                  index_column_name: str = 'original_index',
                  with_tqdm: bool = True,
-                 late_initialization: Callable[['SingleFrameTrainingTask', DataFrameSplit, TrainingEnvironment], None] = None
+                 late_initialization: Callable[['SingleFrameTrainingTask', DataFrameSplit], None] = None
                  ):
         super(SingleFrameTrainingTask, self).__init__()
         self.data_loader = data_loader
@@ -88,11 +88,15 @@ class SingleFrameTrainingTask(AbstractTrainingTask):
         result.train_split = dfs.train
         result.test_splits = dfs.tests
 
-        all_artificiers = ([] if self.metrics_pool is None else [self.metrics_pool]) + ([] if self.artificers is None else self.artificers)
-
-        args = ArtificierArguments(result,dfs)
-        for artificer in all_artificiers:
-            artificer.run(args)
+        args = ArtificierArguments(result, dfs)
+        if self.artificers is not None:
+            for artificier in self.artificers:
+                artificier.run_before_metrics(args)
+        if self.metrics_pool is not None:
+            self.metrics_pool.run(args)
+        if self.artificers is not None:
+            for artificier in self.artificers:
+                artificier.run_before_storage(args)
 
         return result
 
@@ -102,19 +106,15 @@ class SingleFrameTrainingTask(AbstractTrainingTask):
         iteration_result.info['iteration'] = iteration
         return iteration_result
 
-
     def _average_metrics(self, metrics_base):
         df = pd.DataFrame(metrics_base)
         metrics = Query.series(df.mean(axis=0)).to_dictionary()
         return metrics
 
-
-
-
     def _get_splits(self, data, env=None):
         dfs = self.data_loader.get_data(data)
         if self.late_initialization is not None:
-            self.late_initialization(self, dfs, env)
+            self.late_initialization(self, dfs)
         if self.model_provider is None:
             raise ValueError('model_provider is not set in constructor or in late initialization')
 
@@ -134,7 +134,6 @@ class SingleFrameTrainingTask(AbstractTrainingTask):
 
         dfs = self._get_splits(data, env)
 
-
         stages_count = len(dfs)
         if self.with_tqdm and env.supports_tqdm():
             dfs = Query.en(dfs).feed(fluq.with_progress_bar())
@@ -142,14 +141,14 @@ class SingleFrameTrainingTask(AbstractTrainingTask):
         result = []
         metrics_base = []
         for i, df in enumerate(dfs):
-            env.log(f'Starting stage {i + 1}/{stages_count}')
+            Logger.info(f'Starting stage {i + 1}/{stages_count}')
             iteration_result = self._iteration_on_dfs(i, df)
             if iteration_result.metrics is not None:
                 metrics_base.append(iteration_result.metrics)
             for key, value in iteration_result.__dict__.items():
                 env.store_artifact(['runs', i], key, value)
             result.append(iteration_result)
-            env.log(f'Completed stage {i + 1}/{stages_count}')
+            Logger.info(f'Completed stage {i + 1}/{stages_count}')
             env.flush()
 
         if len(metrics_base) > 0:
@@ -165,7 +164,6 @@ class SingleFrameTrainingTask(AbstractTrainingTask):
             return []
         metrics = [metric + '_' + stage for metric in self.metrics_pool.get_metrics_names() for stage in expected_stages]
         return metrics
-
 
     def make_kraken_task(self, configs: List[Any], data) -> Tuple[Callable, List[Any]]:
         return _make_kraken_task(self, configs, data)

@@ -1,7 +1,6 @@
 from typing import *
 
 
-
 def _get_selector_name(selector) -> Optional[str]:
     if isinstance(selector, str):
         return selector
@@ -18,7 +17,8 @@ class SelectorCallStackItem:
     """
     Representation of one call in the selectors' callstack
     """
-    def __init__(self, selector_type: str, selector_name: str, stage: Union[str,int]):
+
+    def __init__(self, selector_type: str, selector_name: str, stage: Union[str, int]):
         """
 
         Args:
@@ -40,6 +40,7 @@ class SelectorCallStack:
     Contains the callstack of selectors (which are of :class:``CombinedSelector`` type), and the
     last call (which can be an arbitrary callable)
     """
+
     def __init__(self):
         """
         Creates an empty call stack. To create a meaningful call stack, :func:``append_call`` is used.
@@ -47,9 +48,7 @@ class SelectorCallStack:
         self.call_stack = ()  # type: Optional[Tuple]
         self.called_object_name = None
 
-
-
-    def append_call(self, selector: Any, stage: Union[str,int], called_object: Any) -> 'SelectorCallStack':
+    def append_call(self, selector: Any, stage: Union[str, int], called_object: Any) -> 'SelectorCallStack':
         """
         Appends a call to the call stack
         Args:
@@ -67,11 +66,12 @@ class SelectorCallStack:
         ch.called_object_name = _get_selector_name(called_object)
         return ch
 
-    
+
 class SelectorDataPathContext:
     """
     An internal class that is used to build the data path
     """
+
     def __init__(self, in_chain: Tuple):
         self.in_chain = in_chain
         self.out_chain = None
@@ -93,10 +93,10 @@ class SelectionContext:
         Creates a selection context out of the object that is subjected to featurization
         Args:
             original_object:
+            root_info:
         """
         self = SelectionContext()
         self.call_stack = SelectorCallStack()
-        self.warnings = []
         self.chain_context = SelectorDataPathContext(tuple())
         self.original_object = original_object
         self.root_info = root_info
@@ -111,12 +111,10 @@ class SelectionContext:
         This constructor is not meant to be used publically
         """
         self.original_object = None
-        self.call_stack = None # type:Optional[SelectorCallStack]
-        self.warnings = None # type: Optional[List]
-        self.chain_context = SelectorDataPathContext(tuple()) #type: SelectorDataPathContext
+        self.call_stack = None  # type:Optional[SelectorCallStack]
+        self.chain_context = SelectorDataPathContext(tuple())  # type: SelectorDataPathContext
 
-
-    def append_call(self, selector: Any, stage: Union[str,int], called_object: Any, data_path: Tuple = tuple()) -> 'SelectionContext':
+    def append_call(self, selector: Any, stage: Union[str, int], called_object: Any, data_path: Tuple = tuple()) -> 'SelectionContext':
         """
         Adds a call to the context
 
@@ -131,8 +129,7 @@ class SelectionContext:
         """
         ctx = SelectionContext()
         ctx.call_stack = self.call_stack.append_call(selector, stage, called_object)
-        ctx.warnings = self.warnings
-        ctx.chain_context.in_chain = self.chain_context.in_chain+data_path
+        ctx.chain_context.in_chain = self.chain_context.in_chain + data_path
         ctx.chain_context.out_chain = None
         ctx.original_object = self.original_object
         return ctx
@@ -142,7 +139,6 @@ class SelectionContext:
         Generates string representation of the data path, that was processed on the moment of this context
         """
         return '.'.join(self.chain_context.in_chain)
-
 
     def get_code_path(self) -> str:
         """
@@ -156,7 +152,6 @@ class SelectionContext:
         return code_path
 
 
-
 class SelectorException(Exception):
     """
     Exception describing the error occured somewhere in the selection.
@@ -164,25 +159,26 @@ class SelectorException(Exception):
     error tracing by code path (the location of the erroneous selector in the graph)
     and data path (the location of data that triggered an error within the input data)
     """
+
     def __init__(self, context: SelectionContext):
         self.context = context
         super(SelectorException, self).__init__(self._generate_message())
 
     def _generate_message(self):
         try:
-            return self.context.get_code_path()+"\n"+self.context.get_data_path()
+            return self.context.get_code_path() + "\n" + self.context.get_data_path()
         except:
             return 'FAILED TO PRODUCE MESSAGE FOR FEATURIZATION CALLSTACK'
-
 
 
 class CombinedSelector:
     """
     Abstract class for the selector, that enables the compositions of other selectors and traces errors in their structure
     """
+
     def __init__(self):
         self._name = None  # type: Optional[str]
-        self._id_selector = None #type: Optional[Callable]
+        self._id_selector = None  # type: Optional[Callable]
 
     def assign_name(self, name: str) -> 'CombinedSelector':
         """
@@ -205,11 +201,11 @@ class CombinedSelector:
 
     def call_and_return_context(self, obj: Any) -> Tuple[Any, SelectionContext]:
         """
-        Performs the call and returns not only the result, but also the context. The context will contain warnings.
+        Performs the call and returns not only the result, but also the context.
 
         """
         context = SelectionContext.create(obj, SelectionRootInfo(self._name, self._id_selector))
-        return self(obj,context), context
+        return self(obj, context), context
 
     def _internal_call(self, obj: Any, context: SelectionContext):
         """

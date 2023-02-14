@@ -3,7 +3,6 @@ from typing import *
 from datetime import timedelta
 
 
-
 def _type_value(type: str, value: str):
     if type == 'str':
         return value

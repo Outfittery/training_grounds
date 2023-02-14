@@ -22,4 +22,4 @@ env.rc
 
 .coverage
 
-tools/coverage/
+tools_private/coverage/

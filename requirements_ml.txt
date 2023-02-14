@@ -1,0 +1,16 @@
+numpy
+pandas
+scikit-learn
+statsmodels
+yo_fluq_ds
+fastparquet
+pyarrow
+boto3
+sagemaker
+python-dotenv
+coverage
+simplejson
+
+torch
+catboost
+
