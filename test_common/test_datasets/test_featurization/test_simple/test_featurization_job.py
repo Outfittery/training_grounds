@@ -66,7 +66,7 @@ class BatchJobTestCase(TestCase):
         job.run()
         files = list(mem.cache)
         self.assertEqual(1, len(files))
-        self.assertTrue(files[0].startswith('def/'))
+        self.assertTrue(files[0].startswith('def'+Loc.file_slash))
         self.assertListEqual([0, 1, 2, 3, 4], list(mem.get_parquet(0).a))
         self.assertEqual(5, job.records_processed_)
 
@@ -128,7 +128,7 @@ class BatchJobTestCase(TestCase):
             None
         )
         job.run()
-        stats = Query.en(mem.cache).group_by(lambda z: z.split('/')[0]).to_dictionary(lambda z: z.key, lambda z: len(z.value))
+        stats = Query.en(mem.cache).group_by(lambda z: z.split(Loc.file_slash)[0]).to_dictionary(lambda z: z.key, lambda z: len(z.value))
         self.assertDictEqual(
             {'batched': 3, 'simple': 1},
             stats

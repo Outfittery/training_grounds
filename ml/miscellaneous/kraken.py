@@ -181,7 +181,7 @@ class Kraken:
             if output is None:
                 output = pd_result
             else:
-                output = output.append(pd_result)
+                output = pd.concat([output,pd_result])
             if exclude_config_fields is not None:
                 for field in exclude_config_fields:
                     del condition[field]

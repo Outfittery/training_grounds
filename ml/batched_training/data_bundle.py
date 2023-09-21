@@ -22,3 +22,11 @@ class IndexedDataBundle:
         if key=='index':
             return self.index_frame
         return self.bundle.data_frames[key]
+
+    def describe(self, limits: Optional[int] = None):
+        desc = self.bundle.describe(limits)
+        desc['@index_frame'] = self.bundle.describe_dataframe(self.index_frame, limits)
+        return desc
+
+    def __repr__(self):
+        return self.describe().__str__()

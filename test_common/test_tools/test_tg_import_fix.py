@@ -13,13 +13,13 @@ class ImportFixTestCase(TestCase):
         path1 = '/a/bf.d/we.asda/qwe.adsa'
         path2 = '/a/bf.d/fdasda/qwqw/xas/asd'
         c = ImportFixer.find_common_prefix(Path(path1), Path(path2))
-        self.assertEqual('/a/bf.d', str(c))
+        self.assertEqual('{0}a{0}bf.d'.format(Loc.file_slash), str(c))
 
     def test_module_form(self):
         path1 = '/a/b/c/d/e'
         path2 = '/a/b/x/y/z/p.py'
         c = ImportFixer.relative_import(Path(path2), Path(path1))
-        self.assertEqual('...c.d.e', c)
+        self.assertEqual('....c.d.e', c)
 
 
 
@@ -34,23 +34,24 @@ import numpy as np
 def something():
     pass
         '''
-        res = ImportFixed.parse_imports(text)
+        res = ImportFixer.parse_imports(text)
         res = [r.__dict__ for r in res]
+        print(res)
         self.assertListEqual(
             [{'content': 'X',
               'file': None,
               'from_module': 'pandas',
-              'line_number': 'from pandas import X'},
+              'line_number': 1},
              {'content': 'Loc',
               'file': None,
               'from_module': 'tg.common',
-              'line_number': 'from tg.common import Loc'},
+              'line_number': 2},
              {'content': 'Loc',
               'file': None,
               'from_module': '...common',
-              'line_number': 'from ...common import Loc'},
+              'line_number': 3},
              {'content': 'batched_training as bt',
               'file': None,
               'from_module': '...common.ml',
-              'line_number': 'from ...common.ml import batched_training as bt'}
+              'line_number': 4}
              ], res)

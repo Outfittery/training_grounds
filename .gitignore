@@ -23,3 +23,5 @@ env.rc
 .coverage
 
 tools_private/coverage/
+
+.vscode/

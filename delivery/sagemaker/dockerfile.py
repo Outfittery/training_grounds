@@ -2,7 +2,7 @@ DOCKERFILE_TEMPLATE = '''FROM python:{python_version}
 
 {install_libraries}
 
-RUN pip install sagemaker-containers 
+RUN pip freeze
 
 COPY . /opt/ml/code
 

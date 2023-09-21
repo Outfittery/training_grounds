@@ -66,9 +66,9 @@ class ContextExtractorTestCase(TestCase):
     def test_context_extractor(self):
         ctx = build_context_extractor()
         rdf = ctx.extract(bt.IndexedDataBundle(bundle.src.iloc[2:3], bundle))
-
+        prefix = 'word'
         self.assertListEqual(
-            ['f0a0_word_a_at_1', 'f0a0_word_a_at_2', 'f0a0_word_b_at_1', 'f0a0_word_b_at_2', 'f0a0_word_c_at_1', 'f0a0_word_c_at_2', 'f0a0_present_f0a0'],
+            [prefix+'_word_a_at_1', prefix+'_word_a_at_2', prefix+'_word_b_at_1', prefix+'_word_b_at_2', prefix+'_word_c_at_1', prefix+'_word_c_at_2', prefix+'_present_word'],
             list(rdf.columns)
         )
         self.assertEqual(1, rdf.shape[0])
@@ -84,8 +84,9 @@ class ContextExtractorTestCase(TestCase):
         dfs.append(ctx.extract(bt.IndexedDataBundle(bundle.src.iloc[1:2], bundle)))
         dfs.append(ctx.extract(bt.IndexedDataBundle(bundle.src.iloc[2:3], bundle)))
         for df in dfs:
+            prefix = 'word_'
             self.assertListEqual(
-                ['f0a0_word_a_at_1', 'f0a0_word_a_at_2', 'f0a0_word_b_at_1', 'f0a0_word_b_at_2', 'f0a0_word_c_at_1', 'f0a0_word_c_at_2', 'f0a0_present_f0a0'],
+                [prefix+'word_a_at_1', prefix+'word_a_at_2', prefix+'word_b_at_1', prefix+'word_b_at_2', prefix+'word_c_at_1', prefix+'word_c_at_2', prefix+'present_word'],
                 list(df.columns)
             )
 
@@ -102,5 +103,5 @@ class ContextExtractorTestCase(TestCase):
         ibundle = bt.IndexedDataBundle(bundle.src, bundle)
         ctx.fit(ibundle)
         res = ctx.extract(ibundle)  # type: btt.AnnotatedTensor
-        self.assertListEqual(['offset', 'sample_id', 'features'], res.dim_names)
+        self.assertEqual(('offset', 'sample_id', 'features'), res.dim_names)
         self.assertListEqual([2, 4, 3], list(res.tensor.shape))

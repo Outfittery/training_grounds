@@ -43,7 +43,7 @@ class PlainExractorBuilder:
             self.joins.append(_JoinDescription(frame_name, _JoinType.Index))
         return self
 
-    def join(self, frame_name: str, on_columns=Union[str, List[str]]) -> 'PlainExractorBuilder':
+    def join(self, frame_name: str, on_columns:Union[str, List[str]]) -> 'PlainExractorBuilder':
         if len(self.joins) == 0:
             self.joins.append(_JoinDescription(None, _JoinType.NullIndex))
         self.joins[-1]._set_columns(on_columns)
@@ -107,6 +107,9 @@ class PlainExtractor(Extractor):
         else:
             raise ValueError('First join must be NullIndex or Index')
         if first_join.keep_columns is not None:
+            for c in first_join.keep_columns:
+                if c not in current.columns:
+                    raise ValueError(f'Column {c} is not in a frame that is being joined. The columns are {list(current)}')
             current = current[first_join.keep_columns]
 
         for join_index, join in enumerate(self.joins[0:]):

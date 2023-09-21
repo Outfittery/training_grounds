@@ -2,6 +2,7 @@ import re
 from pathlib import Path
 import copy
 from yo_fluq_ds import FileIO
+from tg.common import Loc
 
 import_re = re.compile('from ([^ ]+) import (.*)')
 
@@ -42,10 +43,10 @@ class ImportFixer:
         dots = '.'
         from_rel = str(from_file.relative_to(common))
         for i in from_rel:
-            if i=='/':
+            if i==Loc.file_slash:
                 dots+='.'
         remainder = to_module.relative_to(common)
-        return dots+str(remainder).replace('/','.')
+        return dots+str(remainder).replace(Loc.file_slash,'.')
 
 
 
@@ -70,7 +71,7 @@ class ImportFixer:
         results = []
         lines = text.split('\n')
         for line_number, line in enumerate(lines):
-            match = import_re.match(line)
+            match = import_re.match(line.strip())
             if match is not None:
                 results.append(ImportData(file_name, line_number, match.group(1), match.group(2)))
         return results

@@ -2,13 +2,15 @@ from typing import *
 import torch
 import pandas as pd
 from .basics import AnnotatedTensor
-from ....._common import DataBundle
+from ...data_bundle import DataBundle, IndexedDataBundle
+from ..conversion import DfConversion
 
 
 class InputConversionNetwork(torch.nn.Module):
     def __init__(self,
                  input_frames: Union[None, str, Iterable[str]],
-                 raise_if_inputs_are_missing=False
+                 raise_if_inputs_are_missing=False,
+                 conversion: Optional[Callable] = None
                  ):
         super(InputConversionNetwork, self).__init__()
         if input_frames is None:
@@ -21,13 +23,13 @@ class InputConversionNetwork(torch.nn.Module):
             raise ValueError(f'Expected str or Iterable[str] or None, got {type(input_frames)}, value {input_frames}')
         self.input_frames = input_frames
         self.raise_if_inputs_are_missing = raise_if_inputs_are_missing
+        self.conversion = conversion
+        if self.conversion is None:
+            self.conversion = DfConversion.auto
+
 
     @staticmethod
-    def df_to_torch(df: pd.DataFrame) -> torch.Tensor:
-        return torch.tensor(df.astype(float).values).float()
-
-    @staticmethod
-    def collect_tensors(input, input_frames, raise_if_inputs_are_missing):
+    def collect_tensors(input, input_frames, raise_if_inputs_are_missing, conversion: Callable):
         en = input_frames
         tensors = []
         for frame in en:
@@ -37,7 +39,7 @@ class InputConversionNetwork(torch.nn.Module):
                 else:
                     continue
             if isinstance(input[frame], pd.DataFrame):
-                tensors.append(InputConversionNetwork.df_to_torch(input[frame]))
+                tensors.append(conversion(input[frame]))
             elif isinstance(input[frame], AnnotatedTensor):
                 tensors.append(input[frame].tensor)
             elif isinstance(input[frame], torch.Tensor):
@@ -49,21 +51,21 @@ class InputConversionNetwork(torch.nn.Module):
         return tensors
 
     def forward(self, input):
-        if isinstance(input, torch.Tensor):
-            if self.input_frames is not None:
-                raise ValueError('The input was tensor, but `input_frames` were provided, suggesting it would be a dictionary')
-
-        if isinstance(input, DataBundle):
-            input = input.data_frames
-
         if self.input_frames is None:
             en = list(input.keys())
         else:
             en = self.input_frames
-        tensors = InputConversionNetwork.collect_tensors(input, en, self.raise_if_inputs_are_missing)
+
+        if isinstance(input, torch.Tensor):
+            if self.input_frames is not None:
+                raise ValueError('The input was tensor, but `input_frames` were provided, suggesting it would be an IndexedDataBundle')
+        elif not isinstance(input, IndexedDataBundle):
+            raise ValueError("Input expected to be tensor or `IndexedDataBundle`")
+
+        tensors = InputConversionNetwork.collect_tensors(input, en, self.raise_if_inputs_are_missing, self.conversion)
 
         if len(tensors) == 0:
-            raise ValueError(f'No tensors were produced. Input keys are {list(input.keys())}, expected keys are {list(en)}')
+            raise ValueError(f'No tensors were produced. Expected keys are {list(en)}, input is {input}')
         if len(tensors) == 1:
             return tensors[0]
         else:

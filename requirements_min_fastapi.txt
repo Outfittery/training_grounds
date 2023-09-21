@@ -1,0 +1,12 @@
+numpy
+pandas<2.0.0
+yo_fluq_ds
+pyarrow
+sqlalchemy<2.0
+boto3
+s3fs
+psycopg2-binary
+fastapi[all]
+presto-python-client
+python-dotenv
+importlib_metadata

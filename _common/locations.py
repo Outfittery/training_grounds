@@ -4,6 +4,9 @@ import os
 import subprocess
 import uuid
 
+import platform
+
+
 from pathlib import Path
 
 
@@ -33,12 +36,25 @@ class LocationsClass:
         self.tg_name = str(self.tg_path.relative_to(self.root_path))
         self.git_username = _get_git_user()
 
+        self.is_windows = False
+        if platform.system()=='Windows':
+            self.is_windows = True
+        self.file_slash = '/' if not self.is_windows else '\\'
+
         import_path = type(self).__module__
         suffix = '.common._common.locations'
         if not import_path.endswith(suffix):
             self.tg_common_path = None
         else:
             self.tg_import_path = import_path.replace(suffix,'')
+
+        try:
+            import dotenv
+            env_path = self.root_path/'environment.env'
+            if env_path.is_file():
+                dotenv.load_dotenv(env_path)
+        except:
+            pass
 
     def get_default_temp_path(self, prefix: str, location: Optional[Union[str, Path]] = None) -> Path:
         if location is None:

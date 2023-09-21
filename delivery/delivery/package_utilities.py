@@ -33,7 +33,7 @@ def _get_old_module_to_remove(path: Path):
     with tarfile.open(path, 'r:gz') as file:
         egg_info = _read_file(file, '.egg-info/PKG-INFO')
         module_to_remove = Query.en(egg_info.split('\n')).select(lambda z: z.split(': ')).where(lambda z: z[0] == 'Name').select(lambda z: z[1]).single()
-        return module_to_remove
+        return module_to_remove.strip()
 
 
 def _get_module_to_import(path: Path):

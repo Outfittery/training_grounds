@@ -1,3 +1,4 @@
+import traceback
 from typing import *
 
 import os
@@ -78,10 +79,11 @@ class Packaging:
 
         root = Loc.tg_path  # type:Path
         release = Loc.temp_path/'release/package_tmp'  # type:Path
-        try:
-            shutil.rmtree(release.__str__())
-        except:
-            pass
+        if os.path.exists(release):
+            try:
+                shutil.rmtree(release.__str__())
+            except:
+                print(traceback.format_exc())
         os.makedirs(release.__str__())
 
         if not self.human_readable_module_name:
@@ -116,6 +118,8 @@ class Packaging:
         FileIO.write_text(self.init_py_template.format(**props), lib.joinpath('__init__.py'))
         FileIO.write_json(props, release.joinpath('properties.json'))
 
+        #raise NotImplementedError()
+
         pwd = os.getcwd()
         os.chdir(release.__str__())
 
@@ -123,7 +127,9 @@ class Packaging:
         if self.silent:
             args.append('-q')
         args.append('sdist')
-        subprocess.call(args)
+        return_code = subprocess.call(args)
+        if return_code != 0:
+            raise ValueError('sdist returned non-zero code')
 
         os.chdir(pwd)
 

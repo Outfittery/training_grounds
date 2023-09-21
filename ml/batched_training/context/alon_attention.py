@@ -6,7 +6,7 @@ from functools import partial
 # Uri Alon, Meital Zilberstein, Omer Levy, Eran Yahav, code2vec: Learning Distributed Representations of Code
 # https://arxiv.org/pdf/1803.09473.pdf
 class AlonAttention(torch.nn.Module):
-    def __init__(self, sample, hidden_size):
+    def __init__(self, sample, hidden_size, sigmoid=False):
         super(AlonAttention ,self).__init__()
         self.hidden_size = hidden_size
 
@@ -16,7 +16,11 @@ class AlonAttention(torch.nn.Module):
             self.hidden_network = None
 
         hidden_tensor = self._fully_connected_step(sample)
-        self.attention_network = btf.Perceptron(hidden_tensor, 1, function=partial(torch.softmax,dim=1))
+
+        if not sigmoid:
+            self.attention_network = btf.Perceptron(hidden_tensor, 1, function=partial(torch.softmax, dim=0))
+        if sigmoid:
+            self.attention_network = btf.Perceptron(hidden_tensor, 1)
 
 
 

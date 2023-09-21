@@ -6,13 +6,17 @@ import os
 
 from pathlib import Path
 from yo_fluq_ds import Query, fluq
+from .locations import Loc
 
 
 class S3Handler:
     @staticmethod
-    def download_file(bucket: str, s3_path: str, filename: Path):
+    def download_file(bucket: str, s3_path: str, filename: Optional[Path] = None):
         if s3_path.startswith('/'):
             s3_path = s3_path[1:]
+        if filename is None:
+            filename =  ('file_'+bucket+'_'+s3_path).replace('/','_').replace('\\','_').replace('?','_')
+            filename = Loc.temp_path/'s3'/filename
         client = boto3.client('s3')
         os.makedirs(str(filename.parent), exist_ok=True)
         filename = filename.__str__()
@@ -20,7 +24,10 @@ class S3Handler:
         return filename
 
     @staticmethod
-    def download_folder(bucket: str, s3_path: str, folder: Path, report=None):
+    def download_folder(bucket: str, s3_path: str, folder: Optional[Path] = None, report=None):
+        if folder is None:
+            foldername = ('folder_'+bucket+'_'+s3_path).replace('/','_').replace('\\','_').replace('?','_')
+            folder = Loc.temp_path/'s3'/foldername
         if os.path.exists(folder.__str__()):
             shutil.rmtree(folder.__str__())
         os.makedirs(folder.__str__())
@@ -42,6 +49,9 @@ class S3Handler:
             os.makedirs(str(filename.parent), exist_ok=True)
             filename = filename.__str__()
             client.download_file(bucket, key, filename)
+        return folder
+
+        return folder
 
     @staticmethod
     def upload_file(bucket_name: str, s3_path: str, filename: Union[Path, str]):
@@ -72,8 +82,8 @@ class S3Handler:
         for file_path in Query.folder(folder, '**/*'):
             if file_path.is_file():
                 file_path_str = file_path.__str__()
-                relative_path = file_path.relative_to(folder)
-                joint_path = os.path.join(s3_path, relative_path)
+                relative_path = str(file_path.relative_to(folder))
+                joint_path = os.path.join(s3_path, relative_path).replace('\\','/')
                 client.upload_file(file_path_str, bucket_name, joint_path)
 
     @staticmethod
@@ -128,14 +138,11 @@ class S3Handler:
             kwargs = {}
         s3 = boto3.client('s3', **kwargs)
 
-        response = s3.list_objects_v2(
-            Bucket=bucket_name,
-            Prefix=path,
-        )
+        paginator = s3.get_paginator('list_objects_v2')
+        pages = paginator.paginate(Bucket=bucket_name, Prefix=path)
 
         result = []
-        if response['ResponseMetadata']['HTTPStatusCode'] == 200 and len(response['Contents']) > 0:
-            for c in response['Contents']:
-                result.append(c['Key'])
-                
+        for page in pages:
+            for obj in page['Contents']:
+                result.append(obj['Key'])
         return result

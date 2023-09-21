@@ -13,8 +13,8 @@ class AnnotatedTensor:
                  dim_indices: Optional[List[List]]
                  ):
         self.tensor = tensor
-        self.dim_names = list(dim_names)
-        self.dim_indices = dim_indices
+        self.dim_names = tuple(dim_names)
+        self.dim_indices = tuple(tuple(z) for z in dim_indices) if dim_indices is not None else None
         if self.dim_indices is not None:
             self.dim_reverse_indices = [
                 pd.Series(range(len(s)), index=s)

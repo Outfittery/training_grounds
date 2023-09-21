@@ -38,7 +38,7 @@ class Autonamer:
                     else:
                         v = str(value)
                 elif isinstance(value, list) or isinstance(value, tuple):
-                    v = '-'.join(str(c) for c in value)
+                    v = 'x'.join(str(c) for c in value)
                 elif isinstance(value, float):
                     v = str(value).replace('.', '')
                 elif isinstance(value, Enum):
@@ -48,7 +48,8 @@ class Autonamer:
                 parts.append(prefix + v)
             name_suffix = '-'.join(parts)
             for key, value in self.common_arguments.items():
-                call[key] = value
+                if key not in call:
+                    call[key] = value
             task = self.build_method(**call)
             if 'name' not in task.info:
                 task.info['name'] = ''

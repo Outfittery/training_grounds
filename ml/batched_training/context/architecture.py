@@ -25,6 +25,18 @@ class ContextAggregator:
         raise NotImplementedError()
 
 
+
+class ContextAggregator2:
+    def fit(self, index: pd.DataFrame, features_df: pd.DataFrame):
+        pass
+
+    def aggregate_context(self, index: pd.DataFrame, features_df: pd.DataFrame) -> pd.DataFrame:
+        raise NotImplementedError()
+
+
+
+
+
 class ExtractorInnerData:
     def __init__(self, ibundle: IndexedDataBundle, context_size: int):
         self.context_size = context_size
@@ -36,7 +48,7 @@ class ExtractorInnerData:
 
 
 class ExtractorToAggregator:
-    def __init__(self, extractor: Extractor, aggregators: List[ContextAggregator]):
+    def __init__(self, extractor: Extractor, aggregators: List[Union[ContextAggregator, ContextAggregator2]]):
         self.extractor = extractor
         self.aggregators = aggregators
 
@@ -44,10 +56,16 @@ class ExtractorToAggregator:
     def apply_several(context_ibundle: IndexedDataBundle, data, extractors_and_aggregators: List['ExtractorToAggregator']):
         for extractor_index, ea in enumerate(extractors_and_aggregators):
             fdf = ea.extractor.extract(context_ibundle)
-            data.feature_dfs[f'f{extractor_index}'] = fdf
+            data.feature_dfs[ea.extractor.get_name()] = fdf
             for aggregator_index, a in enumerate(ea.aggregators):
-                adf = a.aggregate_context(fdf)
-                data.agg_dfs[f'f{extractor_index}a{aggregator_index}'] = adf
+                if isinstance(a, ContextAggregator2):
+                    adf = a.aggregate_context(data.ibundle.index_frame, fdf)
+                else:
+                    adf = a.aggregate_context(fdf)
+                postfix = ''
+                if len(ea.aggregators) > 1:
+                    postfix = f'_a{aggregator_index}'
+                data.agg_dfs[ea.extractor.get_name()+postfix] = adf
 
 
 class ExtractorToAggregatorFactory:
@@ -64,7 +82,10 @@ class SimpleExtractorToAggregatorFactory(ExtractorToAggregatorFactory):
         self.extractor.fit(ibundle)
         features_df = self.extractor.extract(ibundle)
         for a in self.aggregators:
-            a.fit(features_df)
+            if isinstance(a, ContextAggregator2):
+                a.fit(ibundle.index_frame, features_df)
+            else:
+                a.fit(features_df)
         return [ExtractorToAggregator(self.extractor, self.aggregators)]
 
 

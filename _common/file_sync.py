@@ -12,6 +12,11 @@ from yo_fluq_ds import FileIO, Query
 from .s3helpers import S3Handler
 
 
+def _my_join(*args):
+    result = os.path.join(*args)
+    result = result.replace('\\','/')
+    return result
+
 class FileSyncer:
     def get_local_folder(self) -> Path:
         raise NotImplementedError()
@@ -34,7 +39,7 @@ class FileSyncer:
     def cd(self, subpath: str) -> 'FileSyncer':
         return (self
                 .change_local_folder(self.get_local_folder() / subpath)
-                .change_remote_subfolder(os.path.join(self.get_remote_subfolder(), subpath))
+                .change_remote_subfolder(_my_join(self.get_remote_subfolder(), subpath))
                 )
 
     def change_local_folder(self, path: Path) -> 'FileSyncer':
@@ -60,7 +65,7 @@ class S3FileSyncer(FileSyncer):
         location = self.file_location / subpath
         os.makedirs(str(location.parent), exist_ok=True)
         try:
-            S3Handler.download_file(self.bucket, os.path.join(self.prefix, subpath), location)
+            S3Handler.download_file(self.bucket, _my_join(self.prefix, subpath), location)
         except botocore.exceptions.ClientError as e:
             if e.response['Error']['Code'] == "404":
                 return None
@@ -74,17 +79,17 @@ class S3FileSyncer(FileSyncer):
     def download_folder_with_reporting(self, subpath, reporting) -> Optional[Path]:
         location = self.file_location / subpath
         S3Handler.download_folder(self.bucket,
-                                  os.path.join(self.prefix, subpath),
+                                  _my_join(self.prefix, subpath),
                                   location,
                                   reporting
                                   )
         return location
 
     def upload_file(self, subpath: str):
-        S3Handler.upload_file(self.bucket, os.path.join(self.prefix, subpath), self.file_location / subpath)
+        S3Handler.upload_file(self.bucket, _my_join(self.prefix, subpath), self.file_location / subpath)
 
     def upload_folder(self, subpath):
-        S3Handler.upload_folder(self.bucket, os.path.join(self.prefix, subpath), self.file_location / subpath)
+        S3Handler.upload_folder(self.bucket, _my_join(self.prefix, subpath), self.file_location / subpath)
 
     def change_local_folder(self, path: Path):
         return S3FileSyncer(self.bucket, self.prefix, path)
@@ -119,7 +124,7 @@ class MemoryFileSyncer(FileSyncer):
         return pd.read_parquet(self.get_file_stream(key))
 
     def get_sub(self, subpath):
-        return os.path.join(self.prefix, subpath)
+        return _my_join(self.prefix, subpath)
 
     def get_trim(self, s):
         if self.prefix == '':

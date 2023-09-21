@@ -6,6 +6,7 @@ import pandas as pd
 from yo_fluq_ds import KeyValuePair
 
 from .data_bundle import DataBundle, IndexedDataBundle
+from ..._common import Logger
 
 
 class _ExtractorWithDisabledFit:
@@ -13,7 +14,7 @@ class _ExtractorWithDisabledFit:
         self.extractor = extractor
 
     def fit(self, ibundle: IndexedDataBundle):
-        pass
+        Logger.info(f'Fitting of extractor {self.get_name()} is disabled')
 
     def extract(self, ibundle: IndexedDataBundle) -> pd.DataFrame:
         return self.extractor.extract(ibundle)
@@ -23,6 +24,9 @@ class _ExtractorWithDisabledFit:
 
     def get_name(self):
         return self.extractor.get_name()
+
+    def with_disabled_fit(self):
+        return self
 
 
 class Extractor:
@@ -59,6 +63,22 @@ class Extractor:
             else:
                 result[extractor.get_name()] = rs
         return IndexedDataBundle(ibundle.index_frame, result)
+
+
+class UnionExtractor(Extractor):
+    def __init__(self, extractors: List[Extractor]):
+        self.extractors = extractors
+        self.name = ','.join(extractor.get_name() for extractor in self.extractors)
+
+    def fit(self, ibundle: IndexedDataBundle):
+        for extractor in self.extractors:
+            extractor.fit(ibundle)
+
+    def extract(self, ibundle: IndexedDataBundle) -> pd.DataFrame:
+        return {extractor.get_name():extractor.extract(ibundle) for extractor in self.extractors}
+
+    def get_name(self):
+        return self.name
 
 
 class CombinedExtractor(Extractor):

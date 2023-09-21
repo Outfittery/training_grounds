@@ -13,28 +13,29 @@ class KibanaTypeProcessor:
     def __init__(self):
         self.field_types = {}
 
-    def _observe_types(self, d: Dict):
+    def _observe_types(self, d: Dict, parent: str):
         for key, value in d.items():
+            key = parent + str(key)
             if key in self.field_types:
                 continue
             if value is None:
                 continue
-            if type(value) in PRIMITIVES:
+            if type(value) in PRIMITIVES + (list, dict):
                 self.field_types[key] = type(value).__name__
-            elif isinstance(value, list) or isinstance(value, dict):
-                self.field_types[key] = 'json'
             else:
                 self.field_types[key] = 'other'
 
-    def _replace_non_primitives(self, d: Dict):
+    def _replace_non_primitives(self, d: Dict, parent: str):
         result = {}
         for key, value in d.items():
             if value is None:
                 result[key] = value
             elif type(value) in PRIMITIVES:
                 result[key] = value
-            elif isinstance(value, list) or isinstance(value, dict):
-                result[key] = json.dumps(value)
+            elif isinstance(value, list):
+                result[key] = [json.dumps(e) for e in value]
+            elif isinstance(value, dict):
+                result[key] = self.process(value, parent=parent + str(key))
             elif isinstance(value, datetime.datetime):
                 result[key] = value.astimezone(datetime.timezone.utc).isoformat()
             else:
@@ -48,29 +49,27 @@ class KibanaTypeProcessor:
             return 0.0
         elif t == 'bool':
             return False
-        elif t == 'str':
-            return ''
-        elif t == 'json':
-            return 'null'
-        elif t == 'other':
+        elif t == 'dict':
+            return {}
+        elif t in ['str', 'list', 'other']:
             return ''
         else:
             raise ValueError(f'Wrong type to call _default_value with: {t}')
 
-    def _replace_nones(self, d: Dict):
+    def _replace_empty(self, d: Dict, parent: str):
         result = {}
         for key, value in d.items():
-            if value is None:
-                if key in self.field_types:
-                    result[key] = self._default_value(self.field_types[key])
+            if value in [None, []]:
+                if parent + key in self.field_types:
+                    result[key] = self._default_value(self.field_types[parent + key])
             else:
                 result[key] = value
         return result
 
-    def process(self, d: Dict):
-        self._observe_types(d)
-        d = self._replace_non_primitives(d)
-        d = self._replace_nones(d)
+    def process(self, d: Dict, parent: str = ''):
+        self._observe_types(d, parent)
+        d = self._replace_non_primitives(d, parent)
+        d = self._replace_empty(d, parent)
         return d
 
 

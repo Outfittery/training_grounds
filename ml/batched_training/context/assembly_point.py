@@ -6,7 +6,8 @@ from ... import batched_training as bt
 from ...batched_training import factories as btf
 from .network_factories import Dim3NetworkFactory, PivotNetworkFactory
 from .components import SimpleExtractorToAggregatorFactory, PandasAggregationFinalizer, PivotAggregator
-from .lstm_components import LSTMFinalizer, FoldedFinalizer
+from .lstm_components import LSTMFinalizer
+from .folding_transformer import FoldingTransformer
 from functools import partial
 
 
@@ -68,10 +69,11 @@ class ContextualAssemblyPoint(btf.AssemblyPoint):
             fin = PandasAggregationFinalizer()
         else:
             eaf = SimpleExtractorToAggregatorFactory(self.extractor)
-            if self.reduction_type == ReductionType.Dim3:
-                fin = LSTMFinalizer(self.reverse_order_in_lstm)
-            else:
-                fin = FoldedFinalizer()
+            transformer = None
+            if self.reduction_type == ReductionType.Dim3Folded:
+                transformer = FoldingTransformer()
+            fin = LSTMFinalizer(self.reverse_order_in_lstm, feature_transformer=transformer)
+
 
         return ContextExtractor(
             self.name,
@@ -81,3 +83,6 @@ class ContextualAssemblyPoint(btf.AssemblyPoint):
             fin,
             self.debug
         )
+
+    def get_name(self):
+        return self.name

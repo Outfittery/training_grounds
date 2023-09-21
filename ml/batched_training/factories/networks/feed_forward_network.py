@@ -32,7 +32,7 @@ class FeedForwardNetwork(torch.nn.Module):
                     networks.append(network)
                     input = network(input)
                 except Exception as ex:
-                    raise ValueError(f'Error when initializing FeedForwardFactory at step {index}') from ex
+                    raise ValueError(f'Error when initializing FeedForwardFactory at step {index}, factory {factory}') from ex
             network = FeedForwardNetwork(*networks)
             network.debug = self.debug
             return network

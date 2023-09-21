@@ -25,6 +25,17 @@ class S3TrainingLogsLoader:
         job_ids = [job['TrainingJobName'] for job in client.list_training_jobs(MaxResults=100, **args)['TrainingJobSummaries']]
         return job_ids
 
+    def get_jobs_df(self, from_time: datetime, to_time: Optional[datetime] = None):
+        args = dict(CreationTimeAfter=from_time)
+        if to_time is not None:
+            args['CreationTimeBefore'] = to_time
+
+        client = boto3.client('sagemaker')
+        jobs = [job for job in client.list_training_jobs(MaxResults=100, **args)['TrainingJobSummaries']]
+        jdf = pd.DataFrame(jobs)
+        jdf['duration_in_hours'] = (jdf.TrainingEndTime - jdf.CreationTime).dt.total_seconds() / 3600
+        return jdf
+
 
     def _load_metrics_df(self, rs):
         df = pd.DataFrame(FileIO.read_pickle(rs.get_path('output/history.pkl')))
@@ -116,3 +127,11 @@ class TrainingLogsViewer:
             right_index=True)
         qdf['delta'] = (qdf.next_timestamp - qdf.timestamp).dt.total_seconds()
         return qdf
+
+    @staticmethod
+    def get_name_part_as_column(series, prefix, tp=None):
+        regex_str = f'-{prefix}([^-]*)-'
+        s = series.str.extract(regex_str)
+        if tp is not None:
+            s = s.astype(tp)
+        return s

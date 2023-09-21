@@ -7,6 +7,9 @@ from functools import partial
 import torch
 
 class Factories:
+    FeedForward = FeedForwardNetwork.Factory
+
+
     class Tailing:
         def __init__(self, head_factory, output_frame_name):
             self.head_factory = head_factory
@@ -22,11 +25,16 @@ class Factories:
     def FullyConnected(
             sizes: Union[Iterable[int], int],
             input_frame_name: Union[None, str, Iterable[str]] = None,
-            output_frame_name: Union[None, str] = None):
+            output_frame_name: Union[None, str] = None,
+            dropout: Optional[float] = None
+        ):
         factories = []
 
         if input_frame_name is not None:
             factories.append(InputConversionNetwork(input_frame_name))
+
+        if dropout is not None:
+            factories.append(torch.nn.Dropout(dropout))
 
         if isinstance(sizes, int):
             sizes = [sizes]

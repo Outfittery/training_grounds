@@ -67,11 +67,9 @@ class LoggerState:
         if self._wrap is None:
             return
         with _logger_lock:
-            if len(keys) != 0:
-                self._wrap.set_extra_fields(self._merge_keys(self.base_keys, self.get_session_keys(), keys))
+            self._wrap.set_extra_fields(self._merge_keys(self.base_keys, self.get_session_keys(), keys))
             self._wrap.output(method, object)
-            if len(keys) != 0:
-                self._wrap.set_extra_fields(self._merge_keys(self.base_keys, self.get_session_keys()))
+            self._wrap.set_extra_fields(self._merge_keys(self.base_keys, self.get_session_keys()))
 
 
 def _get_unique_logger_state():

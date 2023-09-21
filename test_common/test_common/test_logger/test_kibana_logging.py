@@ -26,10 +26,22 @@ class KibanaLoggingTestCase(TestCase):
          .check(i=5, b=True, f=0.1, s='ab')
          )
 
-    def test_json(self):
+    def test_lists(self):
         (Sc(self)
-         .log(l=[3, 4], d={'a': 5})
-         .check(l='[3, 4]', d='{"a": 5}')
+         .log(l1=[3, 4], l2=[])
+         .check(l1=['3', '4'], l2='')
+         )
+        
+    def test_dicts(self):
+        (Sc(self)
+         .log(d1={'a': 5}, d2={}, d3={'a': [1, 2]})
+         .check(d1={'a': 5}, d2={}, d3={'a': ['1', '2']})
+         )
+        
+    def test_nested_dicts(self):
+        (Sc(self)
+         .log(d1={'a': {}}, d2={'a': {'b': 1}}, d3={'a': {'b': [1, 2]}}, d4={'a': {'b': {'c': [1]}}}, d5={'a': {1: 2}})
+         .check(d1={'a': {}}, d2={'a': {'b': 1}}, d3={'a': {'b': ['1', '2']}}, d4={'a': {'b': {'c': ['1']}}}, d5={'a': {1: 2}})
          )
 
     def test_datetime(self):
@@ -56,9 +68,15 @@ class KibanaLoggingTestCase(TestCase):
             .check()
             .log(i=5, b=True, f=0.1, s='ab', l=[1], d={'a': 5}, dt=dt)
             .log(i=None, b=None, f=None, s=None, l=None, d=None, dt=None)
-            .check(i=-1, b=False, f=0, s='', l='null', d='null', dt='')
+            .check(i=-1, b=False, f=0.0, s='', l='', d={}, dt='')
         )
 
-
-
-
+    def test_nested_none_replacement(self):
+        (
+            Sc(self)
+            .log(d1=None, d2=None)
+            .check()
+            .log(d1={'a': {'b': 0.1}}, d2={'a': {'b': 1}}, d3={'a': {'b': {'c': [1]}}}, d4={'a': {'b': {'c': True}}})
+            .log(d1={'a': None}, d2={'a': {'b': None}}, d3={'a': {'b': {'c': None}}}, d4={'a': {'b': {'c': None}}})
+            .check(d1={'a': {}}, d2={'a': {'b': -1}}, d3={'a': {'b': {'c': ''}}}, d4={'a': {'b': {'c': False}}})
+        )

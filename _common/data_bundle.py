@@ -47,25 +47,27 @@ class DataBundle:
     def __setstate__(self, state):
         self.data_frames, self.additional_information = state
 
+    def describe_dataframe(self, value, limits: Optional[int] = None):
+        if not isinstance(value, pd.DataFrame):
+            return type(value).__name__
+        r = {}
+        r['shape'] = value.shape
+        r['index_name'] = value.index.name
+        if limits is not None:
+            cols = list(value.columns[:limits])
+            if len(value.columns) > limits:
+                cols.append('...')
+            r['columns'] = cols
+            rows = list(value.index[:limits])
+            if value.shape[0] > limits:
+                rows.append('...')
+            r['index'] = rows
+        return r
+
     def describe(self, limits: Optional[int] = None):
         result = {}
         for key, value in self.data_frames.items():
-            if not isinstance(value, pd.DataFrame):
-                result[key] = type(value).__name__
-                continue
-            r = {}
-            r['shape'] = value.shape
-            r['index_name'] = value.index.name
-            if limits is not None:
-                cols = list(value.columns[:limits])
-                if len(value.columns) > limits:
-                    cols.append('...')
-                r['columns'] = cols
-                rows = list(value.index[:limits])
-                if value.shape[0] > limits:
-                    rows.append('...')
-                r['index'] = rows
-            result[key] = r
+            result[key] = self.describe_dataframe(value, limits)
         return result
 
     def __str__(self):

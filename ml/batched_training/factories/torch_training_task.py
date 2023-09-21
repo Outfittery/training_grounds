@@ -11,6 +11,9 @@ class AssemblyPoint:
     def create_extractor(self):
         raise NotImplementedError()
 
+    def get_name(self):
+        raise NotImplementedError()
+
 
 def _initialization_bridge(task: 'TorchTrainingTask', data: bt.IndexedDataBundle) -> None:
     task.fix_bundle(data)

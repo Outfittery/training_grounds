@@ -21,10 +21,10 @@ class ResultPickleReader:
 
             if 'tg_module_name' in package: #TODO: for compatibility only!
                 from_module = package['tg_module_name']
-                to_module = package['original_tg_module_name']
+                to_module = Loc.tg_import_path # package['original_tg_module_name']
             else:
                 from_module = package['tg_import_path']
-                to_module = package['original_tg_import_path']
+                to_module = Loc.tg_import_path # package['original_tg_import_path']
             if override_dst_module is not None:
                 to_module = override_dst_module
             with open(str(self.path.joinpath(subpath)), 'rb') as file:

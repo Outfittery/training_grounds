@@ -26,6 +26,8 @@ class SagemakerOptions:
         self.instance_type = 'ml.m4.xlarge'
         self.use_spot_instances = False
         self.wait_until_completed = False
+        self.use_checkpoints = False
+        self.custom_job_uuid = None
 
     def get_local_dataset_path(self):
         return self.local_datasets_folder / self.project_name / self.dataset_name
@@ -114,7 +116,17 @@ class SagemakerRemoteExecutor:
         return session
 
     def _get_model(self):
-        sagemaker_name = self.config.containering.image_name.replace('_', '-')
+        uuid = self.config.sagemaker_settings.custom_job_uuid
+        if uuid is None:
+            uuid = str(uuid4()).replace('-','')
+        sagemaker_name = self.config.containering.image_name.replace('_', '-') + '-' + uuid
+
+        checkpoint_uri = None
+        checkpoint_local_path = None
+
+        if self.config.sagemaker_settings.use_checkpoints:
+            checkpoint_uri = f's3://{self.config.sagemaker_settings.s3_bucket}/sagemaker-checkpoints/{self.config.sagemaker_settings.project_name}/{sagemaker_name}'
+            checkpoint_local_path = "/opt/checkpoint"
 
         model = sagemaker.estimator.Estimator(
             self.config.containering.get_remote_name(),
@@ -126,6 +138,8 @@ class SagemakerRemoteExecutor:
             sagemaker_session=self._get_session(),
             base_job_name=sagemaker_name,
             metric_definitions=self._get_sagemaker_metric_definitions(self.config.job.task),
+            checkpoint_s3_uri = checkpoint_uri,
+            checkpoint_local_path = checkpoint_local_path
         )
         if self.config.sagemaker_settings.use_spot_instances:
             model.use_spot_instances = self.config.sagemaker_settings.use_spot_instances

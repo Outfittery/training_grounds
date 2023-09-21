@@ -4,3 +4,5 @@ from .sklearn_datasets import (get_multilabel_classification_bundle, get_binary_
 from .torch_task import SandboxTorchTask
 from .plain_context_builder import PlainContextBuilder
 from .alternative_task import AlternativeTrainingTask
+from .alternative_task_2 import AlternativeTrainingTask2
+from .bundles import TestBundles

@@ -59,6 +59,7 @@ class TaskTestCase(TestCase):
         self.assertSetEqual({'accuracy_score_test', 'f1_score_test', 'accuracy_score_train', 'f1_score_train'}, set(result['metrics'].keys()))
 
     def test_with_wrapper(self):
+        self.skipTest('Find a version of Catboost that is compatible with pandas 2.0')
         task = create_task()
         task.model_provider = ModelProvider(ModelConstructor('catboost:CatBoostClassifier'), None, ModelProvider.catboost_model_fix)
         task.model_provider.constructor.kwargs['silent'] = True

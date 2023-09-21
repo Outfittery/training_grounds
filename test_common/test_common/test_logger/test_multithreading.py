@@ -25,6 +25,20 @@ class Worker:
         for i in range(self.n):
             Logger.push_keys(**{self.prefix + '_' + str(i): str(i)})
             time.sleep(0.001)
+            Logger.push_keys(step=i, thread=self.prefix)
+            Logger.info(self.prefix + '_' + str(i))
+            time.sleep(0.001)
+
+
+class WorkerWithKeys:
+    def __init__(self, prefix, n=100):
+        self.prefix = prefix
+        self.n = n
+
+    def run(self):
+        for i in range(self.n):
+            Logger.push_keys(**{self.prefix + '_' + str(i): str(i)})
+            time.sleep(0.001)
             Logger.info(self.prefix + '_' + str(i), step=i, thread=self.prefix)
             time.sleep(0.001)
 
@@ -41,13 +55,13 @@ class MultithreadingTestCase(TestCase):
             print(df[['message', 'thread', 'step', column]].assign(expexted_value=value))
         self.assertEqual(0, error.shape[0])
 
-    def test_multithreading(self):
+    def _run_test(self, worker_type):
         M = 5
         N = 100
         buffer = SlowLogBuffer()
         threads = []
         for i in range(M):
-            worker = Worker('Thread' + str(i), N)
+            worker = worker_type('Thread' + str(i), N)
             thread = Thread(target=worker.run)
             threads.append(thread)
             thread.start()
@@ -67,3 +81,9 @@ class MultithreadingTestCase(TestCase):
                 self._check_df(df.loc[df.thread != thread], thread, i)
                 self._check_df(df.loc[(df.thread == thread) & (df.step < i)], thread, i)
                 self._check_df(df.loc[(df.thread == thread) & (df.step >= i)], thread, i, str(i))
+
+    def test_keys_provided_in_call(self):
+        self._run_test(WorkerWithKeys)
+
+    def test_keys_provided_separately(self):
+        self._run_test(Worker)

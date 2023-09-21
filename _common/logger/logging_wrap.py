@@ -1,7 +1,5 @@
 from typing import *
 
-import logging
-import simplejson
 import sys
 import datetime
 import traceback

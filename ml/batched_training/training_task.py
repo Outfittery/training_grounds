@@ -35,7 +35,9 @@ class TrainingSettings:
                  mini_epoch_count: Optional[int] = None,
                  mini_reporting_conventional: bool = True,
                  delay_after_iteration_in_seconds: Optional[float] = None,
-                 index_frame_name_in_bundle: str = 'index'
+                 index_frame_name_in_bundle: str = 'index',
+                 skip_training_in_first_epoch: bool = False,
+                 verbose: bool = True
                  ):
         """
 
@@ -55,6 +57,8 @@ class TrainingSettings:
         self.mini_reporting_conventional = mini_reporting_conventional
         self.delay_after_iteration_in_seconds = delay_after_iteration_in_seconds
         self.index_frame_name_in_bundle = index_frame_name_in_bundle
+        self.skip_training_in_first_epoch = skip_training_in_first_epoch
+        self.verbose = verbose
 
     def mini_batches_are_requried(self):
         return self.mini_batch_size is not None
@@ -230,7 +234,8 @@ class BatchedTrainingTask(AbstractTrainingTask):
                 break
             if self.settings.evaluation_batch_limit is not None and i >= self.settings.evaluation_batch_limit:
                 break
-            Logger.info(f"{stage_name}: {i}/{batch_count}")
+            if self.settings.verbose:
+                Logger.info(f"Evaluating {stage_name}: {i}/{batch_count}")
             batch = self.batcher.get_batch(self.settings.batch_size, ibundle, i, True)
             df_addition = self.model_handler.predict(batch)
             dfs.append(df_addition)
@@ -287,6 +292,7 @@ class BatchedTrainingTask(AbstractTrainingTask):
 
         result.metrics['loss'] = np.mean(temp_data.losses)
         result.metrics['iteration'] = temp_data.first_iteration + temp_data.iteration
+        result.metrics['iteration_absolute'] = temp_data.iteration
 
         for key, value in result.metrics.items():
             temp_data.env.output_metric(key, value)
@@ -325,7 +331,8 @@ class BatchedTrainingTask(AbstractTrainingTask):
         for i in range(0, batch_count):
             if not self._check_training_time_conditions(temp_data, i):
                 break
-            Logger.info(f"Training: {i}/{batch_count}")
+            if self.settings.verbose:
+                Logger.info(f"Training: {i}/{batch_count}")
             batch = self.batcher.get_batch(self.settings.batch_size, temp_data.train_bundle, i)
             temp_data.batch = batch
             loss = self.model_handler.train(batch)
@@ -350,7 +357,8 @@ class BatchedTrainingTask(AbstractTrainingTask):
                 if not self._check_training_time_conditions(temp_data, i):
                     terminate = True
                     break
-                Logger.info(f"Training: {i}/{batch_count} batch, {j}/{mini_epochs} mini-epoch")
+                if self.settings.verbose:
+                    Logger.info(f"Training: {i}/{batch_count} batch, {j}/{mini_epochs} mini-epoch")
                 mini_indices = self.batcher.get_mini_batch_indices(self.settings.mini_batch_size, batch)
                 temp_data.mini_batch_indices = mini_indices
                 for mini_index in mini_indices:
@@ -365,6 +373,11 @@ class BatchedTrainingTask(AbstractTrainingTask):
         if self.settings.mini_reporting_conventional:
             self._training_report(temp_data)
 
+    def _training_report_for_evaluation_only(self, temp_data):
+        temp_data.losses = [0, 0, 0]
+        temp_data.epoch_begins_at = datetime.now()
+        self._training_report(temp_data)
+
     def run_with_environment(self, _bundle: Union[str, Path, DataBundle], env: Optional[TrainingEnvironment] = None):
         temp_data = self._prepare_all(_bundle, env)
         Logger.info('Initialization completed')
@@ -375,10 +388,14 @@ class BatchedTrainingTask(AbstractTrainingTask):
 
         for i in range(self.settings.epoch_count):
             Logger.info(f"Epoch {i} of {self.settings.epoch_count}")
-            if not self.settings.mini_batches_are_requried():
-                self._train_simple_epoch(temp_data)
+            if i == 0 and self.settings.skip_training_in_first_epoch:
+                Logger.info('Training skipped for the first epoch as requested by settings')
+                self._training_report_for_evaluation_only(temp_data)
             else:
-                self._train_epoch_with_minibatches(temp_data)
+                if not self.settings.mini_batches_are_requried():
+                    self._train_simple_epoch(temp_data)
+                else:
+                    self._train_epoch_with_minibatches(temp_data)
             if self.settings.delay_after_iteration_in_seconds is not None:
                 time.sleep(self.settings.delay_after_iteration_in_seconds)
 

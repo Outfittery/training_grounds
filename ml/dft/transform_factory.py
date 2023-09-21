@@ -8,6 +8,8 @@ from .architecture import DataFrameTransformer
 from .column_transformers import DataFrameColumnsTransformer, ContinousTransformer, CategoricalTransformer, TopKPopularStrategy
 from .categorical_column_transformer_2 import CategoricalTransformer2
 from .miscellaneous import OneHotEncoderForDataframe
+from .datetime_transform import DatetimeTransformer
+from pandas.api.types import is_datetime64_any_dtype as is_datetime
 
 
 class DataFrameTransformerFactory:
@@ -26,6 +28,9 @@ class DataFrameTransformerFactory:
 
         self.categorical_rich_factory = None  # type:Optional[Callable]
         self.categorical_rich_threshold = None  # type: Optional[int]
+
+        self.datetime_enabled = False
+        self.scaler_in_datetime = True
 
         self.transformer_ = None
 
@@ -78,6 +83,12 @@ class DataFrameTransformerFactory:
         self.categorical_2_max_categories = max_values_per_category
         return self
 
+    def on_datetime(self, with_scaler = True):
+        self.datetime_enabled = True
+        self.scaler_in_datetime = with_scaler
+        return self
+
+
     def _create_transformer(self, df: pd.DataFrame) -> 'DataFrameTransformer':
         transformers = []
 
@@ -98,7 +109,7 @@ class DataFrameTransformerFactory:
                 raise ValueError(f"Continuous features are presenting, but the factory is not set. Features are {continuous}")
             transformers.append(self.continuous_factory(continuous))
 
-        categorical = [c for c in types.index if c not in continuous]
+        categorical = [c for c in types.index if c not in continuous and not is_datetime(df[c])]
         if len(categorical) > 0:
             if self.categorical_2_max_categories is not None:
                 transformers.append(CategoricalTransformer2(categorical, self.categorical_2_max_categories))
@@ -115,6 +126,10 @@ class DataFrameTransformerFactory:
                     if self.categorical_factory is None:
                         raise ValueError(f"Categorical features are presenting, but factory is not set. Features are {categorical}")
                     transformers.append(self.categorical_factory(categorical))
+
+        if self.datetime_enabled:
+            columns = [c for c in df.columns if is_datetime(df[c])]
+            transformers.append(DatetimeTransformer(columns, self.scaler_in_datetime))
 
         return DataFrameTransformer(transformers)
 
@@ -133,10 +148,12 @@ class DataFrameTransformerFactory:
         return self.transform(X)
 
     @staticmethod
-    def default_factory(features: Optional[List] = None, max_values_per_category: Optional[int] = 25):
+    def default_factory(features: Optional[List] = None, max_values_per_category: Optional[int] = 25, enable_datetime = False):
         tr = DataFrameTransformerFactory()
         if features is not None:
             tr = tr.with_feature_allow_list(features)
         tr = tr.on_continuous(ContinousTransformer)
         tr = tr.on_categorical_2(max_values_per_category)
+        if enable_datetime:
+            tr = tr.on_datetime()
         return tr

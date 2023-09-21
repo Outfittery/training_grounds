@@ -25,7 +25,7 @@ class Containering:
         self.image_tag = image_tag
         self.dependencies = get_minimal_dependencies()
 
-        self.python_version = '3.7'
+        self.python_version = '3.8'
         self.callback_before_calling_template = None  # type: Optional[Callable]
         self.run_file_name = 'run.py'
         self.run_file_template = DOCKER_RUN_PY_TEMPLATE
@@ -76,7 +76,9 @@ class Containering:
             release.__str__()
         ])
 
-        call(args)
+        result = call(args)
+        if result!= 0:
+            raise ValueError('Docker deamon returned non-zero code')
         shutil.rmtree(release)
         return self
 

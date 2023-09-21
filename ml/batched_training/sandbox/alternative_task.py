@@ -12,7 +12,7 @@ class AlternativeTrainingTask(btf.TorchTrainingTask):
         self.settings.mini_epoch_count = 1
         core_extractor = bt.PlainExtractor.build('features').index().join('pymorphy', 'another_word_id').apply(
             transformer=dft.DataFrameTransformerFactory.default_factory(),
-            drop_columns = ['normal_form']
+            #drop_columns = ['normal_form']
         )
 
         self.context = btc.ContextualAssemblyPoint(

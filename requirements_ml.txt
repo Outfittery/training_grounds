@@ -5,12 +5,15 @@ statsmodels
 yo_fluq_ds
 fastparquet
 pyarrow
-boto3
 sagemaker
 python-dotenv
 coverage
 simplejson
+sqlalchemy<2.0
 
-torch
-catboost
+boto3
+s3fs
+psycopg2-binary
 
+torch==1.9.1
+catboost==0.26.1
