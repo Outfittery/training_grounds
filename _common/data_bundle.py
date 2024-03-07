@@ -1,16 +1,18 @@
+import pickle
 from typing import *
 
 import os
+
 import pandas as pd
-import traceback
-import pprint
 
 from pathlib import Path
 from yo_fluq_ds import FileIO, Obj, Query
-from warnings import warn
 import copy
 import zipfile
 from io import BytesIO
+
+
+ADD_INFO_NAME = 'add_info.pkl'
 
 class DataBundle:
     def __init__(self, **frames: pd.DataFrame):
@@ -88,6 +90,10 @@ class DataBundle:
                     buffer = BytesIO(file.read(name))
                     df = pd.read_parquet(buffer)
                     bundle[name.replace(parq, '')] = df
+                elif name == ADD_INFO_NAME:
+                    buffer = BytesIO(file.read(ADD_INFO_NAME))
+                    bundle.additional_information = pickle.load(buffer)
+
             return bundle
 
     @staticmethod
@@ -100,10 +106,9 @@ class DataBundle:
         data_frames = Query.en(files).to_dictionary(lambda z: z.name.split('.')[0], lambda z: pd.read_parquet(z))
         bundle = DataBundle(**data_frames)
 
-        pkl_fname = str(path / 'add_info.pkl')
+        pkl_fname = str(path / ADD_INFO_NAME)
         if os.path.exists(pkl_fname):
-            add_info = FileIO.read_pickle(pkl_fname)
-            bundle.additional_information = add_info
+            bundle.additional_information = FileIO.read_pickle(pkl_fname)
 
         return bundle
 
@@ -129,6 +134,7 @@ class DataBundle:
                 bytes = BytesIO()
                 data.to_parquet(bytes)
                 file.writestr(name + '.parquet', bytes.getbuffer())
+            file.writestr(ADD_INFO_NAME, pickle.dumps(self.additional_information))
 
 
     def save(self, folder: Union[str, Path]) -> None:
@@ -137,4 +143,4 @@ class DataBundle:
         os.makedirs(folder, exist_ok=True)
         for key, value in self.data_frames.items():
             value.to_parquet(folder.joinpath(key + '.parquet'))
-        FileIO.write_pickle(self.additional_information, folder / 'add_info.pkl')
+        FileIO.write_pickle(self.additional_information, folder / ADD_INFO_NAME)

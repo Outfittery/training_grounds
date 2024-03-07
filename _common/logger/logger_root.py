@@ -7,27 +7,50 @@ from copy import deepcopy
 from .logger_interface import LoggerInterface, NullLoggerInterface
 from .debug_logging_wrap import DebugLoggingWrap
 from .kibana_logging_wrap import KibanaLoggingWrap
+from .timer import Timer
 import os
+import contextvars
 
 _logger_lock = threading.Lock()
+session_keys_store: contextvars.ContextVar[Optional[Dict]] = contextvars.ContextVar('session_keys_store', default=None)
+session_timer: contextvars.ContextVar[Optional[Timer]] = contextvars.ContextVar('timer', default=None)
 
 
 class LoggerState:
     def __init__(self):
         self._wrap = None  # type: Optional[LoggerInterface]
         self.base_keys = {}
-        self.session_keys_store = {}
         self.reset(DebugLoggingWrap(add_keys=False))
 
+    def get_session_timer(self):
+        timer = session_timer.get()
+        if not timer:
+            timer = Timer()
+            session_timer.set(timer)
+        return timer
+
+    def set_session_timer(self, value):
+        session_timer.set(value)
+
     def get_session_keys(self):
-        thread_name = threading.current_thread().name
-        if thread_name not in self.session_keys_store:
-            self.session_keys_store[thread_name] = {}
-        return self.session_keys_store[thread_name]
+        keys = session_keys_store.get()
+        if not keys:
+            keys = {}
+            session_keys_store.set(keys)
+        return keys
 
     def set_session_keys(self, value):
-        thread_name = threading.current_thread().name
-        self.session_keys_store[thread_name] = value
+        session_keys_store.set(value)
+
+    def delete_keys(self, keys: Iterable[str]):
+        session_keys = self.get_session_keys()
+        for key in keys:
+            del session_keys[key]
+
+    def set_keys(self, keys: Dict):
+        session_keys = self.get_session_keys()
+        for key, value in keys.items():
+            session_keys[key] = value
 
     def _merge_keys(self, *key_arrays):
         result = {}
@@ -43,15 +66,13 @@ class LoggerState:
             if remove:
                 self.set_session_keys({})
         elif isinstance(remove, str):
-            del self.get_session_keys()[remove]
+            self.delete_keys([remove])
         elif isinstance(remove, Iterable):
-            for key in remove:
-                del self.get_session_keys()[key]
+            self.delete_keys(remove)
         else:
             raise ValueError(f"`remove` is expected to be True, False, str or List[str], but was {type(remove)}")
         if add is not None:
-            for key, value in add.items():
-                self.get_session_keys()[key] = value
+            self.set_keys(add)
         if self._wrap is not None:
             self._wrap.set_extra_fields(self._merge_keys(self.base_keys, self.get_session_keys()))
 
@@ -60,7 +81,8 @@ class LoggerState:
             self._wrap.close()
         self._wrap = wrap
         self.base_keys = deepcopy(keys) if keys is not None else {}
-        self.session_keys_store = {}
+        self.set_session_keys(None)
+        self.set_session_timer(None)
         self.update_keys(remove=True)
 
     def output(self, method, object, keys):
@@ -72,7 +94,7 @@ class LoggerState:
             self._wrap.set_extra_fields(self._merge_keys(self.base_keys, self.get_session_keys()))
 
 
-def _get_unique_logger_state():
+def _get_unique_logger_state() -> LoggerState:
     ENV_KEY = 'tg_logger_unique_state_location'
     if ENV_KEY not in os.environ:
         state = LoggerState()
@@ -122,6 +144,9 @@ class LoggerRootBase:
     def reset(self, logging_wrap, keys: Optional[Dict] = None):
         self.state.reset(logging_wrap, keys)
 
+    @property
+    def timer(self):
+        return self.state.get_session_timer()
 
 
 class LoggerRoot(LoggerRootBase):

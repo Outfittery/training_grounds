@@ -74,10 +74,14 @@ class KibanaTypeProcessor:
 
 
 class KibanaLoggingWrap(LoggingWrap):
-    def __init__(self, scope='tg', level=logging.INFO):
+    def __init__(self, scope='tg', level=logging.INFO, human_readable=False):
         self.type_processor = KibanaTypeProcessor()
+        self.human_readable = human_readable
         super(KibanaLoggingWrap, self).__init__(scope, level, self._serialize)
 
     def _serialize(self, d):
         d = self.type_processor.process(d)
-        return json.dumps(d)
+        if self.human_readable:
+            return json.dumps(d, indent=4)
+        else:
+            return json.dumps(d)
