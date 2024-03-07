@@ -1,37 +1,19 @@
 from typing import *
 from ..._common import Loc, S3Handler
-from ..delivery import HackedUnpicker
 from yo_fluq_ds import FileIO
 from pathlib import Path
 import os
 import shutil
 import subprocess
 
-
 _TRAINING_RESULTS_LOCATION = Loc.temp_path / 'training_results'
 
 class ResultPickleReader:
-    def __init__(self, path: Path, hacked_unpickling=True):
+    def __init__(self, path: Path):
         self.path = path
-        self.hacked_unpickling = hacked_unpickling
 
     def unpickle(self, subpath, override_dst_module = None) -> Any:
-        if self.hacked_unpickling:
-            package = FileIO.read_jsonpickle(self.path.joinpath('package.json'))
-
-            if 'tg_module_name' in package: #TODO: for compatibility only!
-                from_module = package['tg_module_name']
-                to_module = Loc.tg_import_path # package['original_tg_module_name']
-            else:
-                from_module = package['tg_import_path']
-                to_module = Loc.tg_import_path # package['original_tg_import_path']
-            if override_dst_module is not None:
-                to_module = override_dst_module
-            with open(str(self.path.joinpath(subpath)), 'rb') as file:
-                unpickler = HackedUnpicker(file, from_module, to_module)
-                return unpickler.load()
-        else:
-            return FileIO.read_pickle(self.path.joinpath(subpath))
+        return FileIO.read_pickle(self.path.joinpath(subpath))
 
     def get_path(self, subpath) -> Path:
         return self.path.joinpath(subpath)

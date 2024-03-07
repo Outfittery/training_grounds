@@ -1,87 +1,50 @@
 from typing import *
-
-import pickle
-import os
-
-from yo_fluq_ds import Query
+from ..._common import Logger
+from dataclasses import dataclass
 from pathlib import Path
+import pickle
+import traceback
 
-from ..._common.locations import Loc
-
-
-class HackedUnpicker(pickle.Unpickler):
-    """
-    The class to read pickled files, whose classes changed the name
-    """
-
-    def __init__(self, file_obj, from_module, to_module, additional_replacements=None):
-        super(HackedUnpicker, self).__init__(file_obj)
-        self.from_module = from_module
-        self.to_module = to_module
-        self.additional_replacements = additional_replacements
-
-    def find_class(self, module: str, name: str) -> str:
-        """
-        Overriden. Replaces the module for training ground with another one.
-        """
-        renamed_module = module
-
-        prefix = self.from_module
-        if module.startswith(prefix):
-            renamed_module = self.to_module + module[len(prefix):]
-
-        if self.additional_replacements is not None:
-            for key, value in self.additional_replacements.items():
-                if renamed_module.startswith(key):
-                    renamed_module = value + renamed_module[len(key):]
-                    break
-
-        return super(HackedUnpicker, self).find_class(renamed_module, name)
-
-
+@dataclass
 class EntryPoint:
-    """
-    This class describes the TG-package.
-    """
+    name: str
+    version: str
+    job_location: Optional[Path]
+    custom_job: Optional = None
 
-    def __init__(self,
-                 name: str,
-                 version: str,
-                 module_name: str,
-                 tg_import_path: str,
-                 original_tg_import_path: str,
-                 resources_location: Path
-                 ):
-        self.name = name
-        self.version = version
-        self.module_name = module_name
-        self.tg_import_path = tg_import_path
-        self.original_tg_import_path = original_tg_import_path
-        self.resources_location = str(resources_location)
+    def _run_function(self, function: Callable):
+        try:
+            function()
+            Logger.info('Job has exited successfully')
+        except:
+            tb = traceback.format_exc()
+            Logger.error('Job has NOT exited sucessfully')
+            Logger.error(tb)
+            raise
 
-    def get_properties(self):
-        """
-        Returns all the internal properties: module's name, version, etc.
-        """
-        return self.__dict__
+    def run(self):
+        if self.custom_job is None:
+            try:
+                with open(self.job_location,'rb') as file:
+                    job = pickle.load(file)
+                    Logger.info('Job of type ' + str(type(job)) + ' is loaded')
+            except:
+                tb = traceback.format_exc()
+                Logger.error('Job is NOT loaded')
+                Logger.error(tb)
+                raise
+        else:
+            job = self.custom_job
 
-    def get_resources(self) -> List[str]:
-        """
-        Returns list of resources' names
+        if callable(job):
+            Logger.info('Job is callable, calling directly')
+            self._run_function(job)
+        elif hasattr(job, 'run'):
+            Logger.info('Job has `run` attribute')
+            if hasattr(job, 'set_calling_entry_point'):
+                job.set_calling_entry_point(self)
+            self._run_function(job.run)
+        else:
+            raise ValueError('Job is not callable and does not have `run` attributes')
 
-        """
-        return Query.folder(self.resources_location).select(lambda z: z.name).to_list()
-
-
-    def load_resource(self, resource_name: str) -> Any:
-        return self.load_file_in_local_tg(
-            os.path.join(self.resources_location, resource_name),
-            self.tg_import_path
-        )
-
-
-    def load_file_in_local_tg(self, filename: str, local_tg: Optional[str] = None):
-        if local_tg is None:
-            local_tg = Loc.tg_name
-        with open(filename, 'rb') as file_obj:
-            return HackedUnpicker(file_obj, self.original_tg_import_path, local_tg).load()
+        Logger.info('DONE. Exiting Training Grounds.')

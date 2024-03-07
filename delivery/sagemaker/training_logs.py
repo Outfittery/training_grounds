@@ -5,7 +5,7 @@ from datetime import datetime
 import boto3
 from .utils import download_and_open_sagemaker_result
 from matplotlib import pyplot as plt
-from ...datasets.access import CacheMode
+from ...data import CacheMode
 from ..._common import Loc
 
 class S3TrainingLogsLoader:
@@ -54,9 +54,9 @@ class S3TrainingLogsLoader:
             rs = None
             try:
                 rs = download_and_open_sagemaker_result(self.bucket, self.project_name, job_id, dont_redownload=True)
-            except:
+            except Exception as ex:
                 if not ignore_errors:
-                    raise
+                    raise ValueError(f"Job_id: {job_id}") from ex
             if rs is None:
                 continue
             df = self._load_metrics_df(rs)

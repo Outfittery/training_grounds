@@ -9,12 +9,22 @@ class PredictionJob:
                  predictor: Optional[Callable[[DataBundle], DataBundle]],
                  output_storage: Optional[Callable[[DataBundle], None]],
                  initialization: Optional[Callable] = None,
+                 name: Optional[str] = None,
+                 version: Optional[str] = None,
                  ):
         self.initialization = initialization
         self.bundle_source = bundle_source
         self.bundle_debug_storage = bundle_debug_storage
         self.predictor = predictor
         self.output_storage = output_storage
+        self.name = name
+        self.version = version
+
+
+    def get_name_and_version(self):
+        name = self.name or 'prediction'
+        version = self.version or '0'
+        return name, version
 
 
     def run(self):

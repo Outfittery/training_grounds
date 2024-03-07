@@ -1,5 +1,5 @@
 from .job import SagemakerJob
-from ..delivery import Packaging, Containering
+from ..delivery import Container
 from ..._common import Loc
 from .utils import open_sagemaker_result, download_and_open_sagemaker_result
 from pathlib import Path
@@ -37,13 +37,11 @@ class SagemakerOptions:
 class SagemakerConfig:
     def __init__(self,
                  job: SagemakerJob,
-                 packaging: Packaging,
-                 containering: Containering,
+                 container: Container,
                  sagemaker_settings: SagemakerOptions
                  ):
         self.job = job
-        self.packaging = packaging
-        self.containering = containering
+        self.container = container
         self.sagemaker_settings = sagemaker_settings
 
 
@@ -62,7 +60,7 @@ class SagemakerAttachedExecutor:
 
     def execute(self):
         input_path = self.config.sagemaker_settings.get_local_dataset_path()
-        return self.config.job.task.run(input_path)
+        return self.config.container.entry_point.task.run(input_path)
 
 
 class SagemakerLocalExecutor:
@@ -85,16 +83,15 @@ class SagemakerLocalExecutor:
         output_folder = os.path.abspath(output_folder)
         os.makedirs(output_folder, exist_ok=True)
 
-        self.config.packaging.make_package()
-        self.config.containering.make_container(self.config.packaging)
+        self.config.container.build()
+
 
         model = sagemaker.estimator.Estimator(
-            f"{self.config.containering.image_name}:{self.config.containering.image_tag}",
+            f"{self.config.container.name}:{self.config.container.tag}",
             self.config.sagemaker_settings.aws_role,
             instance_count=1,
             instance_type='local',
             output_path=f'file://{output_folder}',
-
         )
         model.fit(f'file://{self.config.sagemaker_settings.get_local_dataset_path().absolute()}')
         return id
@@ -119,7 +116,7 @@ class SagemakerRemoteExecutor:
         uuid = self.config.sagemaker_settings.custom_job_uuid
         if uuid is None:
             uuid = str(uuid4()).replace('-','')
-        sagemaker_name = self.config.containering.image_name.replace('_', '-') + '-' + uuid
+        sagemaker_name = self.config.container.name.replace('_', '-') + '-' + uuid
 
         checkpoint_uri = None
         checkpoint_local_path = None
@@ -129,7 +126,7 @@ class SagemakerRemoteExecutor:
             checkpoint_local_path = "/opt/checkpoint"
 
         model = sagemaker.estimator.Estimator(
-            self.config.containering.get_remote_name(),
+            self.config.container.get_remote_name(),
             self.config.sagemaker_settings.aws_role,
             instance_count=1,
             instance_type=self.config.sagemaker_settings.instance_type,
@@ -152,9 +149,8 @@ class SagemakerRemoteExecutor:
 
     def execute(self):
         self.config.job.task.info['run_at_dataset'] = self.config.sagemaker_settings.dataset_name
-        self.config.packaging.make_package()
-        self.config.containering.make_container(self.config.packaging)
-        self.config.containering.push_container()
+        self.config.container.build()
+        self.config.container.push()
         model = self._get_model()
         input_data = f's3://{self.config.sagemaker_settings.s3_bucket}/sagemaker/{self.config.sagemaker_settings.project_name}/datasets/{self.config.sagemaker_settings.dataset_name}'
         model.fit(input_data, self.config.sagemaker_settings.wait_until_completed)

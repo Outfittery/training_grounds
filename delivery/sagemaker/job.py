@@ -19,17 +19,6 @@ class SagemakerJob:
     def set_calling_entry_point(self, entry_point: EntryPoint):
         self.entry_point = entry_point
 
-    def process_package(self):
-        Logger.info('Preparing package properties...')
-        package_props = self.entry_point.get_properties()
-        props_str = json.dumps(package_props)
-        Logger.info(props_str)
-        FileIO.write_text(props_str, str(self.folder / 'package.json'))
-
-        Logger.info('Preparing package file...')
-        package_location = Path('/opt/ml/code/package.tar.gz')
-        shutil.copy(str(package_location), str(self.folder / 'package.tag.gz'))
-
     def process_hyperparameters(self):
         Logger.info('Processing hyperparameters...')
         hyperparams = FileIO.read_json('/opt/ml/input/config/hyperparameters.json')
@@ -79,7 +68,7 @@ class SagemakerJob:
         self.checkpoint_folder = Path('/opt/checkpoint')
 
         env = SagemakerEnvironment(self.folder, self.checkpoint_folder)
-        self.process_package()
+
 
         if not self.try_restore_from_checkpoint():
             Logger.info('New training')

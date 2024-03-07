@@ -1,17 +1,17 @@
 from typing import *
-from ..delivery import Packaging, Containering
+from ..delivery import Container, EntryPoint
 import os
 import subprocess
 
 
 class SSHDockerOptions:
     def __init__(self,
-                 env_vatiables_to_propagate: Optional[Iterable[str]] = None,
+                 env_variables_to_propagate: Optional[Iterable[str]] = None,
                  wait_for_stop: bool = True,
                  cpu_limit: Optional[float] = None,
                  memory_limit_in_gygabytes: Optional[float] = None
                  ):
-        self.env_variables_to_propagate = env_vatiables_to_propagate
+        self.env_variables_to_propagate = env_variables_to_propagate
         self.cpu_limit = cpu_limit
         self.wait_for_stop = wait_for_stop
         self.memory_limit_in_gygabytes = memory_limit_in_gygabytes
@@ -19,14 +19,12 @@ class SSHDockerOptions:
 
 class SSHDockerConfig:
     def __init__(self,
-                 packaging: Packaging,
-                 containering: Containering,
+                 container: Container,
                  options: SSHDockerOptions,
                  username: Optional[str] = None,
                  host: Optional[str] = None
                  ):
-        self.packaging = packaging
-        self.containering = containering
+        self.container = container
         self.options = options
         self.username = username
         self.host = host
@@ -79,7 +77,8 @@ class SSHAttachedExecutor:
         self.config = config
 
     def execute(self):
-        self.config.packaging.payload['job'].run()
+        entry_point = EntryPoint(self.config.container.name, self.config.container.tag, None, self.config.container.entry_point)
+        entry_point.run()
 
 
 class SSHLocalExecutor:
@@ -87,11 +86,10 @@ class SSHLocalExecutor:
         self.config = config
 
     def get_full_image_name(self):
-        return f'{self.config.containering.image_name}:{self.config.containering.image_tag}'
+        return f'{self.config.container.name}:{self.config.container.tag}'
 
     def execute(self):
-        self.config.packaging.make_package()
-        self.config.containering.make_container(self.config.packaging)
+        self.config.container.build()
         full_image_name = self.get_full_image_name()
         call_args = self.config.get_docker_run_cmd(full_image_name, '')
         subprocess.call(call_args)
@@ -112,14 +110,13 @@ class SSHRemoteExecutor():
 
     def execute(self):
         # creating container and pushing it
-        self.config.packaging.make_package()
-        self.config.containering.make_container(self.config.packaging)
-        self.config.containering.push_container()
+        self.config.container.build()
+        self.config.container.push()
 
-        self.call(self.config.get_ssh() + self.config.containering.pusher.get_auth_command())
+        self.call(self.config.get_ssh() + list(self.config.container.pusher.get_auth_command()))
 
 
-        remote_name = self.config.containering.get_remote_name()
+        remote_name = self.config.container.get_remote_name()
         self.call(self.config.get_ssh() + ['docker', 'pull', remote_name])
 
         run_command = self.config.get_docker_run_cmd(remote_name, '"')
@@ -127,7 +124,7 @@ class SSHRemoteExecutor():
 
     def get_logs(self):
         result = SSHDockerConfig.get_logs_by_full_image_name(
-            self.config.containering.get_remote_name(),
+            self.config.container.get_remote_name(),
             self.config.get_ssh()
         )
         return result

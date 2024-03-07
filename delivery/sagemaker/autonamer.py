@@ -51,10 +51,13 @@ class Autonamer:
                 if key not in call:
                     call[key] = value
             task = self.build_method(**call)
-            if 'name' not in task.info:
-                task.info['name'] = ''
             if self.prefix is not None:
-                task.info['name'] = self.prefix+'-'+task.info['name']
-            task.info['name'] += name_suffix
+                if name_suffix == '':
+                    full_name = self.prefix
+                else:
+                    full_name = self.prefix+'-'+name_suffix
+            else:
+                full_name = name_suffix
+            task.info['name'] = full_name
             result.append(task)
         return result
