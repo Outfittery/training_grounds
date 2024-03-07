@@ -11,3 +11,4 @@ flask-healthcheck
 presto-python-client
 python-dotenv
 importlib_metadata
+pydantic

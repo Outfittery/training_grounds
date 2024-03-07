@@ -53,8 +53,13 @@ def docker_run(image: str, command: List[str]):
 
 def run(command: List[str]):
     print(f"Running: {' '.join(command)}")
-    subprocess.run(command, stdout=subprocess.DEVNULL)
-    print("Done.", end="\n\n")
+    result = subprocess.run(command)
+    result = result.returncode
+    if result == 0:
+        print("Done.", end="\n\n")
+    else:
+        print("Failed.", end="\n\n")
+        exit(1)
 
 
 def install(
@@ -63,7 +68,7 @@ def install(
     deps: bool = True,
     upgrade: bool = False,
 ):
-    command = ["pip", "install"]
+    command = [sys.executable, "-m", "pip", "install"]
     if upgrade:
         command.append("--upgrade")
     if not deps:
@@ -105,6 +110,11 @@ def compile(
 
 
 def sync(requirements_file: str):
+    if not os.path.isfile(requirements_file):
+        print(
+            f"File {requirements_file} does not exist. If it is a new repository, run `compile` first."
+        )
+        exit(1)
     run(["pip-sync", requirements_file])
 
 

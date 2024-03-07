@@ -47,11 +47,12 @@ class GloveProcessor:
                       binary = 2,
                       xmax=10,
                       verbose=2,
-                      debug=False):
+                      debug=False,
+                      model=1):
         cmd = (
             f'{self.build_path}/glove -save-file {output} -threads {threads} -input-file {cooc_file} '
             f'-x-max {xmax} -iter {iterations} -vector-size {vector_size} -binary {binary} -vocab-file {vocab_file} '
-            f'-verbose {verbose}'
+            f'-verbose {verbose} -model {model}'
         )
 
         if not debug:
@@ -88,15 +89,29 @@ class GloveProcessor:
             x: pd.Series,
             y: pd.Series,
             scores: pd.DataFrame,
-            unk_key: Optional[str] = None
+            unk_key: Optional[str] = None,
+            bias_term: bool = False,
+            context_vector: bool = False,
     ):
         if unk_key is not None:
             x = pd.Series(np.where(x.isin(scores.index), x, unk_key), x.index)
             y = pd.Series(np.where(y.isin(scores.index), y, unk_key), y.index)
-        mx = x.to_frame('idx').merge(scores, left_on='idx', right_index=True, how='left').drop('idx', axis=1).sort_index()
-        my = y.to_frame('idx').merge(scores, left_on='idx', right_index=True, how='left').drop('idx', axis=1).sort_index()
+        scores_x = scores_y = scores
+        if context_vector:
+            vector_end = scores.shape[1] // 2
+            scores_x = scores_x.iloc[:, :vector_end]
+            scores_y = scores_y.iloc[:, vector_end:]
+            scores_y.columns = scores_x.columns
+        mx = x.to_frame('idx').merge(scores_x, left_on='idx', right_index=True, how='left').drop('idx', axis=1).sort_index()
+        my = y.to_frame('idx').merge(scores_y, left_on='idx', right_index=True, how='left').drop('idx', axis=1).sort_index()
+        bias_x = bias_y = 0
+        if bias_term:
+            bias_x = mx.iloc[:, -1]
+            bias_y = my.iloc[:, -1]
+            mx = mx.iloc[:, :-1]
+            my = my.iloc[:, :-1]
         m = mx * my
-        val = m.sum(axis=1)
+        val = m.sum(axis=1) + bias_x + bias_y
         isn = m.isnull().any(axis=1)
         if isn.any():
             if unk_key is not None:
