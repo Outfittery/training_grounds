@@ -6,7 +6,7 @@ import pandas as pd
 import pickle
 from .._common import Loc, DataBundle
 from .accessor import IAccessor, TData
-from ..datasets.access import CacheMode
+from .cache_mode import CacheMode
 from enum import Enum
 from abc import ABC, abstractmethod
 

@@ -9,7 +9,7 @@ class IAccessor(Generic[TData], ABC):
         pass
 
     @abstractmethod
-    def get_data(self) -> TData:
+    def get_data(self, **kwargs) -> TData:
         pass
 
     def cache(self):

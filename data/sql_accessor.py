@@ -4,6 +4,7 @@ import math
 import pandas as pd
 from sqlalchemy import create_engine, sql
 from sqlalchemy.sql.selectable import Select
+from sqlalchemy.sql.elements import TextClause
 from hashlib import md5
 
 from .._common import Logger
@@ -13,7 +14,7 @@ from yo_fluq_ds import Queryable, Query, fluq
 class SQLAccessor(IAccessor[pd.DataFrame]):
     def __init__(
             self,
-            query: Union[str, Select],
+            query: Union[str, Select, TextClause],
             dsn: str,
             chunk_size: Optional[int] = None,
             with_progress_bar: bool = False,
@@ -32,11 +33,11 @@ class SQLAccessor(IAccessor[pd.DataFrame]):
         if self.log:
             Logger.info(msg)
 
-    def _get_data_flow_iter(self):
+    def _get_data_flow_iter(self, **kwargs):
         self.log_message(f'Executing query with chunks:\n{self.query}')
         with self._engine.connect().execution_options(stream_results=True) as conn:
             chunks = pd.read_sql_query(
-                sql=self.query, con=conn, chunksize=self.chunk_size
+                sql=self.query, con=conn, chunksize=self.chunk_size, params=kwargs
             )
             if isinstance(chunks, pd.DataFrame):
                 chunks = [chunks]
@@ -52,33 +53,33 @@ class SQLAccessor(IAccessor[pd.DataFrame]):
             raise TypeError(f'Expecting query to be str or Select, but was {type(self.query)}')
 
 
-    def _get_data_flow_internal(self):
+    def _get_data_flow_internal(self, **kwargs):
         if self.with_progress_bar:
             self.log_message('Counting rows')
             count_query = self._create_count_query()
-            count = self._engine.execute(count_query).scalar()
+            count = self._engine.execute(count_query, params=kwargs).scalar()
             chunks_count = math.ceil(count/self.chunk_size)
             self.log_message(f'Rows {count}, chunk size {self.chunk_size}, chunks {chunks_count}')
-            return Queryable(self._get_data_flow_iter(), length = chunks_count)
+            return Queryable(self._get_data_flow_iter(**kwargs), length = chunks_count)
         else:
             self.log_message(f'Chunk size {self.chunk_size}')
-            return Queryable(self._get_data_flow_iter())
+            return Queryable(self._get_data_flow_iter(**kwargs))
 
 
-    def get_data_flow(self) -> Queryable[pd.DataFrame]:
+    def get_data_flow(self, **kwargs) -> Queryable[pd.DataFrame]:
         if self.chunk_size is None:
             self.log_message(f"Executing query:\n{self.query}")
-            df = pd.read_sql_query(self.query, self._engine)
+            df = pd.read_sql_query(self.query, self._engine, params=kwargs)
             self.log_message(f"Done.")
             query = Query.en([df])
         else:
-            query = self._get_data_flow_internal()
+            query = self._get_data_flow_internal(**kwargs)
         if self.with_progress_bar:
             query = query.feed(fluq.with_progress_bar())
         return query
 
-    def get_data(self) -> pd.DataFrame:
-        chunks = self.get_data_flow()
+    def get_data(self, **kwargs) -> pd.DataFrame:
+        chunks = self.get_data_flow(**kwargs)
         df = pd.DataFrame()
         chunks_to_concat = []
         for chunk in chunks:
@@ -97,6 +98,8 @@ class SQLAccessor(IAccessor[pd.DataFrame]):
             s = self.query
         elif isinstance(self.query, Select):
             s = str(self.query.compile(compile_kwargs={'literal_binds': True}))
+        elif isinstance(self.query, TextClause):
+            s = str(self.query)
         else:
-            raise TypeError(f'Expecting query to be str or Select, but was {type(self.query)}')
+            raise TypeError(f'Expecting query to be str, Select or TextClause, but was {type(self.query)}')
         return 'query_' + md5(s.encode('utf-8')).hexdigest()
