@@ -1,8 +1,8 @@
 from typing import *
-from ... import batched_training as bt
 from .conventions import Conventions
 from .torch_model_handler import TorchModelHandler
-from .networks.basics import CtorAdapter
+from .ctor_adapter import CtorAdapter
+from ... import batched_training as bt
 
 class AssemblyPoint:
     def create_network_factory(self):

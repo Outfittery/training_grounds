@@ -56,6 +56,7 @@ class ExistingEmbeddingExtractor(AbstractEmbeddingExtractor):
                  ):
         super().__init__(inner_extractor, unk_name)
         self.mapping_ = {k:v for v, k in enumerate(vectors.index)}
+        self.vectors = vectors
 
     def fit(self, ibundle: IndexedDataBundle):
         pass

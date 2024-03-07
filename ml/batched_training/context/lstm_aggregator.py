@@ -1,6 +1,7 @@
 from typing import *
-from ..context import ContextAggregator2, lstm_data_transformation
-from ..factories import DfConversion
+from .components import ContextAggregator2
+from .lstm_components import lstm_data_transformation
+from ..torch import DfConversion
 import pandas as pd
 
 class LSTMAggregator(ContextAggregator2):

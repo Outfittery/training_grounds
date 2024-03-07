@@ -1,5 +1,8 @@
 from typing import *
-from ... import batched_training as bt
+
+from ..model_handler import BatchedModelHandler
+from ..data_bundle import IndexedDataBundle
+
 import pandas as pd
 from .conventions import Conventions
 import torch
@@ -15,7 +18,7 @@ class MulticlassPredictionInterpreter:
         return result
 
 
-class TorchModelHandler(bt.BatchedModelHandler):
+class TorchModelHandler(BatchedModelHandler):
     def __init__(self,
                  network_factory: Callable,
                  optimizer_factory: Callable,
@@ -29,7 +32,7 @@ class TorchModelHandler(bt.BatchedModelHandler):
         self.ignore_consistance_check = ignore_consistancy_check
 
 
-    def instantiate(self, task, input: bt.IndexedDataBundle) -> None:
+    def instantiate(self, task, input: IndexedDataBundle) -> None:
         self.network = self.network_factory(input)
         self.optimizer = self.optimizer_factory(self.network.parameters())
         self.loss = self.loss_factory()

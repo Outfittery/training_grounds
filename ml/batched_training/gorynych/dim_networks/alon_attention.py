@@ -1,5 +1,5 @@
 import torch
-from .. import factories as btf
+from .perceptron import Perceptron
 from functools import partial
 
 # Attention following:
@@ -11,16 +11,16 @@ class AlonAttention(torch.nn.Module):
         self.hidden_size = hidden_size
 
         if self.hidden_size is not None:
-            self.hidden_network = btf.Perceptron(sample, hidden_size)
+            self.hidden_network = Perceptron(sample, hidden_size)
         else:
             self.hidden_network = None
 
         hidden_tensor = self._fully_connected_step(sample)
 
         if not sigmoid:
-            self.attention_network = btf.Perceptron(hidden_tensor, 1, function=partial(torch.softmax, dim=0))
+            self.attention_network = Perceptron(hidden_tensor, 1, function=partial(torch.softmax, dim=0))
         if sigmoid:
-            self.attention_network = btf.Perceptron(hidden_tensor, 1)
+            self.attention_network = Perceptron(hidden_tensor, 1)
 
 
 

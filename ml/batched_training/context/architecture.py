@@ -113,7 +113,7 @@ class ContextExtractor(Extractor):
         self.feature_extractor = None  # type: Optional[Extractor]
         self.finalizer = finalizer
         self.debug = debug
-        self.extractors_and_aggregators = None
+        self.extractors_and_aggregators: Optional[List[ExtractorToAggregator]] = None
 
     def get_name(self):
         return self.name

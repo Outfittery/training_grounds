@@ -1,6 +1,6 @@
 from ... import batched_training as bt
+from ...batched_training import torch as btt
 from ... import dft
-from .. import factories as btf
 from sklearn import datasets
 import pandas as pd
 
@@ -33,7 +33,7 @@ def get_feature_extractor():
 
 def get_binary_label_extractor():
     label_extractor = (bt.PlainExtractor
-                       .build(btf.Conventions.LabelFrame)
+                       .build(btt.Conventions.LabelFrame)
                        .index()
                        .apply(take_columns=['label'], transformer=None)
                        )
@@ -42,7 +42,7 @@ def get_binary_label_extractor():
 
 def get_multilabel_extractor():
     label_extractor = (bt.PlainExtractor
-                   .build(btf.Conventions.LabelFrame)
+                   .build(btt.Conventions.LabelFrame)
                    .index()
                    .apply(take_columns=['label'], transformer=dft.DataFrameTransformerFactory.default_factory())
                   )
